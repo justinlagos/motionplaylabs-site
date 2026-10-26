@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { CtaBand, PlateHero } from "@/components/Clip";
-import { pageClips, site } from "@/content/site";
+import { NextBand, PlateHero } from "@/components/Clip";
+import { pageClips } from "@/content/site";
 import { work } from "@/content/work";
 
 export const metadata: Metadata = {
@@ -39,16 +39,7 @@ export default function WorkPage() {
           </ul>
         </section>
       </div>
-      <CtaBand clip="inkdark" title="Start a project" line={`Tell us what you need on the enquiry form, or email ${site.email}. Every enquiry is read by Justin.`}>
-        <div className="button-row">
-          <Link className="button is-solid" href="/contact/">
-            Send an enquiry
-          </Link>
-          <Link className="button" href="/studio/">
-            How the studio works
-          </Link>
-        </div>
-      </CtaBand>
+      <NextBand clip={pageClips.products} href="/products/" kicker="Next: Products" title="Products" line="Software and hardware we build and run ourselves." />
     </div>
   );
 }

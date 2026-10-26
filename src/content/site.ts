@@ -70,7 +70,7 @@ export const pageClips: Record<string, ClipId> = {
   work: "pigment",
   products: "circuit",
   school: "dust",
-  labNotes: "inkdrops",
+  labNotes: "inkfade",
   company: "droplets",
   procurement: "folds",
   contact: "inkclouds",

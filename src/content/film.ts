@@ -68,7 +68,7 @@ export const film: Beat[] = [
     kind: "close",
     length: 2.4,
     clip: "inkfade",
-    words: "What we teach brings back new problems. The loop starts again.",
+    words: "Teaching turns up new problems. The loop starts again.",
   },
 ];
 

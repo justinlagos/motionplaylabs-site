@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { CtaBand, PlateHero } from "@/components/Clip";
+import { NextBand, PlateHero } from "@/components/Clip";
 import { Loop } from "@/components/Loop";
 import { pageClips, site } from "@/content/site";
 
@@ -11,11 +11,10 @@ export const metadata: Metadata = {
 
 const principles = [
   ["Show the work.", "Case studies, products and numbers instead of adjectives."],
-  ["No fake proof.", "No invented testimonials, user counts, logos or people."],
   ["Every job leaves something reusable.", "A template, a component, a prompt or a lesson."],
-  ["One standard in both markets.", "Lagos work is held to the London bar and priced for its market."],
+  ["One standard in both markets.", "The same standard in Lagos and London, priced for each market."],
   ["Children's safety comes first.", "On any product children use, safety and privacy come before growth."],
-  ["Ship small, then improve.", "A live thing beats a perfect plan."],
+  ["Ship small, then improve.", "A first version goes out early and gets better with use."],
 ];
 
 export default function CompanyPage() {
@@ -29,7 +28,7 @@ export default function CompanyPage() {
             <p className="lede">We design for organisations, build our own products and teach people to build.</p>
             <div className="prose" style={{ marginTop: 28 }}>
               <p>
-                The same <Link href="/">five-step method</Link> runs all three. Each client job, product and class leaves something the next one can use.
+                The same <Link href="/#beat-method">five-step method</Link> runs all three. Each client job, product and class leaves something the next one can use.
               </p>
             </div>
           </div>
@@ -81,17 +80,21 @@ export default function CompanyPage() {
             <dd>{site.ngCompany ? `${site.ngCompany.legalName}, RC ${site.ngCompany.rc}` : "Incorporated in 2026"}</dd>
           </dl>
         </section>
+        <section className="block split">
+          <h2>Contact</h2>
+          <div>
+            <p className="lede">
+              Briefs, tenders, partnerships and press: <a href={`mailto:${site.email}`}>{site.email}</a>
+            </p>
+            <div className="button-row" style={{ marginTop: 28 }}>
+              <Link className="button" href="/procurement/">
+                For procurement teams
+              </Link>
+            </div>
+          </div>
+        </section>
       </div>
-      <CtaBand clip="inkdark" title="Work with us" line={`Briefs, tenders, partnerships and press: ${site.email}. Every enquiry is read by Justin.`}>
-        <div className="button-row">
-          <Link className="button is-solid" href="/contact/">
-            Start a project
-          </Link>
-          <Link className="button" href="/procurement/">
-            For procurement teams
-          </Link>
-        </div>
-      </CtaBand>
+      <NextBand clip={pageClips.contact} href="/contact/" kicker="Next" title="Start a project" line="Tell us what you need. The first step is a short call, then a one-page brief." />
     </div>
   );
 }

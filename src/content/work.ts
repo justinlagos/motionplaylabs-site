@@ -104,7 +104,7 @@ export const work: CaseStudy[] = [
       "Work alongside Google Maps and Waze instead of trying to replace them.",
       "Make colour carry meaning: yellow for the brand, blue for navigation, green only for money genuinely saved, red and amber for risk.",
       "Use the Pilot, a yellow car, as a signal that changes with the situation, from safe to approaching a charge to relieved, not as a mascot.",
-      "Keep the launch site honest: no invented user numbers, and no promises about the outcome of a penalty appeal.",
+      "Help with penalty appeals without promising how they will turn out.",
     ],
     resultsLabel: "Where it stands",
     results: [

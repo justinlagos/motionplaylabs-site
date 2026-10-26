@@ -92,7 +92,7 @@ export const products: Product[] = [
       "Organisers with their own website can embed the ticket box instead.",
     ],
     stage: "Prototype",
-    stageNote: "Working prototype with a live database",
+    stageNote: "A working prototype with a live database",
     markets: "UK and Nigeria",
     forWhom: "Event organisers and promoters",
     facts: [

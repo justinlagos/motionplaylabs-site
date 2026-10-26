@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { CtaBand, PlateHero } from "@/components/Clip";
+import { NextBand, PlateHero } from "@/components/Clip";
 import { pageClips, site } from "@/content/site";
 
 export const metadata: Metadata = {
@@ -89,17 +89,22 @@ export default function SchoolPage() {
             </p>
           </div>
         </section>
+        <section className="block split">
+          <h2>For teams</h2>
+          <div>
+            <p className="lede">We run the session in-house for a company&apos;s own team, built around your work and your tools.</p>
+            <div className="button-row" style={{ marginTop: 28 }}>
+              <Link className="button is-solid" href="/contact/">
+                Ask about a team session
+              </Link>
+              <a className="button" href={site.schoolUrl}>
+                Join the waitlist
+              </a>
+            </div>
+          </div>
+        </section>
       </div>
-      <CtaBand clip="soapfilm" title="For teams" line="We run the session in-house for a company's own team, built around your work and your tools.">
-        <div className="button-row">
-          <Link className="button is-solid" href="/contact/">
-            Ask about a team session
-          </Link>
-          <a className="button" href={site.schoolUrl}>
-            Join the waitlist
-          </a>
-        </div>
-      </CtaBand>
+      <NextBand clip={pageClips.company} href="/company/" kicker="Next: Company" title="Company" line="A design and product lab with companies in the UK and Nigeria." />
     </div>
   );
 }

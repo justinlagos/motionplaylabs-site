@@ -33,6 +33,10 @@ MODE="${7:-fade}"
 FADE=1
 AV1_CRF="${AV1_CRF:-40}"
 H264_CRF="${H264_CRF:-25}"
+# Dark, smooth gradients (smoke, ink in black water) band and block at 8 bits. For those set
+# AV1_DEPTH=10, and AV1_GRAIN (e.g. 6) to let the decoder add fine grain back instead of storing it.
+AV1_DEPTH="${AV1_DEPTH:-8}"
+AV1_GRAIN="${AV1_GRAIN:-0}"
 PRE="${PRE:-}"
 OUT="public/media/${ID}"
 TMP="$(mktemp -d)"
@@ -63,7 +67,9 @@ loop "scale=1920:1080:force_original_aspect_ratio=increase:flags=lanczos,crop=19
 loop "crop=ih*9/16:ih:(iw-ih*9/16)*${FOCUS}/100:0,scale=720:1280:flags=lanczos" "$TMP/port.mp4"
 
 # Delivery files
-ffmpeg -y -loglevel error -i "$TMP/land.mp4" -c:v libsvtav1 -preset 6 -crf "$AV1_CRF" -g 125 -pix_fmt yuv420p -movflags +faststart "$OUT/1080.av1.mp4"
+AV1_PIX=yuv420p
+[[ "$AV1_DEPTH" == "10" ]] && AV1_PIX=yuv420p10le
+ffmpeg -y -loglevel error -i "$TMP/land.mp4" -c:v libsvtav1 -preset 6 -crf "$AV1_CRF" -g 125 -pix_fmt "$AV1_PIX" -svtav1-params "film-grain=${AV1_GRAIN}" -movflags +faststart "$OUT/1080.av1.mp4"
 ffmpeg -y -loglevel error -i "$TMP/land.mp4" -c:v libx264 -preset veryfast -crf "$H264_CRF" -maxrate 4M -bufsize 8M -g 50 -pix_fmt yuv420p -movflags +faststart "$OUT/1080.h264.mp4"
 ffmpeg -y -loglevel error -i "$TMP/port.mp4" -c:v libx264 -preset veryfast -crf "$((H264_CRF + 1))" -maxrate 2M -bufsize 4M -g 50 -pix_fmt yuv420p -movflags +faststart "$OUT/portrait.h264.mp4"
 ffmpeg -y -loglevel error -i "$TMP/land.mp4" -vf "scale=640:360:flags=lanczos" -c:v libx264 -preset veryfast -crf "$((H264_CRF + 2))" -g 50 -pix_fmt yuv420p -movflags +faststart "$OUT/thumb.mp4"

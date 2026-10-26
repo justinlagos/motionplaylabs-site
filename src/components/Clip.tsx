@@ -98,8 +98,8 @@ export function NextBand({ clip, href, kicker, title, line }: NextProps) {
         {line && <p className="cta-band-line">{line}</p>}
       </div>
       <span className="next-mark" aria-hidden="true">
-        <svg viewBox="0 0 48 48" focusable="false">
-          <path d="M8 24h31M27 12l12 12-12 12" />
+        <svg viewBox="0 0 100 100" focusable="false">
+          <path d="M8 50H88M60 22L88 50L60 78" />
         </svg>
       </span>
       <p className="plate-band-caption">{c.caption}</p>

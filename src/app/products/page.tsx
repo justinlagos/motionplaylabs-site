@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { PlateHero } from "@/components/Clip";
+import { NextBand, PlateHero } from "@/components/Clip";
 import { StageMini, stageRank } from "@/components/StageTrack";
 import { activeProducts, parkedProducts, products, stages } from "@/content/products";
 import { pageClips } from "@/content/site";
@@ -11,10 +11,10 @@ export const metadata: Metadata = {
 };
 
 const criteria: Record<(typeof stages)[number], string> = {
-  Explore: "Ten people who would use it confirm the problem.",
-  Prototype: "Five real people use it without help.",
-  Pilot: "They come back, pay or sign up. Safety and data checks are done.",
-  Launch: "Paying users, and one way of finding more at a known cost.",
+  Explore: "Checking the problem with the people who have it.",
+  Prototype: "A working version is being built and tested.",
+  Pilot: "In use by a first group, with safety and data checks done.",
+  Launch: "Open to anyone.",
   Scale: "It funds its own team, or becomes its own company.",
 };
 
@@ -54,7 +54,7 @@ export default function ProductsPage() {
         <section className="block">
           <div className="block-head">
             <h2>How a product moves</h2>
-            <p className="quiet">A product moves to the next stage only when it meets the test for it.</p>
+            <p className="quiet">Every product starts as an experiment. It moves on when it is ready, and is parked when it is not.</p>
           </div>
           <ol className="stage-board">
             {stages.map((s, i) => {
@@ -98,6 +98,7 @@ export default function ProductsPage() {
           </div>
         </section>
       </div>
+      <NextBand clip={pageClips.school} href="/school/" kicker="Next: School" title="School" line="The Build Session: build a working tool with AI, live, with help as you go." />
     </div>
   );
 }

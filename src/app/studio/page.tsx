@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { CtaBand, PlateHero } from "@/components/Clip";
+import { NextBand, PlateHero } from "@/components/Clip";
 import { method } from "@/content/method";
 import { pageClips, site } from "@/content/site";
 
@@ -11,10 +11,10 @@ export const metadata: Metadata = {
 
 const makes = [
   { name: "Brand and identity", items: ["Identity systems", "Guidelines and brand books", "Templates your team uses every day"] },
-  { name: "Campaigns and content", items: ["Campaign platforms", "Social, ads and email", "The assets behind them"] },
+  { name: "Campaigns and content", items: ["Campaign platforms", "Social, ads and email", "Artwork for every size and channel"] },
   { name: "Reports and publications", items: ["Annual and impact reports", "Policy briefs and case studies", "Decks and long documents", "UN and NGO publications"] },
   { name: "Events and motion", items: ["Event identity and booths", "Screen loops and logo reveals", "Photography and video"] },
-  { name: "Websites and product design", items: ["Marketing sites and landing pages", "App interfaces", "Designed and built"] },
+  { name: "Websites and product design", items: ["Marketing sites and landing pages", "App interfaces", "Built in code, not only designed"] },
 ];
 
 const ways = [
@@ -45,7 +45,7 @@ export default function StudioPage() {
             <p className="lede">We design for companies, NGOs, development agencies and foundations, and we build what we design.</p>
             <div className="prose" style={{ marginTop: 28 }}>
               <p>
-                Every job runs through the same <Link href="/">five steps</Link>, so you know what comes next and what you will receive at
+                Every job runs through the same <Link href="/#beat-method">five steps</Link>, so you know what comes next and what you will receive at
                 each one.
               </p>
             </div>
@@ -136,17 +136,22 @@ export default function StudioPage() {
             </p>
           </div>
         </section>
+        <section className="block split">
+          <h2>Start a project</h2>
+          <div>
+            <p className="lede">Tell us what you need. The first step is a short call, then a one-page brief.</p>
+            <div className="button-row" style={{ marginTop: 28 }}>
+              <Link className="button is-solid" href="/contact/">
+                Send an enquiry
+              </Link>
+              <a className="button" href={`mailto:${site.email}`}>
+                {site.email}
+              </a>
+            </div>
+          </div>
+        </section>
       </div>
-      <CtaBand clip="soapfilm" title="Start a project" line={`Tell us what you need on the enquiry form, or email ${site.email}. Every enquiry is read by Justin.`}>
-        <div className="button-row">
-          <Link className="button is-solid" href="/contact/">
-            Send an enquiry
-          </Link>
-          <Link className="button" href="/work/">
-            See the work
-          </Link>
-        </div>
-      </CtaBand>
+      <NextBand clip={pageClips.work} href="/work/" kicker="Next: Work" title="Work" line="Each case study shows the problem, what we decided and what happened." />
     </div>
   );
 }

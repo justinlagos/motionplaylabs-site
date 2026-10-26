@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { PlateHero } from "@/components/Clip";
+import { NextBand, PlateHero } from "@/components/Clip";
 import { pageClips, site } from "@/content/site";
 
 export const metadata: Metadata = {
@@ -91,6 +91,7 @@ export default function ProcurementPage() {
           </div>
         </section>
       </div>
+      <NextBand clip={pageClips.contact} href="/contact/" kicker="Next" title="Start a project" line="Send a brief or an RFQ through the enquiry form, or by email." />
     </div>
   );
 }

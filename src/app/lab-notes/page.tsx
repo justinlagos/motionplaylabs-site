@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { PlateHero } from "@/components/Clip";
+import { NextBand, PlateHero } from "@/components/Clip";
 import { notes, readingMinutes } from "@/content/notes";
 import { pageClips } from "@/content/site";
 
@@ -34,6 +34,7 @@ export default function LabNotesPage() {
           </ul>
         </section>
       </div>
+      <NextBand clip={notes[0].clip} href={`/lab-notes/${notes[0].slug}/`} kicker="Start reading" title={notes[0].title} line={notes[0].line} />
     </div>
   );
 }

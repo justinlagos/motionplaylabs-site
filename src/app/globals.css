@@ -27,6 +27,7 @@
 
   --ease: cubic-bezier(0.22, 0.7, 0.12, 1);
   --t-tone: 520ms;
+  --arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-6 -6 112 112'%3E%3Cpath d='M8 50H88M60 22L88 50L60 78' fill='none' stroke='%23000' stroke-width='12' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
 
   --chrome-fg: var(--black);
   --chrome-fg-2: var(--grey-on-white);
@@ -198,6 +199,11 @@ a:hover {
 /* Inner pages: the header steps out of the way while you read down, and returns when you scroll up */
 html[data-chrome-hidden] .chrome:not(:focus-within):not(.is-open) {
   transform: translateY(-100%);
+}
+
+/* In the film the header's colour is driven frame by frame, so it must not lag behind */
+html[data-film-active] .chrome {
+  transition: transform 520ms var(--ease);
 }
 
 html[data-chrome="solid"] .chrome {
@@ -413,7 +419,7 @@ html[data-chrome="solid"] .chrome {
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(to bottom, rgba(var(--scrim), 0.55), rgba(var(--scrim), 0) 20%),
+    linear-gradient(to bottom, rgba(var(--scrim), 0.66), rgba(var(--scrim), 0) 22%),
     linear-gradient(to top, rgba(var(--scrim), 0.78), rgba(var(--scrim), 0) 58%);
 }
 
@@ -1067,7 +1073,7 @@ html.film-on .badge-dock {
 }
 
 .plate[data-kind="interlude"] .plate-scrim {
-  background: linear-gradient(to bottom, rgba(var(--scrim), 0.5), rgba(var(--scrim), 0) 18%);
+  background: linear-gradient(to bottom, rgba(var(--scrim), 0.72), rgba(var(--scrim), 0) 20%);
 }
 
 @media (max-width: 700px) {
@@ -1313,7 +1319,7 @@ html.film-on .badge-dock {
 
 /* Blocks */
 .block {
-  padding: clamp(48px, 7vw, 112px) 0;
+  padding: clamp(44px, 6vw, 96px) 0;
   border-top: 1px solid var(--rule);
 }
 
@@ -1401,11 +1407,40 @@ html.film-on .badge-dock {
 }
 
 .link-list a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45em;
   font-size: var(--fs-m);
   font-weight: 500;
   font-stretch: var(--wide);
   letter-spacing: -0.02em;
   text-decoration: none;
+}
+
+/* An arrow in the logo's stroke after each link; tilted for links that leave the site */
+.link-list a::after {
+  content: "";
+  flex: none;
+  width: 0.62em;
+  height: 0.62em;
+  background: currentColor;
+  -webkit-mask: var(--arrow) center / contain no-repeat;
+  mask: var(--arrow) center / contain no-repeat;
+  transition: transform 400ms var(--ease);
+}
+
+.link-list a[href^="http"]::after {
+  transform: rotate(-45deg);
+}
+
+.link-list a:hover::after,
+.link-list a:focus-visible::after {
+  transform: translateX(5px);
+}
+
+.link-list a[href^="http"]:hover::after,
+.link-list a[href^="http"]:focus-visible::after {
+  transform: rotate(-45deg) translateX(5px);
 }
 
 .link-list a:hover,
@@ -2271,19 +2306,35 @@ html.film-on .badge-dock {
   color: var(--fg);
 }
 
+/* The same stops as the stage track, small: a hairline with five dots, filled up to the current one */
 .stage-mini {
+  position: relative;
   display: inline-flex;
-  gap: 3px;
+  gap: 7px;
+}
+
+.stage-mini::before {
+  content: "";
+  position: absolute;
+  left: 3px;
+  right: 3px;
+  top: 50%;
+  height: 1px;
+  background: var(--rule);
 }
 
 .stage-mini span {
-  width: 12px;
-  height: 3px;
-  background: var(--rule);
+  position: relative;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--bg);
+  box-shadow: inset 0 0 0 1px var(--fg-2);
 }
 
 .stage-mini span.is-on {
   background: var(--fg);
+  box-shadow: none;
 }
 
 @media (max-width: 900px) {
@@ -2671,24 +2722,19 @@ html.film-on .badge-dock {
   z-index: 1;
   right: var(--margin);
   bottom: clamp(72px, 8vw, 120px);
-  display: grid;
-  place-items: center;
-  width: clamp(56px, 5.6vw, 88px);
-  aspect-ratio: 1;
-  border: 1px solid currentColor;
-  border-radius: 50%;
+  width: clamp(48px, 4.6vw, 76px);
   color: var(--fg);
-  transition:
-    transform 700ms var(--ease),
-    background-color 300ms var(--ease),
-    color 300ms var(--ease);
+  transition: transform 800ms var(--ease);
 }
 
+/* Drawn with the logo's stroke: round caps, the same weight as the numerals */
 .next-mark svg {
-  width: 44%;
+  display: block;
+  width: 100%;
+  overflow: visible;
   fill: none;
   stroke: currentColor;
-  stroke-width: 2.4;
+  stroke-width: 9;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
@@ -2699,9 +2745,7 @@ html.film-on .badge-dock {
 
 .cta-band.is-next:hover .next-mark,
 .cta-band.is-next:focus-within .next-mark {
-  transform: translateX(10px);
-  background: var(--fg);
-  color: var(--bg);
+  transform: translateX(14px);
 }
 
 .cta-band.is-next:hover .plate-scrim {

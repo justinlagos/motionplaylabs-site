@@ -27,6 +27,7 @@ const easeInOut = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t 
 // Where in its beat the reader is "at rest" (words fully in), and where the hand-over starts
 const REST = 0.34; // where a beat comes to rest: everything in its frame has arrived by here
 const HANDOVER = 0.8;
+const PULL = 12; // px of blur at the middle of a focus pull
 
 type Kind = "lens" | "exposure" | "focus";
 
@@ -184,14 +185,6 @@ export function startFilm(el: HTMLElement, beats: Beat[]): () => void {
       frames.forEach((f, k) => f.classList.toggle("is-active", k === i));
       el.dataset.current = beat.id;
       active = i;
-      railLinks.forEach((a) => {
-        const k = Number(a.dataset.k);
-        const next = railLinks.find((b) => Number(b.dataset.k) > k);
-        const current = i >= k && (!next || i < Number(next.dataset.k));
-        a.classList.toggle("is-current", current);
-        if (current) a.setAttribute("aria-current", "step");
-        else a.removeAttribute("aria-current");
-      });
     }
 
     // Words: the frame rises in, holds, and lifts away at the edges of its beat
@@ -225,6 +218,21 @@ export function startFilm(el: HTMLElement, beats: Beat[]): () => void {
     const kind: Kind = isLast || reduced || tones[i] === tones[i + 1] ? "focus" : tones[i + 1] === "dark" ? "lens" : "exposure";
     const push = reduced ? 1 : 1 + 0.045 * local; // slow push-in through the beat
     const radius = lensReach() * mix;
+
+    // The rail names the chapter on screen: it moves on once the next clip has taken over
+    const shown = mix > 0.5 ? i + 1 : i;
+    if (shown !== railAt) {
+      railAt = shown;
+      railLinks.forEach((a) => {
+        const k = Number(a.dataset.k);
+        const next = railLinks.find((b) => Number(b.dataset.k) > k);
+        const current = shown >= k && (!next || shown < Number(next.dataset.k));
+        a.classList.toggle("is-current", current);
+        if (current) a.setAttribute("aria-current", "step");
+        else a.removeAttribute("aria-current");
+      });
+    }
+
     plates.forEach((p, k) => {
       const v = videos[k];
       let show = false;
@@ -242,8 +250,10 @@ export function startFilm(el: HTMLElement, beats: Beat[]): () => void {
           p.style.transform = `scale(${(push + 0.03 * mix).toFixed(4)})`;
           p.style.filter = "none";
         } else {
+          // Focus: the outgoing clip goes soft first, then the two trade places while both are soft
           p.style.transform = `scale(${(push + 0.03 * mix).toFixed(4)})`;
-          p.style.filter = fine && !reduced && mix > 0.001 ? `blur(${(mix * 9).toFixed(2)}px)` : "none";
+          const soft = smooth(0, 0.5, mix);
+          p.style.filter = fine && !reduced && soft > 0.001 ? `blur(${(soft * PULL).toFixed(2)}px)` : "none";
         }
       } else if (k === i + 1 && mix > 0.001) {
         show = true;
@@ -269,9 +279,11 @@ export function startFilm(el: HTMLElement, beats: Beat[]): () => void {
           p.style.maskImage = "none";
           p.style.webkitMaskImage = "none";
           p.style.transformOrigin = "50% 50%";
-          p.style.opacity = String(mix);
+          // ...and the incoming clip comes into focus once it has the screen
+          p.style.opacity = String(fine && !reduced ? smooth(0.38, 0.62, mix) : mix);
           p.style.transform = reduced ? "none" : `scale(${(1.04 - 0.04 * mix).toFixed(4)})`;
-          p.style.filter = fine && !reduced && mix < 0.999 ? `blur(${((1 - mix) * 9).toFixed(2)}px)` : "none";
+          const soft = 1 - smooth(0.5, 1, mix);
+          p.style.filter = fine && !reduced && soft > 0.001 ? `blur(${(soft * PULL).toFixed(2)}px)` : "none";
         }
       }
       p.style.visibility = show ? "visible" : "hidden";
@@ -326,6 +338,7 @@ export function startFilm(el: HTMLElement, beats: Beat[]): () => void {
   let raf = 0;
   let angle = 0;
   let lastScrollT = 0;
+  let railAt = -1;
   let lastInputT = 0;
   let checkedInput = 0;
   let settling = false;
