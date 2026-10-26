@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Pager } from "@/components/Pager";
-import { SceneHero } from "@/components/SceneHero";
+import { PlateHero } from "@/components/Clip";
 import { caseBySlug, work } from "@/content/work";
 
 export const dynamicParams = false;
@@ -25,7 +25,7 @@ export default async function CasePage({ params }: P) {
   const next = work[(i + 1) % work.length];
   return (
     <div className="page">
-      <SceneHero scene={w.scene} kicker={w.owner} title={w.title} line={w.summary} />
+      <PlateHero clip={w.clip} kicker={w.owner} title={w.title} line={w.summary} />
       <div className="wrap">
         <section className="block split">
           <h2>At a glance</h2>

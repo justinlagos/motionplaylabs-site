@@ -1,4 +1,4 @@
-import type { SceneId } from "@/lib/gl/shaders";
+import type { ClipId } from "./footage";
 
 // Launch case studies are our own products, which we can show without anyone's permission.
 // Client case studies are added once each client agrees in writing (decision D6).
@@ -10,7 +10,7 @@ export type CaseStudy = {
   discipline: string;
   market: string;
   year: string;
-  scene: SceneId;
+  clip: ClipId;
   summary: string;
   problem: string;
   decisions: string[];
@@ -27,7 +27,7 @@ export const work: CaseStudy[] = [
     discipline: "Product, brand, web",
     market: "UK and Nigeria",
     year: "2026",
-    scene: "trail",
+    clip: "pencil",
     summary: "A learning platform where children aged 3 to 7 learn by moving, not tapping.",
     problem: "Most screen time for children aged 3 to 7 asks them to sit still and tap glass.",
     decisions: [
@@ -51,7 +51,7 @@ export const work: CaseStudy[] = [
     discipline: "Product, interface",
     market: "Everywhere",
     year: "2026",
-    scene: "halftone",
+    clip: "pigment",
     summary: "An image editor that runs entirely in the browser and uploads nothing.",
     problem: "Quick image work usually means a heavy desktop app, or uploading files to someone else's server.",
     decisions: [
@@ -70,7 +70,7 @@ export const work: CaseStudy[] = [
     discipline: "Product, brand, interface",
     market: "UK and Nigeria",
     year: "2026",
-    scene: "beam",
+    clip: "milkdrop",
     summary: "Ticketing for organisers who want to sell under their own name.",
     problem: "Small organisers pay a ticketing company and send their buyers to someone else's brand.",
     decisions: [
@@ -93,7 +93,7 @@ export const work: CaseStudy[] = [
     discipline: "Programme, automation, email",
     market: "UK and Nigeria",
     year: "2026",
-    scene: "chalk",
+    clip: "dust",
     summary: "A paid live workshop run by one person, with the admin handled by automation.",
     problem: "Run a paid live workshop as one person, across two currencies, without handling every application by hand.",
     decisions: [

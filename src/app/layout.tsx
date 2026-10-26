@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import "@fontsource/marcellus/400.css";
-import "@fontsource-variable/instrument-sans/index.css";
+import "@fontsource-variable/mona-sans/standard.css";
 import "./globals.css";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -23,8 +22,8 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#000000",
-  colorScheme: "dark",
+  themeColor: "#ffffff",
+  colorScheme: "light",
 };
 
 const orgJsonLd = {
@@ -41,10 +40,10 @@ const orgJsonLd = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en-GB">
+    <html lang="en-GB" data-tone="light">
       <body>
         <Header />
-        <main id="content" tabIndex={-1}>
+        <main id="content" tabIndex={-1} data-tone="light">
           {children}
         </main>
         <Footer />

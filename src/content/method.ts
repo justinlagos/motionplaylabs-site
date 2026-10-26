@@ -1,11 +1,11 @@
-import type { SceneId } from "@/lib/gl/shaders";
+import type { ClipId } from "./footage";
 
 export type Step = {
   slug: string;
   numeral: string;
   name: string;
   line: string;
-  scene: SceneId;
+  clip: ClipId;
   intro: string;
   weDo: string[];
   youGet: string[];
@@ -18,7 +18,7 @@ export const method: Step[] = [
     numeral: "I",
     name: "Research",
     line: "Find the real problem",
-    scene: "halftone",
+    clip: "ferrofluid",
     intro:
       "Every job starts by finding out what is actually wrong, who the work is for and what proof already exists. We read what you have before we draw anything.",
     weDo: [
@@ -38,7 +38,7 @@ export const method: Step[] = [
     numeral: "II",
     name: "Design",
     line: "Make it clear at a glance",
-    scene: "cmy",
+    clip: "pigment",
     intro:
       "We shape the idea until someone who has never seen it understands it in a few seconds, then build the system that keeps it consistent.",
     weDo: [
@@ -57,7 +57,7 @@ export const method: Step[] = [
     numeral: "III",
     name: "Build",
     line: "Make the working thing",
-    scene: "circuit",
+    clip: "circuit",
     intro:
       "We make the working version: the website, the document, the booth, the app. A mock-up is a step, not the result.",
     weDo: [
@@ -76,7 +76,7 @@ export const method: Step[] = [
     numeral: "IV",
     name: "Launch",
     line: "Put it in front of people",
-    scene: "beam",
+    clip: "milkdrop",
     intro: "We put the work in front of the people it is for and watch what they do with it.",
     weDo: [
       "Plan the release: channels, dates, who says what",
@@ -91,7 +91,7 @@ export const method: Step[] = [
     numeral: "V",
     name: "Teach",
     line: "Pass it on",
-    scene: "chalk",
+    clip: "inkdark",
     intro:
       "What worked becomes a template, a tool or a lesson. Clients keep them, the School teaches them, and the next job starts further on.",
     weDo: [

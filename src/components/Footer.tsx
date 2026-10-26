@@ -1,18 +1,17 @@
 import Link from "next/link";
+import { footageSources } from "@/content/legal";
 import { footerNav, site } from "@/content/site";
-import { Mark } from "./Mark";
+import { LogoStacked } from "./Logo";
 
 export function Footer() {
   return (
-    <footer className="footer">
+    <footer className="footer" data-tone="dark">
       <div className="footer-top">
         <div className="footer-brand">
-          <Mark className="footer-mark" />
-          <p>
-            Questions, briefs and tenders:
-            <br />
-            <a href={`mailto:${site.email}`}>{site.email}</a>
-          </p>
+          <p className="footer-ask">Questions, briefs and tenders</p>
+          <a className="footer-email" href={`mailto:${site.email}`}>
+            {site.email}
+          </a>
         </div>
         {footerNav.map((col) => (
           <nav key={col.title} aria-label={col.title} className="footer-col">
@@ -27,9 +26,16 @@ export function Footer() {
           </nav>
         ))}
       </div>
-      <p className="footer-legal">
-        {site.ukCompany.legalName}, registered in {site.ukCompany.jurisdiction}, company number {site.ukCompany.number}.
-      </p>
+      <LogoStacked className="footer-logo" title="MotionPlay Labs" />
+      <div className="footer-base">
+        <p>
+          {site.ukCompany.legalName}, registered in {site.ukCompany.jurisdiction}, company number {site.ukCompany.number}.
+        </p>
+        <p>
+          {footageSources.length > 0 && <>Footage: {footageSources.join(", ")} contributors. </>}
+          <Link href="/legal/credits/">Credits</Link>
+        </p>
+      </div>
     </footer>
   );
 }

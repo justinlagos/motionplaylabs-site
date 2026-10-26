@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import { SceneHero } from "@/components/SceneHero";
-import { pageScenes, site } from "@/content/site";
+import { PlateHero } from "@/components/Clip";
+import { pageClips, site } from "@/content/site";
 import { ContactForm } from "./ContactForm";
 
 export const metadata: Metadata = {
@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 export default function ContactPage() {
   return (
     <div className="page">
-      <SceneHero scene={pageScenes.contact} title="Start a project" line="Tell us what you need. Every enquiry is read by Justin." />
+      <PlateHero clip={pageClips.contact} title="Start a project" line="Tell us what you need. Every enquiry is read by Justin." />
       <div className="wrap">
         <section className="block split">
           <h2>Enquiry</h2>

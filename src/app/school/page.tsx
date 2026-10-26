@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { SceneHero } from "@/components/SceneHero";
-import { pageScenes, site } from "@/content/site";
+import { PlateBand, PlateHero } from "@/components/Clip";
+import { pageClips, site } from "@/content/site";
 
 export const metadata: Metadata = {
   title: "School",
@@ -11,13 +11,13 @@ export const metadata: Metadata = {
 export default function SchoolPage() {
   return (
     <div className="page">
-      <SceneHero scene={pageScenes.school} kicker="MotionPlay School" title="The Build Session" line="A live, hands-on session where you build a working tool with AI. ChatGPT for thinking, Claude for building.">
+      <PlateHero clip={pageClips.school} kicker="MotionPlay School" title="The Build Session" line="A live, hands-on session where you build a working tool with AI. ChatGPT for thinking, Claude for building.">
         <div className="button-row">
           <a className="button is-solid" href={site.schoolUrl}>
             Join the waitlist
           </a>
         </div>
-      </SceneHero>
+      </PlateHero>
       <div className="wrap">
         <section className="block split">
           <h2>What happens</h2>
@@ -45,6 +45,7 @@ export default function SchoolPage() {
             <dd>Kit, sign-in codes and email support for three weeks</dd>
           </dl>
         </section>
+        <PlateBand clip="inkclouds" />
         <section className="block split">
           <h2>For teams</h2>
           <div>

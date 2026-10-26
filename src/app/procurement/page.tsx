@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import { SceneHero } from "@/components/SceneHero";
-import { pageScenes, site } from "@/content/site";
+import { PlateHero } from "@/components/Clip";
+import { pageClips, site } from "@/content/site";
 
 export const metadata: Metadata = {
   title: "For procurement teams",
@@ -19,7 +19,7 @@ const services = [
 export default function ProcurementPage() {
   return (
     <div className="page">
-      <SceneHero scene={pageScenes.procurement} title="For procurement teams" line="Vendor details for UN agencies, NGOs and public buyers." />
+      <PlateHero clip={pageClips.procurement} title="For procurement teams" line="Vendor details for UN agencies, NGOs and public buyers." />
       <div className="wrap">
         <section className="block split">
           <h2>Vendor details</h2>

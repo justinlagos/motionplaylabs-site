@@ -1,4 +1,4 @@
-import type { SceneId } from "@/lib/gl/shaders";
+import type { ClipId } from "./footage";
 
 export type Stage = "Explore" | "Prototype" | "Pilot" | "Launch" | "Scale" | "Parked";
 
@@ -13,7 +13,7 @@ export type Product = {
   forWhom: string;
   facts: { label: string; value: string }[];
   link?: { href: string; label: string };
-  scene: SceneId;
+  clip: ClipId;
 };
 
 export const products: Product[] = [
@@ -36,7 +36,7 @@ export const products: Product[] = [
       { label: "Hardware", value: "Television dongle in development" },
     ],
     link: { href: "https://drawintheair.com", label: "Visit drawintheair.com" },
-    scene: "trail",
+    clip: "pencil",
   },
   {
     slug: "void-canvas",
@@ -57,7 +57,7 @@ export const products: Product[] = [
       { label: "Price", value: "Free" },
     ],
     link: { href: "https://voidcanvas.netlify.app", label: "Open Void Canvas" },
-    scene: "halftone",
+    clip: "pigment",
   },
   {
     slug: "art-director-studio",
@@ -72,7 +72,7 @@ export const products: Product[] = [
     forWhom: "Working designers",
     facts: [{ label: "Successor", value: "Void Canvas" }],
     link: { href: "https://artdirectorstudio.com", label: "Visit artdirectorstudio.com" },
-    scene: "cmy",
+    clip: "magenta",
   },
   {
     slug: "pamiit",
@@ -91,7 +91,7 @@ export const products: Product[] = [
       { label: "Check-in", value: "Phone scanner that works offline" },
       { label: "For buyers", value: "Self-service transfers and refunds" },
     ],
-    scene: "beam",
+    clip: "milkdrop",
   },
   {
     slug: "tollpilot",
@@ -110,7 +110,7 @@ export const products: Product[] = [
       { label: "During", value: "Alerts as charges approach" },
       { label: "After", value: "Help with penalty charge notices" },
     ],
-    scene: "bokeh",
+    clip: "circuit",
   },
   {
     slug: "election-day-naija",
@@ -123,7 +123,7 @@ export const products: Product[] = [
     markets: "Nigeria",
     forWhom: "Players in Nigeria and the diaspora",
     facts: [{ label: "Setting", value: "Lagos Mainland, Lagos Island, Abuja" }],
-    scene: "halftone",
+    clip: "inkclouds",
   },
   {
     slug: "life-stages",
@@ -136,7 +136,7 @@ export const products: Product[] = [
     markets: "Nigeria",
     forWhom: "Players in Nigeria and the diaspora",
     facts: [{ label: "First chapter", value: "NYSC camp" }],
-    scene: "chalk",
+    clip: "dust",
   },
   {
     slug: "naijago",
@@ -147,7 +147,7 @@ export const products: Product[] = [
     markets: "Nigeria",
     forWhom: "Visitors and residents",
     facts: [],
-    scene: "bokeh",
+    clip: "droplets",
   },
   {
     slug: "kino",
@@ -160,7 +160,7 @@ export const products: Product[] = [
     markets: "Nigeria first",
     forWhom: "Hosts, guests and filmmakers",
     facts: [],
-    scene: "beam",
+    clip: "soapfilm",
   },
 ];
 

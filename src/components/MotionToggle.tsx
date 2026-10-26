@@ -2,7 +2,7 @@
 
 import { setPaused, useMotionPaused } from "@/lib/motion";
 
-/** Pauses every moving scene on the site. Shown wherever footage is moving. */
+/** Pauses every moving clip on the site. Shown wherever footage is moving. */
 export function MotionToggle({ className = "" }: { className?: string }) {
   const paused = useMotionPaused();
   return (

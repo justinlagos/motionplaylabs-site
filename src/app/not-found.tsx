@@ -3,8 +3,8 @@ import Link from "next/link";
 export default function NotFound() {
   return (
     <div className="page">
-      <div className="wrap" style={{ paddingTop: 180, paddingBottom: 120 }}>
-        <h1 className="scene-hero-title" style={{ textAlign: "left" }}>
+      <div className="wrap page-top">
+        <h1 className="page-title">
           Not found
         </h1>
         <p className="quiet">This page does not exist or has moved.</p>

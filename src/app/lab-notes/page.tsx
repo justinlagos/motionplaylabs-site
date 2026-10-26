@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { SceneHero } from "@/components/SceneHero";
-import { pageScenes } from "@/content/site";
+import { PlateHero } from "@/components/Clip";
+import { pageClips } from "@/content/site";
 
 export const metadata: Metadata = {
   title: "Lab notes",
@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 export default function LabNotesPage() {
   return (
     <div className="page">
-      <SceneHero scene={pageScenes.labNotes} title="Lab notes" line="Build logs, method notes and what we learn working in the UK and Nigeria." />
+      <PlateHero clip={pageClips.labNotes} title="Lab notes" line="Build logs, method notes and what we learn working in the UK and Nigeria." />
       <div className="wrap">
         <section className="block split">
           <h2>Notes</h2>

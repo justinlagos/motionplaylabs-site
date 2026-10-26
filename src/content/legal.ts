@@ -1,3 +1,5 @@
+import { footage } from "./footage";
+
 // TODO: privacy, terms and safeguarding text to be finalised with a solicitor before launch.
 
 export type LegalDoc = { slug: string; title: string; status?: string; sections: { heading: string; body: string[] }[] };
@@ -97,6 +99,28 @@ export const legal: LegalDoc[] = [
       },
     ],
   },
+  {
+    slug: "credits",
+    title: "Credits",
+    sections: [
+      {
+        heading: "Footage",
+        body: Object.values(footage).map((c) => `${c.caption}. ${c.credit.by ? `${c.credit.by}, ` : ""}${c.credit.source}. ${c.credit.url}`),
+      },
+      {
+        heading: "Licences",
+        body: [
+          "The clips are used under the free licences of the sites they come from, which allow commercial use. They are placeholders for footage we shoot ourselves and will be replaced clip by clip.",
+        ],
+      },
+      {
+        heading: "Type",
+        body: ["Mona Sans, designed by GitHub with Degarism Studio, under the SIL Open Font License."],
+      },
+    ],
+  },
 ];
+
+export const footageSources = [...new Set(Object.values(footage).map((c) => c.credit.source))].filter((s) => s !== "MotionPlay Labs");
 
 export const legalBySlug = (slug: string) => legal.find((d) => d.slug === slug);

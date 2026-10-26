@@ -1,77 +1,86 @@
-import type { Beat, Media } from "@/content/film";
-import { SceneRenderer } from "@/lib/gl/renderer";
+import type { Beat } from "@/content/film";
+import { footage, media } from "@/content/footage";
 import { isPaused, prefersReducedMotion, subscribe } from "@/lib/motion";
 
-// The homepage film: scroll position picks the beat, fades its words in, cross-fades the footage
-// and draws the progress mark. Plain DOM so the same engine runs in the site and in a static preview.
+// The homepage film. Scroll position picks the beat; the beat's words reveal; the footage hands
+// over to the next beat either through a lens (an iris that opens from the centre, used when the
+// tone changes between light and dark) or a focus pull (used when the tone stays the same).
+// The circle badge starts large in the middle, docks in the corner, and its ring turns with scroll.
+// Plain DOM so the same engine runs in the site and in the static preview.
 
 const clamp = (v: number, a = 0, b = 1) => Math.min(b, Math.max(a, v));
 const smooth = (a: number, b: number, v: number) => {
   const t = clamp((v - a) / (b - a));
   return t * t * (3 - 2 * t);
 };
-const sceneOf = (m: Media) => m.scene;
+const easeOut = (t: number) => 1 - Math.pow(1 - t, 3);
+const easeInOut = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 
 export function startFilm(el: HTMLElement, beats: Beat[]): () => void {
-  const cv = el.querySelector<HTMLCanvasElement>(".stage-canvas");
-  const progressLine = el.querySelector<SVGPathElement>(".film-progress .mark-line");
-  if (!cv) return () => {};
-  document.documentElement.classList.add("film-on");
-
-  let renderer: SceneRenderer | null = null;
-  try {
-    renderer = new SceneRenderer(cv, { quality: 0.6, maxWidth: 1400 });
-    renderer.setTime(6);
-  } catch {
-    el.classList.add("no-webgl");
-  }
+  const root = document.documentElement;
+  root.classList.add("film-on");
 
   const sections = Array.from(el.querySelectorAll<HTMLElement>("[data-beat]"));
   const frames = sections.map((s) => s.querySelector<HTMLElement>(".beat-frame")!);
   const words = frames.map((f) => Array.from(f.querySelectorAll<HTMLElement>(".w")));
-  const reduced = prefersReducedMotion();
+  const plates = Array.from(el.querySelectorAll<HTMLElement>(".plate"));
+  const videos = plates.map((p) => p.querySelector<HTMLVideoElement>("video"));
+  const badge = el.querySelector<HTMLElement>(".badge-dock");
+  const ring = badge?.querySelector<SVGGElement>(".badge-ring") ?? null;
+  const tones = beats.map((b) => footage[b.clip].tone);
 
-  // Real footage, once encoded: one <video> per beat that has it, over the placeholder scene.
-  const videos = new Map<number, HTMLVideoElement>();
-  const portrait = window.matchMedia("(max-aspect-ratio: 1/1)").matches;
-  el.querySelectorAll<HTMLVideoElement>("video[data-for]").forEach((v) => {
-    const k = Number(v.dataset.for);
-    const m = beats[k].media;
-    if (m.kind !== "video") return;
-    const set = portrait && m.portrait ? m.portrait : m.src;
-    v.poster = portrait && m.portrait ? m.portrait.poster : m.poster;
+  const reduced = prefersReducedMotion();
+  const fine = window.matchMedia("(pointer: fine) and (min-width: 900px)").matches;
+
+  // Choose landscape or portrait files once, by the shape of the screen.
+  const portrait = window.matchMedia("(max-aspect-ratio: 4/5)").matches;
+  videos.forEach((v, k) => {
+    if (!v) return;
+    const m = media(beats[k].clip);
+    v.addEventListener("playing", () => v.classList.add("is-playing"), { once: true });
     v.replaceChildren();
-    if (set.av1) {
+    const add = (src: string, type: string) => {
       const s = document.createElement("source");
-      s.src = set.av1;
-      s.type = 'video/mp4; codecs="av01.0.05M.08"';
+      s.src = src;
+      s.type = type;
       v.appendChild(s);
+    };
+    if (portrait) add(m.portrait, "video/mp4");
+    else {
+      add(m.av1, 'video/mp4; codecs="av01.0.08M.08"');
+      add(m.h264, "video/mp4");
     }
-    const h = document.createElement("source");
-    h.src = set.h264;
-    h.type = "video/mp4";
-    v.appendChild(h);
-    videos.set(k, v);
   });
+
   let tops: number[] = [];
   let heights: number[] = [];
+  let vw = window.innerWidth;
   let vh = window.innerHeight;
   let filmEnd = 0;
   let active = -1;
+  let tone = "";
   let ticking = false;
   let inView = true;
 
   const measure = () => {
+    vw = window.innerWidth;
     vh = window.innerHeight;
     tops = sections.map((s) => s.getBoundingClientRect().top + window.scrollY);
     heights = sections.map((s) => s.offsetHeight);
     filmEnd = tops[tops.length - 1] + heights[heights.length - 1];
-    renderer?.resize();
+  };
+
+  const setTone = (t: string) => {
+    if (t === tone) return;
+    tone = t;
+    root.dataset.tone = t;
+    el.dataset.tone = t;
   };
 
   const update = () => {
     ticking = false;
-    const probe = window.scrollY + vh * 0.5;
+    const y = window.scrollY;
+    const probe = y + vh * 0.5;
     let i = sections.length - 1;
     for (let k = 0; k < sections.length; k++) {
       if (probe < tops[k] + heights[k]) {
@@ -81,6 +90,7 @@ export function startFilm(el: HTMLElement, beats: Beat[]): () => void {
     }
     const local = clamp((probe - tops[i]) / heights[i]);
     const beat = beats[i];
+    const isLast = i === beats.length - 1;
 
     if (i !== active) {
       frames.forEach((f, k) => f.classList.toggle("is-active", k === i));
@@ -88,53 +98,121 @@ export function startFilm(el: HTMLElement, beats: Beat[]): () => void {
       active = i;
     }
 
-    // Frame fade in and out
-    const isLast = i === beats.length - 1;
-    const fadeOut = isLast ? 1 : 1 - smooth(0.86, 0.98, local);
-    const fadeIn = i === 0 ? 1 : smooth(0.02, 0.14, local);
+    // Words: frame fades in and out at the edges of its beat
+    const fadeOut = isLast ? 1 : 1 - smooth(0.8, 0.9, local);
+    const fadeIn = i === 0 ? 1 : smooth(0.04, 0.16, local);
     frames.forEach((f, k) => {
       f.style.opacity = k === i ? String(fadeIn * fadeOut) : "0";
     });
 
-    // Word-by-word reveal; unrevealed words stay dim, as in the reference
+    // Word-by-word reveal; unrevealed words stay dim
     const ws = words[i];
     if (ws.length) {
-      const r = reduced ? 1 : smooth(0.06, 0.55, local);
+      const r = reduced ? 1 : smooth(0.08, 0.55, local);
       const n = ws.length;
       ws.forEach((w, j) => {
         const v = clamp(r * (n + 2) - j);
-        w.style.opacity = String(0.22 + 0.78 * v);
+        w.style.opacity = String(0.2 + 0.8 * v);
       });
     }
-
-    // Numerals on the method beat appear after the sentence
     if (beat.kind === "index") {
-      frames[i].style.setProperty("--numerals", String(reduced ? 1 : smooth(0.55, 0.7, local)));
-    }
-    if (beat.kind === "title") {
-      frames[i].style.setProperty("--draw", String(reduced ? 1 : smooth(0.0, 0.55, local + 0.18)));
+      frames[i].style.setProperty("--rows", String(reduced ? 1 : smooth(0.3, 0.62, local)));
     }
 
-    // Cross-fade the footage into the next beat
-    const next = beats[Math.min(i + 1, beats.length - 1)];
-    const mix = isLast ? 0 : smooth(0.84, 1, local);
-    renderer?.setScenes(sceneOf(beat.media), sceneOf(next.media), mix);
-    videos.forEach((v, k) => {
-      const o = k === i ? 1 - mix : k === i + 1 ? mix : 0;
-      v.style.opacity = String(o);
-      if ((k === i || k === i + 1) && v.preload !== "auto") {
+    // Footage hand-over
+    const mix = isLast ? 0 : easeInOut(smooth(0.78, 1, local));
+    const iris = !isLast && tones[i] !== tones[i + 1] && !reduced;
+    plates.forEach((p, k) => {
+      const v = videos[k];
+      let show = false;
+      if (k === i) {
+        show = true;
+        p.style.zIndex = "1";
+        p.style.clipPath = "none";
+        p.style.opacity = "1";
+        if (iris) {
+          p.style.transform = `scale(${1 - 0.06 * mix})`;
+          p.style.filter = fine ? `brightness(${1 - 0.25 * mix})` : "none";
+        } else {
+          p.style.transform = reduced ? "none" : `scale(${1 + 0.03 * mix})`;
+          p.style.filter = fine && !reduced && mix > 0 ? `blur(${(mix * 10).toFixed(2)}px)` : "none";
+        }
+      } else if (k === i + 1 && mix > 0) {
+        show = true;
+        p.style.zIndex = "2";
+        if (iris) {
+          const R = Math.hypot(vw, vh) / 2 + 4;
+          p.style.opacity = "1";
+          p.style.clipPath = `circle(${(R * mix).toFixed(1)}px at 50% 50%)`;
+          p.style.transform = `scale(${1.22 - 0.22 * easeOut(mix)})`;
+          p.style.filter = "none";
+        } else {
+          p.style.clipPath = "none";
+          p.style.opacity = String(mix);
+          p.style.transform = reduced ? "none" : `scale(${1.04 - 0.04 * mix})`;
+          p.style.filter = fine && !reduced && mix < 1 ? `blur(${((1 - mix) * 10).toFixed(2)}px)` : "none";
+        }
+      }
+      p.style.visibility = show ? "visible" : "hidden";
+      if (!v) return;
+      if ((k === i || k === i + 1 || k === i + 2) && v.preload !== "auto") {
         v.preload = "auto";
         v.load();
       }
-      const want = o > 0 && !isPaused() && inView;
+      const want = show && !isPaused() && inView;
       if (want && v.paused) v.play().catch(() => {});
       if (!want && !v.paused) v.pause();
     });
 
-    // Overall progress on the mark
-    const p = clamp(window.scrollY / Math.max(1, filmEnd - vh));
-    if (progressLine) progressLine.style.strokeDashoffset = String(1 - p);
-    el.classList.toggle("is-past", window.scrollY > filmEnd - vh * 0.6);
+    // Light or dark: flips halfway through the hand-over
+    setTone(mix > 0.5 ? tones[i + 1] : tones[i]);
+    const past = y > filmEnd - vh * 0.75;
+    el.classList.toggle("is-past", past);
+    if (past) delete root.dataset.filmActive;
+    else {
+      root.dataset.filmActive = "1";
+      delete root.dataset.chrome;
+    }
+
+    // Badge: large in the middle on the title, docked in the corner after it
+    if (badge) {
+      const t = i === 0 ? easeInOut(smooth(0.18, 0.92, local)) : 1;
+      const big = badge.offsetWidth;
+      const small = vw < 700 ? 56 : 84;
+      const m = vw < 700 ? 16 : 28;
+      const dx = vw - m - small / 2 - vw / 2;
+      const dy = vh - m - small / 2 - vh / 2;
+      const s = 1 + (small / big - 1) * t;
+      badge.style.transform = `translate(-50%, -50%) translate(${(dx * t).toFixed(1)}px, ${(dy * t).toFixed(1)}px) scale(${s.toFixed(4)})`;
+      badge.classList.toggle("is-docked", t > 0.98);
+    }
+  };
+
+  // Ring rotation: a slow turn, plus whatever the reader scrolls
+  let angle = 0;
+  let lastY = window.scrollY;
+  let lastT = performance.now();
+  let raf = 0;
+  const spin = (now: number) => {
+    const dt = Math.min(0.1, (now - lastT) / 1000);
+    lastT = now;
+    const y = window.scrollY;
+    const dy = y - lastY;
+    lastY = y;
+    angle = (angle + dt * 5 + dy * 0.12) % 360;
+    if (ring) ring.style.transform = `rotate(${angle.toFixed(2)}deg)`;
+    raf = requestAnimationFrame(spin);
+  };
+  const runSpin = () => {
+    const want = !reduced && !isPaused() && inView && !!ring;
+    if (want && !raf) {
+      lastT = performance.now();
+      lastY = window.scrollY;
+      raf = requestAnimationFrame(spin);
+    } else if (!want && raf) {
+      cancelAnimationFrame(raf);
+      raf = 0;
+    }
   };
 
   const onScroll = () => {
@@ -149,11 +227,9 @@ export function startFilm(el: HTMLElement, beats: Beat[]): () => void {
   };
 
   const syncPlayback = () => {
-    if (renderer) {
-      if (isPaused() || !inView) renderer.stop();
-      else renderer.play();
-    }
-    if (videos.size) update();
+    el.classList.toggle("is-paused", isPaused());
+    runSpin();
+    update();
   };
 
   const io = new IntersectionObserver(
@@ -161,7 +237,7 @@ export function startFilm(el: HTMLElement, beats: Beat[]): () => void {
       inView = entries.some((e) => e.isIntersecting);
       syncPlayback();
     },
-    { rootMargin: "0px 0px -40% 0px" },
+    { rootMargin: "0px 0px -30% 0px" },
   );
   io.observe(el);
 
@@ -181,12 +257,17 @@ export function startFilm(el: HTMLElement, beats: Beat[]): () => void {
   window.addEventListener("scroll", onScroll, { passive: true });
   window.addEventListener("resize", onResize);
   el.addEventListener("focusin", onFocus);
+  // Fonts and late layout can move section tops
+  const late = window.setTimeout(onResize, 600);
 
   return () => {
-    document.documentElement.classList.remove("film-on");
+    root.classList.remove("film-on");
+    delete root.dataset.filmActive;
     unsub();
     io.disconnect();
-    renderer?.stop();
+    if (raf) cancelAnimationFrame(raf);
+    window.clearTimeout(late);
+    videos.forEach((v) => v?.pause());
     window.removeEventListener("scroll", onScroll);
     window.removeEventListener("resize", onResize);
     el.removeEventListener("focusin", onFocus);

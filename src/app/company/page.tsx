@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { SceneHero } from "@/components/SceneHero";
-import { pageScenes, site } from "@/content/site";
+import { PlateBand, PlateHero } from "@/components/Clip";
+import { pageClips, site } from "@/content/site";
 
 export const metadata: Metadata = {
   title: "Company",
@@ -20,7 +20,7 @@ const principles = [
 export default function CompanyPage() {
   return (
     <div className="page">
-      <SceneHero scene={pageScenes.company} title="Company" line="A design and product lab with companies in the UK and Nigeria." />
+      <PlateHero clip={pageClips.company} title="Company" line="A design and product lab with companies in the UK and Nigeria." />
       <div className="wrap">
         <section className="block split">
           <h2>What we are</h2>
@@ -45,6 +45,7 @@ export default function CompanyPage() {
             <p>MA Design in Graphic Design, first class. First degree in Computer Science and Education. He builds the company&apos;s products himself.</p>
           </div>
         </section>
+        <PlateBand clip="inkdark" />
         <section className="block split">
           <h2>How we work</h2>
           <ul className="list">

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { SceneHero } from "@/components/SceneHero";
-import { pageScenes } from "@/content/site";
+import { PlateBand, PlateHero } from "@/components/Clip";
+import { pageClips } from "@/content/site";
 
 export const metadata: Metadata = {
   title: "Studio",
@@ -26,8 +26,8 @@ const retainers = [
 export default function StudioPage() {
   return (
     <div className="page">
-      <SceneHero
-        scene={pageScenes.studio}
+      <PlateHero
+        clip={pageClips.studio}
         title="Studio"
         line="Identity, campaigns, publications, events and websites for organisations in the UK and Nigeria."
       />
@@ -84,6 +84,7 @@ export default function StudioPage() {
             </li>
           </ol>
         </section>
+        <PlateBand clip="soapfilm" />
         <section className="block split">
           <h2>Prices</h2>
           <div>

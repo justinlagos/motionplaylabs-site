@@ -1,4 +1,4 @@
-import type { SceneId } from "@/lib/gl/shaders";
+import type { ClipId } from "./footage";
 
 export const site = {
   name: "MotionPlay Labs",
@@ -64,15 +64,15 @@ export const footerNav = [
   },
 ];
 
-/** Which placeholder scene sits behind each page hero until real footage exists. */
-export const pageScenes: Record<string, SceneId> = {
-  studio: "cmy",
-  work: "halftone",
+/** Which clip opens each page. */
+export const pageClips: Record<string, ClipId> = {
+  studio: "magenta",
+  work: "pigment",
   products: "circuit",
-  school: "chalk",
-  labNotes: "trail",
-  company: "emboss",
-  procurement: "halftone",
-  contact: "ink",
-  legal: "emboss",
+  school: "dust",
+  labNotes: "pencil",
+  company: "droplets",
+  procurement: "folds",
+  contact: "inkclouds",
+  legal: "folds",
 };

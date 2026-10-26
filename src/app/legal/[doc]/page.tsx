@@ -19,8 +19,8 @@ export default async function LegalPage({ params }: P) {
   if (!d) notFound();
   return (
     <div className="page legal">
-      <div className="wrap" style={{ paddingTop: 150 }}>
-        <h1 className="scene-hero-title" style={{ textAlign: "left", fontSize: "clamp(32px, 1rem + 3vw, 60px)" }}>
+      <div className="wrap page-top">
+        <h1 className="page-title">
           {d.title}
         </h1>
         {d.status && <p className="quiet">{d.status}</p>}

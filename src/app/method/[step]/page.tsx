@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Pager } from "@/components/Pager";
-import { SceneHero } from "@/components/SceneHero";
+import { PlateHero } from "@/components/Clip";
 import { method, stepBySlug } from "@/content/method";
 
 export const dynamicParams = false;
@@ -26,7 +26,7 @@ export default async function StepPage({ params }: P) {
   const next = method[i + 1];
   return (
     <div className="page">
-      <SceneHero scene={s.scene} kicker={`${s.numeral} of V`} title={s.name} line={`${s.line}.`} />
+      <PlateHero clip={s.clip} kicker={`${s.numeral} of V`} title={s.name} line={`${s.line}.`} />
       <div className="wrap">
         <section className="block split">
           <h2>What it means</h2>

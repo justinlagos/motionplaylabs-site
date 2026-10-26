@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { SceneHero } from "@/components/SceneHero";
-import { SceneStill } from "@/components/SceneStill";
+import { ClipThumb, PlateBand, PlateHero } from "@/components/Clip";
 import { activeProducts, parkedProducts } from "@/content/products";
-import { pageScenes } from "@/content/site";
+import { pageClips } from "@/content/site";
 
 export const metadata: Metadata = {
   title: "Products",
@@ -13,8 +12,8 @@ export const metadata: Metadata = {
 export default function ProductsPage() {
   return (
     <div className="page">
-      <SceneHero
-        scene={pageScenes.products}
+      <PlateHero
+        clip={pageClips.products}
         title="Products"
         line="Software and hardware we build and run ourselves. Each one starts as an experiment and has to earn its next stage."
       />
@@ -25,7 +24,7 @@ export default function ProductsPage() {
             {activeProducts.map((p) => (
               <li className="row" key={p.slug}>
                 <Link href={`/products/${p.slug}/`}>
-                  <SceneStill scene={p.scene} className="row-still" />
+                  <ClipThumb id={p.clip} className="row-still" />
                   <span>
                     <span className="row-name">{p.name}</span>
                     <span className="row-line">{p.line}</span>
@@ -40,6 +39,7 @@ export default function ProductsPage() {
             ))}
           </ul>
         </section>
+        <PlateBand clip="inkfade" />
         <section className="block split">
           <h2>Parked</h2>
           <div>

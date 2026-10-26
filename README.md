@@ -1,14 +1,16 @@
 # motionplaylabs.com
 
-The MotionPlay Labs website. The homepage is a scroll-driven film in eleven beats; every other page opens on a looping scene. Built from the company playbook (sections 14 to 18).
+The MotionPlay Labs website. The homepage is a scroll film in eleven beats, each on a macro clip. The page flips between light and dark with the footage: where the tone changes, the next clip opens through a lens from the centre of the screen; where it stays the same, the focus pulls from one clip to the next. The circle badge draws itself in on load, docks in the corner, and its ring turns as you scroll. Every other page opens on a clip.
+
+Design: Swiss grid, black and white only, one typeface (Mona Sans) in two widths. Colour comes from the footage.
 
 ## Run it
 
 ```bash
 npm install
-npm run dev          # http://localhost:3000
-npm run build        # production build
-npm run export:preview   # static copy in out/ for preview hosting (no contact API)
+npm run dev              # http://localhost:3000
+npm run build            # production build
+npm run preview:site     # static, self-contained copy in preview-site/ (no contact API)
 ```
 
 ## Deploy
@@ -22,36 +24,28 @@ npm run export:preview   # static copy in out/ for preview hosting (no contact A
 
 | What | File |
 | --- | --- |
-| The film: beats, words, which shot plays where | `src/content/film.ts` |
+| Footage library: captions, tone, credits | `src/content/footage.ts` |
+| The film: beats, words, which clip plays where | `src/content/film.ts` |
 | The five method chapters | `src/content/method.ts` |
 | Products | `src/content/products.ts` |
 | Case studies | `src/content/work.ts` |
-| Company details, nav, page scenes | `src/content/site.ts` |
-| Legal pages (drafts) | `src/content/legal.ts` |
-| Placeholder footage (WebGL scenes) | `src/lib/gl/shaders.ts` |
-| Scroll engine | `src/components/Film.tsx` |
+| Company details, nav, page clips | `src/content/site.ts` |
+| Legal pages (drafts) and credits | `src/content/legal.ts` |
+| Logos (generated from the logo files) | `src/components/logo-art.ts`, `src/components/Logo.tsx` |
+| Scroll engine | `src/lib/film-engine.ts` |
+| Header tone and clip playback | `src/lib/chrome-tone.ts`, `src/lib/clip-playback.ts` |
 | Styles and tokens | `src/app/globals.css` |
 | Contact form email | `src/app/api/contact/route.ts` |
 
-## Swapping placeholder scenes for real footage
+## Footage
 
-Every shot in the shot list is drawn live in WebGL until the shoot. To replace one:
+The clips are real macro footage from free-licence libraries (Mixkit, Pexels), listed with links on `/legal/credits/`. They stand in until we shoot our own. To swap one:
 
-1. Put the graded master in `media/masters/` (ignored by git).
-2. Run `scripts/encode-video.sh media/masters/H1.mov H1` (add a portrait master as a third argument if you shot one). It writes AV1 and H.264 files, posters and an index loop to `public/media/H1/` and prints their sizes against the budget.
-3. In `src/content/film.ts`, change that beat's media from `scene("ink")` to:
+1. Put the source in `media/sources/` (ignored by git).
+2. Run `scripts/encode-video.sh media/sources/new.mp4 ink 2 9 50`: source, clip id, start second, loop length, horizontal focus for the phone crop. It writes a seamless loop (the last second dissolves into the first) as AV1 and H.264 at 1080p, a 720x1280 phone crop, a 640x360 thumbnail loop and posters to `public/media/ink/`.
+3. Update the caption, tone and credit for that id in `src/content/footage.ts`.
 
-```ts
-{
-  kind: "video",
-  scene: "ink", // stays as the fallback while the video loads
-  poster: "/media/H1/H1-poster.jpg",
-  src: { av1: "/media/H1/H1-1080.av1.mp4", h264: "/media/H1/H1-1080.h264.mp4" },
-  portrait: { av1: "/media/H1/H1-v.av1.mp4", h264: "/media/H1/H1-v.h264.mp4", poster: "/media/H1/H1-poster.jpg" },
-}
-```
-
-Only the current and next clip load. Video pauses with the Pause motion button and for reduced-motion users. For production, move `public/media` to Cloudflare R2 behind `media.motionplaylabs.com` and use those URLs.
+Only the current and next two clips load. Video pauses with the Pause motion button and starts paused for reduced-motion users. To serve media from a CDN, upload `public/media` and set `NEXT_PUBLIC_MEDIA_ROOT` to its URL.
 
 ## Waiting on decisions (playbook section 21)
 
@@ -59,10 +53,9 @@ Only the current and next clip load. Video pauses with the Pause motion button a
 | --- | --- |
 | D5 prices | `src/app/studio/page.tsx` shows the proposed price book |
 | D6 client case studies | `src/content/work.ts` has our own products only |
-| D8 type and accent | Marcellus and Instrument Sans are free stand-ins; accent is process cyan `#00a0e3` in `globals.css` |
 | D9 hero line | `src/content/film.ts`, beat `hero` |
 | D4 Nigerian company details | `src/content/site.ts`, `ngCompany` |
-| Mark | `src/components/Mark.tsx` and `markPt()` in `shaders.ts` share one path; replace both after the brand sprint |
+| Own footage | `src/content/footage.ts`, one clip at a time |
 | Legal text | `src/content/legal.ts` drafts need a solicitor's review |
 
 ## Rules the site follows

@@ -3,8 +3,9 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { nav, site } from "@/content/site";
-import { Mark } from "./Mark";
+import { nav } from "@/content/site";
+import { watchChromeTone } from "@/lib/chrome-tone";
+import { LogoHorizontal } from "./Logo";
 
 function isCurrent(path: string, href: string) {
   if (href === "/") return path === "/" || path.startsWith("/method/");
@@ -14,6 +15,9 @@ function isCurrent(path: string, href: string) {
 export function Header() {
   const path = usePathname() ?? "/";
   const [open, setOpen] = useState(false);
+
+  // Re-read the tone on every route change
+  useEffect(() => watchChromeTone(), [path]);
 
   useEffect(() => setOpen(false), [path]);
 
@@ -30,13 +34,9 @@ export function Header() {
         Skip to content
       </a>
       <header className={`chrome${open ? " is-open" : ""}`}>
-        <Link href="/" className="chrome-brand">
-          <span className="wordmark">MotionPlay Labs</span>
+        <Link href="/" className="chrome-brand" aria-label="MotionPlay Labs, home">
+          <LogoHorizontal className="chrome-logo" />
         </Link>
-        <p className="chrome-descriptor">
-          <span>{site.descriptor[0]}</span>
-          <span>{site.descriptor[1]}</span>
-        </p>
         <nav className="chrome-nav" aria-label="Main">
           <ul>
             {nav.map((item) => (
@@ -48,8 +48,8 @@ export function Header() {
             ))}
           </ul>
         </nav>
-        <Link href="/" className="chrome-mark" aria-hidden="true" tabIndex={-1}>
-          <Mark />
+        <Link className="chrome-contact" href="/contact/" aria-current={path.startsWith("/contact") ? "page" : undefined}>
+          Contact
         </Link>
         <button
           type="button"

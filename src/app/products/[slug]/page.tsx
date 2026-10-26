@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { SceneHero } from "@/components/SceneHero";
+import { PlateHero } from "@/components/Clip";
 import { productBySlug, products } from "@/content/products";
 import { work } from "@/content/work";
 
@@ -24,7 +24,7 @@ export default async function ProductPage({ params }: P) {
   const caseStudy = work.find((w) => w.slug === p.slug);
   return (
     <div className="page">
-      <SceneHero scene={p.scene} kicker={`Stage: ${p.stage}`} title={p.name} line={p.line}>
+      <PlateHero clip={p.clip} kicker={`Stage: ${p.stage}`} title={p.name} line={p.line}>
         {p.link && (
           <div className="button-row">
             <a className="button" href={p.link.href} rel="noopener">
@@ -32,7 +32,7 @@ export default async function ProductPage({ params }: P) {
             </a>
           </div>
         )}
-      </SceneHero>
+      </PlateHero>
       <div className="wrap">
         <section className="block split">
           <h2>What it is</h2>
