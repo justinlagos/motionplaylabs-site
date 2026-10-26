@@ -39,6 +39,24 @@ export function scrollToY(y: number, duration = 1.1) {
   else window.scrollTo({ top: y, behavior: prefersReducedMotion() ? "auto" : "smooth" });
 }
 
+/**
+ * Glide to y, picking up the page's current speed so there is no stop-and-start.
+ * The curve is a cubic that leaves at the present velocity and arrives at rest.
+ */
+export function glideToY(y: number, duration = 1.1) {
+  if (!lenis) return scrollToY(y, duration);
+  const dist = y - lenis.animatedScroll;
+  if (Math.abs(dist) < 1) return;
+  const pxPerSecond = lenis.velocity * 60;
+  const m0 = Math.max(0, Math.min(2.4, (pxPerSecond * duration) / dist));
+  const easing = (t: number) => m0 * (t * t * t - 2 * t * t + t) + (3 * t * t - 2 * t * t * t);
+  lenis.scrollTo(y, { duration, easing, force: true });
+}
+
+/** Where inertia will bring the page to rest, and how fast it is moving now (px per frame). */
+export const scrollDestination = () => (lenis ? lenis.targetScroll : window.scrollY);
+export const scrollVelocity = () => (lenis ? lenis.velocity : 0);
+
 /** Jump without animation, e.g. after a route change. */
 export function jumpToY(y: number) {
   if (lenis) lenis.scrollTo(y, { immediate: true, force: true });

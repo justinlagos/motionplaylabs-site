@@ -29,10 +29,11 @@ npm run preview:site     # static, self-contained copy in preview-site/ (no cont
 | The five method chapters | `src/content/method.ts` |
 | Products | `src/content/products.ts` |
 | Case studies | `src/content/work.ts` |
+| Lab notes | `src/content/notes.ts` |
 | Company details, nav, page clips | `src/content/site.ts` |
 | Legal pages (drafts) and credits | `src/content/legal.ts` |
 | Logos (generated from the logo files) | `src/components/logo-art.ts`, `src/components/Logo.tsx` |
-| Scroll engine | `src/lib/film-engine.ts` |
+| Scroll engine | `src/lib/film-engine.ts` (the film), `src/lib/scroll.ts` (inertial scrolling) |
 | Header tone and clip playback | `src/lib/chrome-tone.ts`, `src/lib/clip-playback.ts` |
 | Styles and tokens | `src/app/globals.css` |
 | Contact form email | `src/app/api/contact/route.ts` |
@@ -57,6 +58,8 @@ Only the current and next two clips load. Video pauses with the Pause motion but
 | D4 Nigerian company details | `src/content/site.ts`, `ngCompany` |
 | Own footage | `src/content/footage.ts`, one clip at a time |
 | Legal text | `src/content/legal.ts` drafts need a solicitor's review |
+| Lab notes | `src/content/notes.ts`: four drafts written from product decisions; Justin approves each before launch |
+| Retainer and team prices | `src/app/studio/page.tsx`, part of D5 |
 
 ## Rules the site follows
 

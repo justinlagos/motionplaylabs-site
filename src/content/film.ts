@@ -30,7 +30,7 @@ export const film: Beat[] = [
   {
     id: "hero",
     kind: "hero",
-    length: 2,
+    length: 1.8,
     clip: "inkclouds",
     // TODO(D9): hero line pending Justin's decision.
     words: "We build what we design.",
@@ -38,7 +38,7 @@ export const film: Beat[] = [
   {
     id: "statement",
     kind: "statement",
-    length: 2.6,
+    length: 2.2,
     clip: "soapfilm",
     words:
       "MotionPlay Labs is a design and product lab in the UK and Nigeria. We design for organisations, build our own products and teach people to build.",
@@ -47,7 +47,7 @@ export const film: Beat[] = [
   {
     id: "method",
     kind: "index",
-    length: 2.6,
+    length: 2.3,
     clip: "folds",
     words: "One method runs everything we make.",
   },

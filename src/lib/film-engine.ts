@@ -1,7 +1,7 @@
 import type { Beat } from "@/content/film";
 import { footage, media } from "@/content/footage";
 import { isPaused, prefersReducedMotion, subscribe } from "@/lib/motion";
-import { hasSmoothScroll, jumpToY, scrollToY } from "@/lib/scroll";
+import { glideToY, hasSmoothScroll, jumpToY, scrollDestination, scrollToY, scrollVelocity } from "@/lib/scroll";
 
 // The homepage film.
 //
@@ -25,7 +25,7 @@ const easeOut = (t: number) => 1 - Math.pow(1 - t, 3);
 const easeInOut = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 
 // Where in its beat the reader is "at rest" (words fully in), and where the hand-over starts
-const REST = 0.3;
+const REST = 0.34; // where a beat comes to rest: everything in its frame has arrived by here
 const HANDOVER = 0.8;
 
 type Kind = "lens" | "exposure" | "focus";
@@ -90,7 +90,6 @@ export function startFilm(el: HTMLElement, beats: Beat[]): () => void {
   let cornerDist = 0;
   let itemCentres: { x: number; y: number }[] = [];
   let itemsTinted = false;
-  let state = { i: 0, mix: 0 };
 
   const restY = (k: number) => tops[k] + heights[k] * REST - vh * 0.5;
   const handoverY = (k: number) => tops[k] + heights[k] * (HANDOVER - 0.08) - vh * 0.5;
@@ -148,7 +147,8 @@ export function startFilm(el: HTMLElement, beats: Beat[]): () => void {
     itemsTinted = false;
   };
 
-  const render = (y: number) => {
+  /** Which beat a scroll position falls in, how far through it, and how far its hand-over has run. */
+  const stateAt = (y: number) => {
     const probe = y + vh * 0.5;
     let i = sections.length - 1;
     for (let k = 0; k < sections.length; k++) {
@@ -158,6 +158,25 @@ export function startFilm(el: HTMLElement, beats: Beat[]): () => void {
       }
     }
     const local = clamp((probe - tops[i]) / heights[i]);
+    const mix = i === beats.length - 1 ? 0 : easeInOut(smooth(HANDOVER, 1, local));
+    return { i, local, mix };
+  };
+
+  /**
+   * Between one beat's rest and the next there is a change: the clip hands over, then the next
+   * frame's words arrive. Returns which change y is in and how far through it, or null in a hold.
+   */
+  const changeAt = (y: number) => {
+    for (let k = 0; k < beats.length - 1; k++) {
+      const a = handoverY(k);
+      const b = restY(k + 1);
+      if (y > a && y < b) return { k, p: (y - a) / (b - a) };
+    }
+    return null;
+  };
+
+  const render = (y: number) => {
+    const { i, local } = stateAt(y);
     const beat = beats[i];
     const isLast = i === beats.length - 1;
 
@@ -190,7 +209,7 @@ export function startFilm(el: HTMLElement, beats: Beat[]): () => void {
     // Word by word: each word brightens and rises a little as you read
     const ws = words[i];
     if (ws.length) {
-      const r = reduced ? 1 : smooth(0.06, 0.5, local);
+      const r = reduced ? 1 : smooth(0.04, 0.3, local);
       const n = ws.length;
       ws.forEach((w, j) => {
         const v = easeOut(clamp(r * (n + 3) - j, 0, 1));
@@ -198,15 +217,14 @@ export function startFilm(el: HTMLElement, beats: Beat[]): () => void {
         w.style.transform = reduced ? "none" : `translate3d(0, ${((1 - v) * 0.22).toFixed(3)}em, 0)`;
       });
     }
-    if (beat.kind === "index") frames[i].style.setProperty("--rows", String(reduced ? 1 : smooth(0.24, 0.56, local)));
-    if (beat.kind === "chapter") frames[i].style.setProperty("--draw", String(reduced ? 1 : smooth(0.04, 0.36, local)));
+    if (beat.kind === "index") frames[i].style.setProperty("--rows", String(reduced ? 1 : smooth(0.1, 0.32, local)));
+    if (beat.kind === "chapter") frames[i].style.setProperty("--draw", String(reduced ? 1 : smooth(0.04, 0.3, local)));
 
     // Footage
     const mix = isLast ? 0 : easeInOut(smooth(HANDOVER, 1, local));
     const kind: Kind = isLast || reduced || tones[i] === tones[i + 1] ? "focus" : tones[i + 1] === "dark" ? "lens" : "exposure";
     const push = reduced ? 1 : 1 + 0.045 * local; // slow push-in through the beat
     const radius = lensReach() * mix;
-    state = { i, mix };
     plates.forEach((p, k) => {
       const v = videos[k];
       let show = false;
@@ -308,6 +326,8 @@ export function startFilm(el: HTMLElement, beats: Beat[]): () => void {
   let raf = 0;
   let angle = 0;
   let lastScrollT = 0;
+  let lastInputT = 0;
+  let checkedInput = 0;
   let settling = false;
   let settleTarget = 0;
   let pointerDown = false;
@@ -336,14 +356,31 @@ export function startFilm(el: HTMLElement, beats: Beat[]): () => void {
     }
     lastY = target;
 
-    // Settle: never leave the reader on a half-changed frame
+    // Settle: never leave the reader part-way through a change
     if (settling && Math.abs(window.scrollY - settleTarget) < 2) settling = false;
-    if (!reduced && !settling && !pointerDown && now - lastScrollT > 260 && Math.abs(target - sy) < 1) {
-      const { i, mix } = state;
-      if (mix > 0.03 && mix < 0.97 && i < beats.length - 1) {
-        settleTarget = mix > 0.5 ? restY(i + 1) : handoverY(i);
-        settling = true;
-        scrollToY(settleTarget, 0.9 + 0.5 * Math.abs(mix - (mix > 0.5 ? 1 : 0)));
+    if (!reduced && !settling && !pointerDown) {
+      if (hasSmoothScroll()) {
+        // Mouse and trackpad: as soon as the hand lifts, look at where inertia will stop. If that is
+        // inside a change, steer the same glide on to the nearest rest, keeping its speed.
+        if (now - lastInputT > 120 && checkedInput !== lastInputT) {
+          checkedInput = lastInputT;
+          const c = changeAt(scrollDestination());
+          if (c && c.p > 0.02 && c.p < 0.98) {
+            const v = scrollVelocity();
+            const forward = v > 0.5 ? c.p > 0.15 : v < -0.5 ? c.p > 0.85 : c.p > 0.5;
+            settleTarget = forward ? restY(c.k + 1) : handoverY(c.k);
+            settling = true;
+            glideToY(settleTarget, Math.min(1.5, 0.75 + (Math.abs(settleTarget - window.scrollY) / vh) * 0.6));
+          }
+        }
+      } else if (now - lastScrollT > 220 && Math.abs(target - sy) < 1) {
+        // Touch: native momentum has stopped; ease the rest of the way
+        const c = changeAt(target);
+        if (c && c.p > 0.02 && c.p < 0.98) {
+          settleTarget = c.p > 0.5 ? restY(c.k + 1) : handoverY(c.k);
+          settling = true;
+          scrollToY(settleTarget, 0.7 + 0.6 * Math.min(c.p, 1 - c.p));
+        }
       }
     }
 
@@ -362,7 +399,7 @@ export function startFilm(el: HTMLElement, beats: Beat[]): () => void {
   };
   const onInput = () => {
     settling = false;
-    lastScrollT = performance.now();
+    lastScrollT = lastInputT = performance.now();
   };
   const onDown = () => {
     pointerDown = true;
@@ -403,7 +440,7 @@ export function startFilm(el: HTMLElement, beats: Beat[]): () => void {
     if (!sec) return;
     const k = Number(sec.dataset.beat);
     if (k === active) return;
-    jumpToY(restY(k) + heights[k] * 0.15);
+    jumpToY(restY(k));
   };
 
   // Rail: jump to a chapter
@@ -412,7 +449,7 @@ export function startFilm(el: HTMLElement, beats: Beat[]): () => void {
     if (!a) return;
     e.preventDefault();
     settling = true;
-    settleTarget = restY(Number(a.dataset.k)) + heights[Number(a.dataset.k)] * 0.12;
+    settleTarget = restY(Number(a.dataset.k));
     scrollToY(settleTarget, 1.6);
   };
 
