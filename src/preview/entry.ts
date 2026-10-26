@@ -3,8 +3,10 @@ import { film } from "@/content/film";
 import { watchChromeTone } from "@/lib/chrome-tone";
 import { wirePlate, wireThumb } from "@/lib/clip-playback";
 import { startFilm } from "@/lib/film-engine";
+import { startSmoothScroll } from "@/lib/scroll";
 import { isPaused, setPaused, subscribe } from "@/lib/motion";
 
+startSmoothScroll();
 const root = document.querySelector<HTMLElement>(".film");
 if (root) startFilm(root, film);
 watchChromeTone();

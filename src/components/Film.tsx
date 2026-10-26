@@ -27,6 +27,16 @@ function Words({ text }: { text: string }) {
   );
 }
 
+/** The chapters listed on the rail: the opening, the method and its five steps. */
+function rail(beats: Beat[]) {
+  const label = (b: Beat) =>
+    b.kind === "hero" ? "Intro" : b.kind === "statement" ? "About" : b.kind === "index" ? "Method" : b.kind === "chapter" ? b.name : null;
+  return beats.flatMap((b, k) => {
+    const l = label(b);
+    return l ? [{ id: b.id, k, label: l }] : [];
+  });
+}
+
 function Caption({ beat }: { beat: Beat }) {
   return <p className="beat-caption">{footage[beat.clip].caption}</p>;
 }
@@ -61,6 +71,7 @@ export function Film({ beats }: { beats: Beat[] }) {
       {beats.map((b, i) => (
         <section
           key={b.id}
+          id={`beat-${b.id}`}
           data-beat={i}
           data-tone={footage[b.clip].tone}
           className={`beat beat-${b.kind}`}
@@ -159,6 +170,22 @@ export function Film({ beats }: { beats: Beat[] }) {
         </section>
       ))}
 
+      <nav className="film-rail" aria-label="Film chapters">
+        <div className="film-rail-track" aria-hidden="true">
+          <span className="film-rail-fill" />
+          <span className="film-rail-dot" />
+        </div>
+        <ol>
+          {rail(beats).map((r) => (
+            <li key={r.id}>
+              <a href={`#beat-${r.id}`} data-k={r.k}>
+                <span className="film-rail-label">{r.label}</span>
+              </a>
+            </li>
+          ))}
+        </ol>
+      </nav>
+      <div className="film-bar" aria-hidden="true" />
       <MotionToggle className="is-fixed" />
       <div id="after-film" tabIndex={-1} />
     </div>

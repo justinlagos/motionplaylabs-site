@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Pager } from "@/components/Pager";
-import { PlateHero } from "@/components/Clip";
+import { CtaBand, PlateHero } from "@/components/Clip";
+import { site } from "@/content/site";
 import { caseBySlug, work } from "@/content/work";
 
 export const dynamicParams = false;
@@ -50,16 +51,14 @@ export default async function CasePage({ params }: P) {
         </section>
         <section className="block split">
           <h2>What we decided</h2>
-          <ol className="steps">
+          <ul className="list">
             {w.decisions.map((d) => (
-              <li key={d}>
-                <span>{d}</span>
-              </li>
+              <li key={d}>{d}</li>
             ))}
-          </ol>
+          </ul>
         </section>
         <section className="block split">
-          <h2>What happened</h2>
+          <h2>{w.resultsLabel ?? "What happened"}</h2>
           <ul className="list">
             {w.results.map((r) => (
               <li key={r}>{r}</li>
@@ -82,13 +81,15 @@ export default async function CasePage({ params }: P) {
         )}
         <section className="block">
           <Pager prev={{ href: "/work/", label: "Back to", title: "All work" }} next={{ href: `/work/${next.slug}/`, label: "Next case study", title: next.title }} />
-          <div className="button-row" style={{ marginTop: 48 }}>
-            <Link className="button is-solid" href="/contact/">
-              Start a project
-            </Link>
-          </div>
         </section>
       </div>
+      <CtaBand clip="inkdark" title="Start a project" line={`Tell us what you need on the enquiry form, or email ${site.email}. Every enquiry is read by Justin.`}>
+        <div className="button-row">
+          <Link className="button is-solid" href="/contact/">
+            Send an enquiry
+          </Link>
+        </div>
+      </CtaBand>
     </div>
   );
 }

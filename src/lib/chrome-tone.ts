@@ -6,12 +6,20 @@
 export function watchChromeTone(): () => void {
   const root = document.documentElement;
   let ticking = false;
+  let lastY = window.scrollY;
   const read = () => {
     ticking = false;
+    const y = window.scrollY;
+    const d = y - lastY;
+    lastY = y;
     if (root.dataset.filmActive) {
       delete root.dataset.chrome;
+      delete root.dataset.chromeHidden;
       return;
     }
+    // Step the header out of the way while reading down; bring it back on the way up
+    if (y > 320 && d > 4) root.dataset.chromeHidden = "1";
+    else if (d < -4 || y < 160) delete root.dataset.chromeHidden;
     const stack = document.elementsFromPoint(window.innerWidth / 2, 30);
     for (const e of stack) {
       if (e.closest(".chrome, .menu-panel")) continue;
@@ -35,6 +43,7 @@ export function watchChromeTone(): () => void {
   window.addEventListener("scroll", onScroll, { passive: true });
   window.addEventListener("resize", onScroll);
   return () => {
+    delete root.dataset.chromeHidden;
     window.removeEventListener("scroll", onScroll);
     window.removeEventListener("resize", onScroll);
   };

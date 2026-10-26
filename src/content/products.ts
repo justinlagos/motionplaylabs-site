@@ -13,8 +13,12 @@ export type Product = {
   forWhom: string;
   facts: { label: string; value: string }[];
   link?: { href: string; label: string };
+  /** What happens next, as decided. */
+  next: string;
   clip: ClipId;
 };
+
+export const stages: Exclude<Stage, "Parked">[] = ["Explore", "Prototype", "Pilot", "Launch", "Scale"];
 
 export const products: Product[] = [
   {
@@ -23,7 +27,8 @@ export const products: Product[] = [
     line: "Children aged 3 to 7 learn letters, numbers and shapes by drawing in the air in front of a webcam.",
     body: [
       "We trained children to sit still and tap glass. Draw in the Air turns the screen around: the camera follows a child's hand, and the movement is the lesson.",
-      "It runs in the browser with nothing to install, follows the Early Years Foundation Stage, and has a Class Mode and a teacher dashboard for schools. A version that plugs into a television is in development.",
+      "It runs in the browser with nothing to install, follows the Early Years Foundation Stage, and has a Class Mode and a teacher dashboard so a teacher can run it with a whole class.",
+      "It is approved on the Chrome Web Store and running in a UK primary school pilot. A television version, built on a Raspberry Pi compute module, has reached design freeze.",
     ],
     stage: "Pilot",
     stageNote: "Running in a UK primary school pilot",
@@ -36,6 +41,7 @@ export const products: Product[] = [
       { label: "Hardware", value: "Television dongle in development" },
     ],
     link: { href: "https://drawintheair.com", label: "Visit drawintheair.com" },
+    next: "A pilot in Lagos, and the television version: a small computer that plugs into a TV.",
     clip: "inkdrops",
   },
   {
@@ -57,6 +63,7 @@ export const products: Product[] = [
       { label: "Price", value: "Free" },
     ],
     link: { href: "https://voidcanvas.netlify.app", label: "Open Void Canvas" },
+    next: "Bring Art Director Studio's tools into Void Canvas, so the two work as one editor that can still be used in parts.",
     clip: "pigment",
   },
   {
@@ -64,7 +71,8 @@ export const products: Product[] = [
     name: "Art Director Studio",
     line: "A design tool built for and used by designers in Nigeria.",
     body: [
-      "Art Director Studio came first. Void Canvas is its successor, and the two are being brought together into one editor that can still be used in parts.",
+      "Art Director Studio is a design tool built at home, for the way designers in Nigeria work, and it is live at artdirectorstudio.com.",
+      "It came first. Void Canvas is its successor, and the two are being brought together into one editor that can still be used in parts.",
     ],
     stage: "Launch",
     stageNote: "Live",
@@ -72,6 +80,7 @@ export const products: Product[] = [
     forWhom: "Working designers",
     facts: [{ label: "Successor", value: "Void Canvas" }],
     link: { href: "https://artdirectorstudio.com", label: "Visit artdirectorstudio.com" },
+    next: "Its tools move into Void Canvas, so designers get both in one place.",
     clip: "magenta",
   },
   {
@@ -91,6 +100,7 @@ export const products: Product[] = [
       { label: "Check-in", value: "Phone scanner that works offline" },
       { label: "For buyers", value: "Self-service transfers and refunds" },
     ],
+    next: "Card payments in the UK first, then naira payments, then the first organisers selling real tickets.",
     clip: "milkdrop",
   },
   {
@@ -110,6 +120,7 @@ export const products: Product[] = [
       { label: "During", value: "Alerts as charges approach" },
       { label: "After", value: "Help with penalty charge notices" },
     ],
+    next: "The launch site and waitlist, then routing that can steer around charges.",
     clip: "circuit",
   },
   {
@@ -117,12 +128,18 @@ export const products: Product[] = [
     name: "Election Day: Naija",
     line: "A browser 3D simulation of a fictional Nigerian election day.",
     body: [
-      "Players move through a fictional election day across Lagos and Abuja, from the polling unit outward.",
+      "A social simulation that runs in the browser. Players live through a fictional election day across Lagos Mainland, Lagos Island and Abuja, from the polling unit outward.",
+      "The core game will be free, with no paywall at launch. Port Harcourt follows the first three areas.",
     ],
     stage: "Prototype",
     markets: "Nigeria",
     forWhom: "Players in Nigeria and the diaspora",
-    facts: [{ label: "Setting", value: "Lagos Mainland, Lagos Island, Abuja" }],
+    facts: [
+      { label: "Setting", value: "Lagos Mainland, Lagos Island, Abuja; Port Harcourt later" },
+      { label: "Runs in", value: "The browser, in 3D" },
+      { label: "Price", value: "Free core game, no paywall at launch" },
+    ],
+    next: "The polling-unit finder goes live only when the imported records match INEC's published totals and pass duplicate and ward checks.",
     clip: "inkclouds",
   },
   {
@@ -130,23 +147,33 @@ export const products: Product[] = [
     name: "Life-stages game (working title)",
     line: "One Nigerian life played in chapters, starting with NYSC camp.",
     body: [
-      "A character's life told through the stages many Nigerians share. The first world is the NYSC orientation camp; an apprenticeship chapter follows.",
+      "One character's life, played through the stages many Nigerians share. Each stage is its own chapter and its own world.",
+      "The first world is the NYSC orientation camp. Igba Boi, the market apprenticeship that ends with being settled into your own business, follows.",
     ],
     stage: "Prototype",
     markets: "Nigeria",
     forWhom: "Players in Nigeria and the diaspora",
-    facts: [{ label: "First chapter", value: "NYSC camp" }],
+    facts: [
+      { label: "First chapter", value: "NYSC orientation camp" },
+      { label: "Next chapter", value: "Igba Boi" },
+      { label: "Started", value: "October 2026" },
+    ],
+    next: "Test the first world, NYSC camp, then build the Igba Boi apprenticeship chapter.",
     clip: "dust",
   },
   {
     slug: "naijago",
     name: "NaijaGo",
     line: "Find and book experiences across Nigeria.",
-    body: ["Designed in full. Build resumes after a quarterly review."],
+    body: [
+      "A place to find and book things to do across Nigeria, from tours to events to food.",
+      "The web and mobile designs and a design system are complete, with a clickable prototype. There is no back end yet.",
+    ],
     stage: "Parked",
     markets: "Nigeria",
     forWhom: "Visitors and residents",
     facts: [],
+    next: "The web and app designs are complete. The build starts after the next quarterly review.",
     clip: "droplets",
   },
   {
@@ -154,12 +181,14 @@ export const products: Product[] = [
     name: "Kino",
     line: "Film screenings in homes and venues, booked like a stay.",
     body: [
-      "Hosts list their space, screen and food; guests book a seat. A second way for Nigerian filmmakers to reach paying audiences after or alongside cinema.",
+      "Hosts list their space, screen and food; guests book a seat. Each listing shows where it is, the size of the screen and what is served.",
+      "Nigerian filmmakers keep a small share of cinema takings. Kino would give them a second way to reach paying audiences, for premieres and after a film's cinema run.",
     ],
     stage: "Parked",
     markets: "Nigeria first",
     forWhom: "Hosts, guests and filmmakers",
     facts: [],
+    next: "Safety checks for hosts and guests come first, before any booking is built.",
     clip: "soapfilm",
   },
 ];

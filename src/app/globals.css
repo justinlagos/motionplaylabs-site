@@ -189,7 +189,15 @@ a:hover {
   gap: clamp(20px, 2.4vw, 40px);
   padding: 0 var(--margin);
   color: var(--chrome-fg);
-  transition: color var(--t-tone) var(--ease), background-color var(--t-tone) var(--ease);
+  transition:
+    color var(--t-tone) var(--ease),
+    background-color var(--t-tone) var(--ease),
+    transform 520ms var(--ease);
+}
+
+/* Inner pages: the header steps out of the way while you read down, and returns when you scroll up */
+html[data-chrome-hidden] .chrome:not(:focus-within):not(.is-open) {
+  transform: translateY(-100%);
 }
 
 html[data-chrome="solid"] .chrome {
@@ -577,6 +585,7 @@ html.film-on .beat-frame {
   inset: 0;
   z-index: 10;
   opacity: 0;
+  will-change: opacity, transform;
   pointer-events: none;
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
@@ -593,7 +602,141 @@ html.film-on .film.is-past .beat-frame {
 }
 
 .w {
-  transition: opacity 160ms linear;
+  display: inline-block;
+  will-change: transform, opacity;
+}
+
+/* Chapter rail: where you are in the film, with the logo's dot as the marker */
+.film-rail {
+  display: none;
+}
+
+html.film-on .film-rail {
+  position: fixed;
+  right: calc(var(--margin) * 0.5 + 4px);
+  top: 50%;
+  z-index: 40;
+  display: block;
+  height: min(46vh, 380px);
+  transform: translateY(-50%);
+  color: var(--chrome-fg);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 500ms var(--ease), color var(--t-tone) var(--ease);
+}
+
+html.film-on .film-rail.is-shown {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.film-rail-track {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: 1px;
+  background: color-mix(in srgb, currentColor 22%, transparent);
+}
+
+.film-rail-fill {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 100%;
+  background: currentColor;
+  transform-origin: top;
+  transform: scaleY(var(--p, 0));
+}
+
+.film-rail-dot {
+  position: absolute;
+  left: 50%;
+  top: calc(var(--p, 0) * 100%);
+  width: 9px;
+  height: 9px;
+  margin: -4.5px 0 0 -4.5px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.film-rail ol {
+  position: absolute;
+  inset: 0;
+}
+
+.film-rail li {
+  display: contents;
+}
+
+.film-rail a {
+  position: absolute;
+  right: -10px;
+  top: calc(var(--at, 0) * 100%);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  height: 22px;
+  min-width: 22px;
+  margin-top: -11px;
+  padding-right: 10px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.film-rail a::after {
+  content: "";
+  width: 7px;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.5;
+}
+
+.film-rail-label {
+  font-size: 12px;
+  font-weight: 450;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateX(6px);
+  transition: opacity 300ms var(--ease), transform 300ms var(--ease);
+}
+
+.film-rail a.is-current .film-rail-label,
+.film-rail a:hover .film-rail-label,
+.film-rail a:focus-visible .film-rail-label {
+  opacity: 1;
+  transform: none;
+}
+
+.film-rail a:not(.is-current):not(:hover):not(:focus-visible) .film-rail-label {
+  opacity: 0;
+}
+
+/* On phones: a thin progress line under the header instead of the rail */
+.film-bar {
+  display: none;
+}
+
+@media (max-width: 899px) {
+  html.film-on .film-rail {
+    display: none;
+  }
+  html.film-on .film-bar {
+    display: block;
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    z-index: 51;
+    height: 2px;
+    background: var(--chrome-fg);
+    transform-origin: left;
+    transform: scaleX(0);
+    transition: background-color var(--t-tone) var(--ease);
+  }
+  .film.is-past .film-bar {
+    opacity: 0;
+  }
 }
 
 .beat-caption {
@@ -1641,36 +1784,55 @@ html.film-on .badge-dock {
   z-index: 30;
   background: var(--bg);
   color: var(--fg);
-  padding: clamp(56px, 8vw, 120px) var(--margin) var(--margin);
+  padding: clamp(64px, 9vw, 128px) var(--margin) clamp(20px, 2.4vw, 32px);
 }
 
-.footer-top {
-  display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
-  column-gap: var(--gutter);
-  row-gap: 40px;
-}
-
-.footer-brand {
-  grid-column: 1 / span 4;
+.footer-contact {
+  padding-bottom: clamp(48px, 7vw, 96px);
 }
 
 .footer-ask {
   font-size: var(--fs-s);
   color: var(--fg-2);
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 
 .footer-email {
-  font-size: var(--fs-m);
+  font-size: var(--fs-l);
   font-weight: 500;
   font-stretch: var(--wide);
-  letter-spacing: -0.02em;
+  letter-spacing: -0.035em;
+  line-height: 1.05;
   text-decoration: none;
+  overflow-wrap: anywhere;
 }
 
-.footer-email:hover {
+.footer-email:hover,
+.footer-email:focus-visible {
   text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.12em;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--gutter);
+  row-gap: 40px;
+  padding-top: 28px;
+  border-top: 1px solid var(--rule);
+}
+
+.footer-brand {
+  grid-column: 1 / span 4;
+  align-self: start;
+  display: block;
+  width: clamp(120px, 11vw, 168px);
+}
+
+.footer-logo {
+  width: 100%;
+  height: auto;
 }
 
 .footer-col {
@@ -1678,37 +1840,33 @@ html.film-on .badge-dock {
 }
 
 .footer-col h2 {
-  font-size: var(--fs-s);
+  font-size: 13px;
   font-weight: 450;
   color: var(--fg-2);
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .footer-col a {
   display: inline-block;
-  padding: 5px 0;
+  padding: 4px 0;
   font-size: 15px;
   text-decoration: none;
 }
 
-.footer-col a:hover {
+.footer-col a:hover,
+.footer-col a:focus-visible {
   text-decoration: underline;
-}
-
-.footer-logo {
-  width: min(100%, 920px);
-  height: auto;
-  margin: clamp(80px, 12vw, 200px) auto clamp(48px, 7vw, 96px);
 }
 
 .footer-base {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  gap: 8px 24px;
-  padding-top: 20px;
-  border-top: 1px solid var(--rule);
-  font-size: 13px;
+  gap: 4px 24px;
+  margin-top: clamp(56px, 8vw, 112px);
+  font-size: 11.5px;
+  line-height: 1.5;
+  letter-spacing: 0.01em;
   color: var(--fg-2);
 }
 
@@ -1719,6 +1877,99 @@ html.film-on .badge-dock {
   .footer-col {
     grid-column: span 6;
   }
+}
+
+/* ---------- Page entrance and scroll depth on inner pages ---------- */
+
+@keyframes page-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 28px, 0);
+  }
+}
+
+.page {
+  animation: page-in 500ms var(--ease) both;
+}
+
+.plate-hero-kicker,
+.plate-hero-title,
+.plate-hero-line,
+.plate-hero-text > .button-row,
+.page-top > .page-title {
+  animation: rise-in 1100ms var(--ease) both;
+}
+
+.plate-hero-title {
+  animation-delay: 80ms;
+}
+
+.plate-hero-line,
+.plate-hero-text > .button-row {
+  animation-delay: 220ms;
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .plate-hero > .plate {
+      animation: hero-depth linear both;
+      animation-timeline: view();
+      animation-range: exit 0% exit 100%;
+    }
+    .plate-hero-text {
+      animation: hero-lift linear both;
+      animation-timeline: view();
+      animation-range: exit 0% exit 90%;
+    }
+    .cta-band > .plate {
+      animation: band-depth linear both;
+      animation-timeline: view();
+      animation-range: cover 0% cover 100%;
+    }
+  }
+}
+
+@keyframes hero-depth {
+  to {
+    transform: translate3d(0, 22%, 0) scale(1.08);
+  }
+}
+
+@keyframes hero-lift {
+  to {
+    transform: translate3d(0, -10vh, 0);
+    opacity: 0;
+  }
+}
+
+@keyframes band-depth {
+  from {
+    transform: translate3d(0, -8%, 0) scale(1.16);
+  }
+  to {
+    transform: translate3d(0, 8%, 0) scale(1.16);
+  }
+}
+
+/* ---------- Smooth scroll ---------- */
+
+html.has-smooth-scroll {
+  scroll-behavior: auto;
+}
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
 }
 
 /* ---------- Reduced motion ---------- */

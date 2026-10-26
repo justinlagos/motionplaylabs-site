@@ -15,6 +15,8 @@ export type CaseStudy = {
   problem: string;
   decisions: string[];
   results: string[];
+  /** Heading for the results: "What happened", or "Where it stands" while the work is still under way. */
+  resultsLabel?: string;
   credits: { role: string; name: string }[];
   links?: { href: string; label: string }[];
 };
@@ -79,12 +81,37 @@ export const work: CaseStudy[] = [
       "Reserve a ticket before payment, so an event cannot oversell.",
       "Check guests in from a phone, with or without signal.",
     ],
+    resultsLabel: "Where it stands",
     results: [
       "A working prototype covering storefront, checkout, organiser tools, buyer wallet, door scanner and admin.",
       "A live database with oversell protection tested.",
       "Next: the first three organisers selling real tickets.",
     ],
     credits: [{ role: "Product, design and build", name: "Justin Ukaegbu" }],
+  },
+  {
+    slug: "tollpilot",
+    title: "TollPilot",
+    owner: "MotionPlay Labs product",
+    discipline: "Product, brand, web",
+    market: "UK",
+    year: "2026",
+    clip: "circuit",
+    summary: "A driving cost app built around one idea: before, during and after the journey.",
+    problem: "UK drivers often find out about a toll, a clean air zone or a congestion charge after the fact, when a penalty notice arrives.",
+    decisions: [
+      "Organise everything around before, during and after a journey, and keep that order on every screen and page.",
+      "Work alongside Google Maps and Waze instead of trying to replace them.",
+      "Make colour carry meaning: yellow for the brand, blue for navigation, green only for money genuinely saved, red and amber for risk.",
+      "Use the Pilot, a yellow car, as a signal that changes with the situation, from safe to approaching a charge to relieved, not as a mascot.",
+      "Keep the launch site honest: no invented user numbers, and no promises about the outcome of a penalty appeal.",
+    ],
+    resultsLabel: "Where it stands",
+    results: [
+      "The launch site and waitlist are being built, with a referral queue for early drivers.",
+      "Routing that can steer around charges is being set up on its own server.",
+    ],
+    credits: [{ role: "Product, brand and design", name: "Justin Ukaegbu" }],
   },
   {
     slug: "the-build-session",

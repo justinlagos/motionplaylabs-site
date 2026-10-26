@@ -6,13 +6,16 @@ import { LogoStacked } from "./Logo";
 export function Footer() {
   return (
     <footer className="footer" data-tone="dark">
-      <div className="footer-top">
-        <div className="footer-brand">
-          <p className="footer-ask">Questions, briefs and tenders</p>
-          <a className="footer-email" href={`mailto:${site.email}`}>
-            {site.email}
-          </a>
-        </div>
+      <div className="footer-contact">
+        <p className="footer-ask">Questions, briefs and tenders</p>
+        <a className="footer-email" href={`mailto:${site.email}`}>
+          {site.email}
+        </a>
+      </div>
+      <div className="footer-grid">
+        <Link href="/" className="footer-brand" aria-label="MotionPlay Labs, home">
+          <LogoStacked className="footer-logo" />
+        </Link>
         {footerNav.map((col) => (
           <nav key={col.title} aria-label={col.title} className="footer-col">
             <h2>{col.title}</h2>
@@ -26,7 +29,6 @@ export function Footer() {
           </nav>
         ))}
       </div>
-      <LogoStacked className="footer-logo" title="MotionPlay Labs" />
       <div className="footer-base">
         <p>
           {site.ukCompany.legalName}, registered in {site.ukCompany.jurisdiction}, company number {site.ukCompany.number}.

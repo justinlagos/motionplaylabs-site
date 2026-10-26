@@ -3,6 +3,7 @@ import "@fontsource-variable/mona-sans/standard.css";
 import "./globals.css";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { SmoothScroll } from "@/components/SmoothScroll";
 import { site } from "@/content/site";
 
 export const metadata: Metadata = {
@@ -42,6 +43,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en-GB" data-tone="light">
       <body>
+        <SmoothScroll />
         <Header />
         <main id="content" tabIndex={-1} data-tone="light">
           {children}
