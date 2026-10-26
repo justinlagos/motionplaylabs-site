@@ -19,6 +19,8 @@
 #                   where a dissolve would show the frame jumping back. The loop is twice <seconds>.
 # No audio. Keep loops 8 to 10 seconds.
 # Grainy or particle-heavy clips: raise AV1_CRF and H264_CRF (defaults 40 and 25) to keep files small.
+# To reframe before encoding (zoom into part of the source), set PRE to an ffmpeg crop, e.g.
+#   PRE="crop=iw*0.6:ih*0.6:iw*0.1:ih*0.2"
 
 set -euo pipefail
 IN="${1:?source file}"
@@ -31,6 +33,7 @@ MODE="${7:-fade}"
 FADE=1
 AV1_CRF="${AV1_CRF:-40}"
 H264_CRF="${H264_CRF:-25}"
+PRE="${PRE:-}"
 OUT="public/media/${ID}"
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
@@ -43,12 +46,12 @@ G="${EXTRA:+,${EXTRA}}"
 loop() { # $1 = per-frame filter for the shape, $2 = output
   if [[ "$MODE" == "pingpong" ]]; then
     ffmpeg -y -loglevel error -ss "$START" -t "$DUR" -i "$IN" -an -filter_complex \
-      "[0:v]fps=25,$1${G},format=yuv420p,split[a][b];[b]reverse,trim=start_frame=1,setpts=PTS-STARTPTS[r];[a][r]concat=n=2:v=1:a=0[v]" \
+      "[0:v]fps=25,${PRE:+$PRE,}$1${G},format=yuv420p,split[a][b];[b]reverse,trim=start_frame=1,setpts=PTS-STARTPTS[r];[a][r]concat=n=2:v=1:a=0[v]" \
       -map "[v]" -c:v libx264 -preset veryfast -crf 12 "$2"
     return
   fi
   ffmpeg -y -loglevel error -ss "$START" -t "$SEG" -i "$IN" -an -filter_complex \
-    "[0:v]fps=25,$1${G},format=yuv420p,split[a][b];\
+    "[0:v]fps=25,${PRE:+$PRE,}$1${G},format=yuv420p,split[a][b];\
      [a]trim=start=${FADE}:end=${SEG},setpts=PTS-STARTPTS[m];\
      [b]trim=start=0:end=${FADE},setpts=PTS-STARTPTS[h];\
      [m][h]xfade=transition=fade:duration=${FADE}:offset=${OFF}[v]" \

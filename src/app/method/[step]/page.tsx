@@ -60,7 +60,7 @@ export default async function StepPage({ params }: P) {
         </section>
         <section className="block">
           <Pager
-            prev={prev ? { href: `/method/${prev.slug}/`, label: `Previous: ${prev.numeral}`, title: prev.name } : { href: "/", label: "Back to", title: "The film" }}
+            prev={prev ? { href: `/method/${prev.slug}/`, label: `Previous: ${prev.numeral}`, title: prev.name } : { href: "/", label: "Back to", title: "Method" }}
             next={next ? { href: `/method/${next.slug}/`, label: `Next: ${next.numeral}`, title: next.name } : { href: "/studio/", label: "Work with us", title: "Studio" }}
           />
         </section>

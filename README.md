@@ -1,8 +1,8 @@
 # motionplaylabs.com
 
-The MotionPlay Labs website. The homepage is a scroll film in eleven beats, each on a macro clip. The page flips between light and dark with the footage: where the tone changes, the next clip opens through a lens from the centre of the screen; where it stays the same, the focus pulls from one clip to the next. The circle badge draws itself in on load, docks in the corner, and its ring turns as you scroll. Every other page opens on a clip.
+The MotionPlay Labs website. The homepage is a scroll film in eleven beats, each on a macro clip, alternating light and dark. Each hand-over is named for what a camera does: going into a dark clip, the next picture opens out of the dot in the header logo (lens); coming back to light, the dark clip overexposes into the next (exposure); between clips of the same tone, the focus pulls. The circle badge draws itself in on the title and comes back, turning, beside the closing line. The chapter numerals are drawn with the logo's stroke and draw in as each chapter opens. Every other page opens on a clip; Studio and Work end on a dark clip with the next step.
 
-Design: Swiss grid, black and white only, one typeface (Mona Sans) in two widths. Colour comes from the footage.
+Design: Swiss grid, black and white only, one typeface (Mona Sans) in two widths. Colour is held back in the footage too, except for the Design chapter's pigment, the one colour moment.
 
 ## Run it
 

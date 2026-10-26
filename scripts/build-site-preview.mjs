@@ -16,7 +16,7 @@ const walk = (dir) => {
   for (const f of readdirSync(dir)) {
     const p = path.join(dir, f);
     if (statSync(p).isDirectory()) {
-      if (f === "_next" || f === "media") continue;
+      if (f === "_next" || f === "media" || f.startsWith("_") || f === "404") continue;
       walk(p);
     } else if (f === "index.html") pages.push(path.relative("out", p));
   }
@@ -59,7 +59,8 @@ for (const page of pages) {
   const up = here ? here.split("/").map(() => "..").join("/") + "/" : "";
 
   const body = html.match(/<body[^>]*>([\s\S]*)<\/body>/)[1];
-  const title = (html.match(/<title>([\s\S]*?)<\/title>/) ?? [, "MotionPlay Labs"])[1];
+  // The home page keeps the preview's published name; other pages keep their own titles.
+  const title = here === "" ? "MotionPlay Labs Website" : (html.match(/<title>([\s\S]*?)<\/title>/) ?? [, "MotionPlay Labs"])[1];
   const htmlTone = (html.match(/<html[^>]*data-tone="(\w+)"/) ?? [, "light"])[1];
 
   let content = body

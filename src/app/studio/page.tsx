@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { PlateBand, PlateHero } from "@/components/Clip";
-import { pageClips } from "@/content/site";
+import { CtaBand, PlateHero } from "@/components/Clip";
+import { pageClips, site } from "@/content/site";
 
 export const metadata: Metadata = {
   title: "Studio",
@@ -84,7 +84,6 @@ export default function StudioPage() {
             </li>
           </ol>
         </section>
-        <PlateBand clip="soapfilm" />
         <section className="block split">
           <h2>Prices</h2>
           <div>
@@ -125,18 +124,17 @@ export default function StudioPage() {
             </p>
           </div>
         </section>
-        <section className="block split">
-          <h2>Start</h2>
-          <div className="button-row">
-            <Link className="button is-solid" href="/contact/">
-              Start a project
-            </Link>
-            <Link className="button" href="/work/">
-              See the work
-            </Link>
-          </div>
-        </section>
       </div>
+      <CtaBand clip="soapfilm" title="Start a project" line={`Tell us what you need on the enquiry form, or email ${site.email}. Every enquiry is read by Justin.`}>
+        <div className="button-row">
+          <Link className="button is-solid" href="/contact/">
+            Send an enquiry
+          </Link>
+          <Link className="button" href="/work/">
+            See the work
+          </Link>
+        </div>
+      </CtaBand>
     </div>
   );
 }

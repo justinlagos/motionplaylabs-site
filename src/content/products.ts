@@ -36,7 +36,7 @@ export const products: Product[] = [
       { label: "Hardware", value: "Television dongle in development" },
     ],
     link: { href: "https://drawintheair.com", label: "Visit drawintheair.com" },
-    clip: "pencil",
+    clip: "inkdrops",
   },
   {
     slug: "void-canvas",

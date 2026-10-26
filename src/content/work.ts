@@ -27,7 +27,7 @@ export const work: CaseStudy[] = [
     discipline: "Product, brand, web",
     market: "UK and Nigeria",
     year: "2026",
-    clip: "pencil",
+    clip: "inkdrops",
     summary: "A learning platform where children aged 3 to 7 learn by moving, not tapping.",
     problem: "Most screen time for children aged 3 to 7 asks them to sit still and tap glass.",
     decisions: [

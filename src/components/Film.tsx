@@ -11,6 +11,7 @@ import { startFilm } from "@/lib/film-engine";
 import { ClipPicture, ClipThumb } from "./Clip";
 import { Badge } from "./Logo";
 import { MotionToggle } from "./MotionToggle";
+import { Numeral } from "./Numeral";
 
 function Words({ text }: { text: string }) {
   const parts = text.split(" ");
@@ -50,6 +51,7 @@ export function Film({ beats }: { beats: Beat[] }) {
             <div className="plate-scrim" />
           </div>
         ))}
+        <div className="stage-flash" />
       </div>
 
       <div className="badge-dock" aria-hidden="true">
@@ -116,9 +118,7 @@ export function Film({ beats }: { beats: Beat[] }) {
             {b.kind === "chapter" && (
               <div className="chapter">
                 <Caption beat={b} />
-                <span className="chapter-numeral" aria-hidden="true">
-                  {b.numeral}.
-                </span>
+                <Numeral value={b.numeral} className="chapter-numeral" />
                 <div className="chapter-text">
                   <h2 className="chapter-title">
                     <span className="visually-hidden">{b.numeral}. </span>
@@ -133,9 +133,12 @@ export function Film({ beats }: { beats: Beat[] }) {
             )}
             {b.kind === "close" && (
               <div className="close">
-                <p className="statement">
-                  <Words text={b.words} />
-                </p>
+                <div className="close-head">
+                  <p className="statement">
+                    <Words text={b.words} />
+                  </p>
+                  <Badge className="close-badge" />
+                </div>
                 <ul className="doors">
                   {doors.map((d) => (
                     <li key={d.href}>
@@ -147,6 +150,9 @@ export function Film({ beats }: { beats: Beat[] }) {
                     </li>
                   ))}
                 </ul>
+                <p className="close-contact">
+                  Questions, briefs and tenders: <a href={`mailto:${site.email}`}>{site.email}</a>
+                </p>
               </div>
             )}
           </div>

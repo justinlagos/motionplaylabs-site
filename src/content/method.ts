@@ -18,7 +18,7 @@ export const method: Step[] = [
     numeral: "I",
     name: "Research",
     line: "Find the real problem",
-    clip: "ferrofluid",
+    clip: "smoke",
     intro:
       "Every job starts by finding out what is actually wrong, who the work is for and what proof already exists. We read what you have before we draw anything.",
     weDo: [
@@ -57,7 +57,7 @@ export const method: Step[] = [
     numeral: "III",
     name: "Build",
     line: "Make the working thing",
-    clip: "circuit",
+    clip: "ferrofluid",
     intro:
       "We make the working version: the website, the document, the booth, the app. A mock-up is a step, not the result.",
     weDo: [

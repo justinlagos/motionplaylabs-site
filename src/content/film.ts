@@ -43,7 +43,7 @@ export const film: Beat[] = [
     words:
       "MotionPlay Labs is a design and product lab in the UK and Nigeria. We design for organisations, build our own products and teach people to build.",
   },
-  { id: "interlude", kind: "interlude", length: 1.4, clip: "pencil" },
+  { id: "interlude", kind: "interlude", length: 1.1, clip: "inkdrops" },
   {
     id: "method",
     kind: "index",
@@ -74,6 +74,7 @@ export const film: Beat[] = [
 
 export const doors: { href: string; name: string; line: string; clip: ClipId }[] = [
   { href: "/studio/", name: "Studio", line: "Brand, campaigns, publications, events and web", clip: "magenta" },
+  { href: "/work/", name: "Work", line: "Case studies from our own products and sessions", clip: "pigment" },
   { href: "/products/", name: "Products", line: "Software and hardware we build and run", clip: "circuit" },
   { href: "/school/", name: "School", line: "Live sessions where you build with AI", clip: "dust" },
 ];

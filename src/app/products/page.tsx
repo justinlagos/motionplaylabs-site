@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ClipThumb, PlateBand, PlateHero } from "@/components/Clip";
+import { PlateHero } from "@/components/Clip";
 import { activeProducts, parkedProducts } from "@/content/products";
 import { pageClips } from "@/content/site";
 
@@ -24,8 +24,7 @@ export default function ProductsPage() {
             {activeProducts.map((p) => (
               <li className="row" key={p.slug}>
                 <Link href={`/products/${p.slug}/`}>
-                  <ClipThumb id={p.clip} className="row-still" />
-                  <span>
+                  <span className="row-text">
                     <span className="row-name">{p.name}</span>{" "}
                     <span className="row-line">{p.line}</span>
                   </span>
@@ -39,7 +38,6 @@ export default function ProductsPage() {
             ))}
           </ul>
         </section>
-        <PlateBand clip="inkfade" />
         <section className="block split">
           <h2>Parked</h2>
           <div>

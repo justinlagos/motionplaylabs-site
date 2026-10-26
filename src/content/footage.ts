@@ -29,8 +29,9 @@ export type ClipId =
   | "droplets"
   | "inkclouds"
   | "soapfilm"
-  | "pencil"
+  | "inkdrops"
   | "folds"
+  | "smoke"
   | "ferrofluid"
   | "pigment"
   | "circuit"
@@ -55,12 +56,14 @@ export const media = (id: ClipId) => ({
 });
 
 // Settings for each clip's cut and grade are in scripts/encode-all.sh.
+// Colour is held back on every clip except pigment, the one colour moment (Design).
 export const footage: Record<ClipId, Clip> = {
   droplets: { id: "droplets", tone: "light", caption: "Water on a white surface", focusX: 50, credit: { by: "", source: "Mixkit", url: "https://mixkit.co/free-stock-video/white-bubbles-dripping-down-674/" } },
   inkclouds: { id: "inkclouds", tone: "light", caption: "Ink meeting in water", focusX: 50, credit: { by: "", source: "Pexels", url: "https://www.pexels.com/video/a-black-liquid-mixed-with-water-9809335/" } },
   soapfilm: { id: "soapfilm", tone: "dark", caption: "Light on a soap film", focusX: 50, credit: { by: "", source: "Pexels", url: "https://www.pexels.com/video/rainbow-light-reflection-on-a-soap-bubble-4431323/" } },
-  pencil: { id: "pencil", tone: "light", caption: "Graphite on paper", focusX: 30, credit: { by: "", source: "Pexels", url: "https://www.pexels.com/video/close-up-of-pencil-drawing-line-in-black-and-white-33063729/" } },
+  inkdrops: { id: "inkdrops", tone: "light", caption: "Ink drops sinking through oil", focusX: 45, credit: { by: "", source: "Mixkit", url: "https://mixkit.co/free-stock-video/abstract-video-thick-liquid-drops-of-dark-ink-44820/" } },
   folds: { id: "folds", tone: "light", caption: "Folded paper in moving light", focusX: 50, credit: { by: "", source: "Pexels", url: "https://www.pexels.com/video/light-and-shadows-on-folded-papers-7235006/" } },
+  smoke: { id: "smoke", tone: "dark", caption: "A thread of smoke", focusX: 65, credit: { by: "", source: "Mixkit", url: "https://mixkit.co/free-stock-video/soft-and-traslucent-smoke-flows-up-on-a-dark-background-50956/" } },
   ferrofluid: { id: "ferrofluid", tone: "dark", caption: "Ferrofluid in a magnetic field", focusX: 60, credit: { by: "", source: "Pexels", url: "https://www.pexels.com/video/inky-16296848/" } },
   pigment: { id: "pigment", tone: "light", caption: "Pigment folding into white paint", focusX: 50, credit: { by: "", source: "Pexels", url: "https://www.pexels.com/video/drops-of-red-ink-falling-into-white-paint-10695823/" } },
   circuit: { id: "circuit", tone: "dark", caption: "Circuit board", focusX: 50, credit: { by: "", source: "Pexels", url: "https://www.pexels.com/video/close-up-shot-of-a-printed-circuit-board-6754819/" } },

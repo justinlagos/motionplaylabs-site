@@ -16,11 +16,13 @@ export function LogoHorizontal({ className, title }: Common) {
           <path key={d} d={d} />
         ))}
         <circle cx={HORIZONTAL.dot.cx} cy={HORIZONTAL.dot.cy} r={HORIZONTAL.dot.r} />
-        {HORIZONTAL.word.map((d) => (
-          <path key={d} d={d} />
-        ))}
+        <g className="logo-word">
+          {HORIZONTAL.word.map((d) => (
+            <path key={d} d={d} />
+          ))}
+        </g>
       </g>
-      <line {...HORIZONTAL.rule} stroke="currentColor" strokeOpacity={0.5} strokeWidth={1} vectorEffect="non-scaling-stroke" />
+      <line className="logo-rule" {...HORIZONTAL.rule} stroke="currentColor" strokeOpacity={0.5} strokeWidth={1} vectorEffect="non-scaling-stroke" />
     </svg>
   );
 }

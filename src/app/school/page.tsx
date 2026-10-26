@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { PlateBand, PlateHero } from "@/components/Clip";
+import { PlateHero } from "@/components/Clip";
 import { pageClips, site } from "@/content/site";
 
 export const metadata: Metadata = {
@@ -45,7 +45,6 @@ export default function SchoolPage() {
             <dd>Kit, sign-in codes and email support for three weeks</dd>
           </dl>
         </section>
-        <PlateBand clip="inkclouds" />
         <section className="block split">
           <h2>For teams</h2>
           <div>

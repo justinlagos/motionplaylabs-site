@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ClipThumb, PlateHero } from "@/components/Clip";
-import { pageClips } from "@/content/site";
+import { CtaBand, PlateHero } from "@/components/Clip";
+import { pageClips, site } from "@/content/site";
 import { work } from "@/content/work";
 
 export const metadata: Metadata = {
@@ -24,8 +24,7 @@ export default function WorkPage() {
             {work.map((w) => (
               <li className="row" key={w.slug}>
                 <Link href={`/work/${w.slug}/`}>
-                  <ClipThumb id={w.clip} className="row-still" />
-                  <span>
+                  <span className="row-text">
                     <span className="row-name">{w.title}</span>{" "}
                     <span className="row-line">{w.summary}</span>
                   </span>
@@ -40,6 +39,16 @@ export default function WorkPage() {
           </ul>
         </section>
       </div>
+      <CtaBand clip="inkdark" title="Start a project" line={`Tell us what you need on the enquiry form, or email ${site.email}. Every enquiry is read by Justin.`}>
+        <div className="button-row">
+          <Link className="button is-solid" href="/contact/">
+            Send an enquiry
+          </Link>
+          <Link className="button" href="/studio/">
+            How the studio works
+          </Link>
+        </div>
+      </CtaBand>
     </div>
   );
 }

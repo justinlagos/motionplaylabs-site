@@ -76,13 +76,18 @@ export function ClipThumb({ id, className = "" }: { id: ClipId; className?: stri
   );
 }
 
-/** A full-bleed clip between sections of a page: a pause in the reading, in the clip's tone. */
-export function PlateBand({ clip }: { clip: ClipId }) {
+/** Closing band: a dark clip behind the next step, so a page ends in the same light-to-dark rhythm as the film. */
+export function CtaBand({ clip, title, line, children }: { clip: ClipId; title: string; line?: string; children?: React.ReactNode }) {
   const c = footage[clip];
   return (
-    <figure className="plate-band" data-tone={c.tone}>
+    <section className="cta-band" data-tone={c.tone}>
       <Plate id={clip} />
-      <figcaption className="plate-band-caption">{c.caption}</figcaption>
-    </figure>
+      <div className="cta-band-text">
+        <h2 className="cta-band-title">{title}</h2>
+        {line && <p className="cta-band-line">{line}</p>}
+        {children}
+      </div>
+      <p className="plate-band-caption">{c.caption}</p>
+    </section>
   );
 }
