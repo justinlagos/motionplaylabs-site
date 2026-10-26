@@ -26,7 +26,7 @@ export default function WorkPage() {
                 <Link href={`/work/${w.slug}/`}>
                   <ClipThumb id={w.clip} className="row-still" />
                   <span>
-                    <span className="row-name">{w.title}</span>
+                    <span className="row-name">{w.title}</span>{" "}
                     <span className="row-line">{w.summary}</span>
                   </span>
                   <span className="row-meta">

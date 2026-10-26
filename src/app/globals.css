@@ -658,6 +658,7 @@ html.film-on .film.is-past .beat-frame {
   letter-spacing: -0.045em;
   max-width: 9.5em;
   padding-bottom: 0.04em;
+  text-wrap: balance;
 }
 
 /* Statement */
@@ -669,6 +670,7 @@ html.film-on .film.is-past .beat-frame {
   line-height: 1.12;
   letter-spacing: -0.025em;
   max-width: 20em;
+  text-wrap: pretty;
 }
 
 /* Index */
@@ -753,7 +755,7 @@ html.film-on .film.is-past .beat-frame {
   grid-column: 1 / span 7;
   align-self: start;
   font-size: clamp(120px, 23vw, 400px);
-  font-weight: 200;
+  font-weight: 250;
   font-stretch: 125%;
   line-height: 0.78;
   letter-spacing: -0.04em;

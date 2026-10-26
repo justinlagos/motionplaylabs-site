@@ -94,12 +94,12 @@ export function startFilm(el: HTMLElement, beats: Beat[]): () => void {
 
     if (i !== active) {
       frames.forEach((f, k) => f.classList.toggle("is-active", k === i));
-      el.dataset.beat = beat.id;
+      el.dataset.current = beat.id;
       active = i;
     }
 
     // Words: frame fades in and out at the edges of its beat
-    const fadeOut = isLast ? 1 : 1 - smooth(0.8, 0.9, local);
+    const fadeOut = isLast ? 1 : 1 - smooth(0.72, 0.84, local);
     const fadeIn = i === 0 ? 1 : smooth(0.04, 0.16, local);
     frames.forEach((f, k) => {
       f.style.opacity = k === i ? String(fadeIn * fadeOut) : "0";
@@ -120,7 +120,7 @@ export function startFilm(el: HTMLElement, beats: Beat[]): () => void {
     }
 
     // Footage hand-over
-    const mix = isLast ? 0 : easeInOut(smooth(0.78, 1, local));
+    const mix = isLast ? 0 : easeInOut(smooth(0.8, 1, local));
     const iris = !isLast && tones[i] !== tones[i + 1] && !reduced;
     plates.forEach((p, k) => {
       const v = videos[k];
@@ -164,8 +164,8 @@ export function startFilm(el: HTMLElement, beats: Beat[]): () => void {
       if (!want && !v.paused) v.pause();
     });
 
-    // Light or dark: flips halfway through the hand-over
-    setTone(mix > 0.5 ? tones[i + 1] : tones[i]);
+    // Light or dark: flips once the next clip covers the header
+    setTone(mix > 0.6 ? tones[i + 1] : tones[i]);
     const past = y > filmEnd - vh * 0.75;
     el.classList.toggle("is-past", past);
     if (past) delete root.dataset.filmActive;

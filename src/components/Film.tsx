@@ -105,7 +105,7 @@ export function Film({ beats }: { beats: Beat[] }) {
                         <span className="index-numeral" aria-hidden="true">
                           {s.numeral}
                         </span>
-                        <span className="index-name">{s.name}</span>
+                        <span className="index-name">{s.name}</span>{" "}
                         <span className="index-line">{s.line}</span>
                       </Link>
                     </li>
@@ -117,7 +117,7 @@ export function Film({ beats }: { beats: Beat[] }) {
               <div className="chapter">
                 <Caption beat={b} />
                 <span className="chapter-numeral" aria-hidden="true">
-                  {b.numeral}
+                  {b.numeral}.
                 </span>
                 <div className="chapter-text">
                   <h2 className="chapter-title">
@@ -141,7 +141,7 @@ export function Film({ beats }: { beats: Beat[] }) {
                     <li key={d.href}>
                       <Link href={d.href}>
                         <ClipThumb id={d.clip} className="door-clip" />
-                        <span className="door-name">{d.name}</span>
+                        <span className="door-name">{d.name}</span>{" "}
                         <span className="door-line">{d.line}</span>
                       </Link>
                     </li>

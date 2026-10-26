@@ -26,7 +26,7 @@ export default function ProductsPage() {
                 <Link href={`/products/${p.slug}/`}>
                   <ClipThumb id={p.clip} className="row-still" />
                   <span>
-                    <span className="row-name">{p.name}</span>
+                    <span className="row-name">{p.name}</span>{" "}
                     <span className="row-line">{p.line}</span>
                   </span>
                   <span className="row-meta">
