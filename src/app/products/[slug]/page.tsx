@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { PlateHero } from "@/components/Clip";
+import { NextBand, PlateHero } from "@/components/Clip";
+import { StageTrack } from "@/components/StageTrack";
+import { notes } from "@/content/notes";
 import { productBySlug, products } from "@/content/products";
 import { work } from "@/content/work";
 
@@ -22,9 +24,11 @@ export default async function ProductPage({ params }: P) {
   const p = productBySlug((await params).slug);
   if (!p) notFound();
   const caseStudy = work.find((w) => w.slug === p.slug);
+  const note = notes.find((n) => n.about.href === `/products/${p.slug}/`);
+  const next = products[(products.indexOf(p) + 1) % products.length];
   return (
     <div className="page">
-      <PlateHero clip={p.clip} kicker={`Stage: ${p.stage}`} title={p.name} line={p.line}>
+      <PlateHero clip={p.clip} kicker={p.markets} title={p.name} line={p.line}>
         {p.link && (
           <div className="button-row">
             <a className="button" href={p.link.href} rel="noopener">
@@ -37,30 +41,42 @@ export default async function ProductPage({ params }: P) {
         <section className="block split">
           <h2>What it is</h2>
           <div className="prose">
-            {p.body.map((b) => (
-              <p key={b}>{b}</p>
+            {p.body.map((b, i) => (
+              <p key={b} className={i === 0 ? "prose-lead" : undefined}>
+                {b}
+              </p>
             ))}
           </div>
         </section>
         <section className="block split">
-          <h2>Details</h2>
-          <dl className="facts">
-            <dt>Stage</dt>
-            <dd>
-              {p.stage}
-              {p.stageNote ? `. ${p.stageNote}.` : ""}
-            </dd>
-            <dt>For</dt>
-            <dd>{p.forWhom}</dd>
-            <dt>Markets</dt>
-            <dd>{p.markets}</dd>
-            {p.facts.map((f) => (
-              <div key={f.label} style={{ display: "contents" }}>
-                <dt>{f.label}</dt>
-                <dd>{f.value}</dd>
-              </div>
-            ))}
-          </dl>
+          <h2>Stage</h2>
+          <div>
+            <StageTrack stage={p.stage} />
+            <p className="stage-note">
+              <strong>{p.stage}.</strong> {p.stageNote ? `${p.stageNote}.` : p.stage === "Parked" ? "Designs and code are kept; we look at it again each quarter." : ""}
+            </p>
+          </div>
+        </section>
+        {(p.facts.length > 0 || p.forWhom) && (
+          <section className="block split">
+            <h2>Details</h2>
+            <dl className="facts">
+              <dt>For</dt>
+              <dd>{p.forWhom}</dd>
+              <dt>Markets</dt>
+              <dd>{p.markets}</dd>
+              {p.facts.map((f) => (
+                <div key={f.label} style={{ display: "contents" }}>
+                  <dt>{f.label}</dt>
+                  <dd>{f.value}</dd>
+                </div>
+              ))}
+            </dl>
+          </section>
+        )}
+        <section className="block split">
+          <h2>Next</h2>
+          <p className="lede">{p.next}</p>
         </section>
         <section className="block split">
           <h2>More</h2>
@@ -68,6 +84,11 @@ export default async function ProductPage({ params }: P) {
             {caseStudy && (
               <li>
                 <Link href={`/work/${caseStudy.slug}/`}>Read the case study</Link>
+              </li>
+            )}
+            {note && (
+              <li>
+                <Link href={`/lab-notes/${note.slug}/`}>Lab note: {note.title}</Link>
               </li>
             )}
             <li>
@@ -79,6 +100,7 @@ export default async function ProductPage({ params }: P) {
           </ul>
         </section>
       </div>
+      <NextBand clip={next.clip} href={`/products/${next.slug}/`} kicker="Next product" title={next.name} line={next.line} />
     </div>
   );
 }

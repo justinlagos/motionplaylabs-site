@@ -1,28 +1,37 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PlateHero } from "@/components/Clip";
+import { notes, readingMinutes } from "@/content/notes";
 import { pageClips } from "@/content/site";
 
 export const metadata: Metadata = {
   title: "Lab notes",
-  description: "Build logs, method notes and what we learn working in the UK and Nigeria.",
+  description: "Short notes on decisions we made building our products, and why.",
 };
 
 export default function LabNotesPage() {
   return (
     <div className="page">
-      <PlateHero clip={pageClips.labNotes} title="Lab notes" line="Build logs, method notes and what we learn working in the UK and Nigeria." />
+      <PlateHero clip={pageClips.labNotes} title="Lab notes" line="Short notes on decisions we made building our products, and why." />
       <div className="wrap">
-        <section className="block split">
-          <h2>Notes</h2>
-          <div>
-            <p className="empty">The first notes go up with the site launch. Until then, the case studies show how we work.</p>
-            <div className="button-row" style={{ marginTop: 24 }}>
-              <Link className="button" href="/work/">
-                See the work
-              </Link>
-            </div>
-          </div>
+        <section className="block">
+          <h2 className="visually-hidden">Notes</h2>
+          <ul className="rows">
+            {notes.map((n) => (
+              <li className="row" key={n.slug}>
+                <Link href={`/lab-notes/${n.slug}/`}>
+                  <span className="row-text">
+                    <span className="row-name">{n.title}</span> <span className="row-line">{n.line}</span>
+                  </span>
+                  <span className="row-meta">
+                    {n.about.label}
+                    <br />
+                    {n.date}, {readingMinutes(n)} min read
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
         </section>
       </div>
     </div>

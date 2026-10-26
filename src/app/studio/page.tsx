@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { CtaBand, PlateHero } from "@/components/Clip";
+import { method } from "@/content/method";
 import { pageClips, site } from "@/content/site";
 
 export const metadata: Metadata = {
@@ -9,11 +10,17 @@ export const metadata: Metadata = {
 };
 
 const makes = [
-  { name: "Brand and identity", line: "Identity systems, guidelines, brand books and the templates your team uses every day." },
-  { name: "Campaigns and content", line: "Campaign platforms, social, ads, email and the assets behind them." },
-  { name: "Reports and publications", line: "Annual and impact reports, policy briefs, decks and long documents, including UN and NGO publications." },
-  { name: "Events and motion", line: "Event identity, booths, screen loops, logo reveals, photography and video." },
-  { name: "Websites and product design", line: "Marketing sites, landing pages and app interfaces, designed and built." },
+  { name: "Brand and identity", items: ["Identity systems", "Guidelines and brand books", "Templates your team uses every day"] },
+  { name: "Campaigns and content", items: ["Campaign platforms", "Social, ads and email", "The assets behind them"] },
+  { name: "Reports and publications", items: ["Annual and impact reports", "Policy briefs and case studies", "Decks and long documents", "UN and NGO publications"] },
+  { name: "Events and motion", items: ["Event identity and booths", "Screen loops and logo reveals", "Photography and video"] },
+  { name: "Websites and product design", items: ["Marketing sites and landing pages", "App interfaces", "Designed and built"] },
+];
+
+const ways = [
+  { name: "A project", price: "From £2,500 or ₦400,000", line: "One job with a fixed scope, price and date, from brief to handover." },
+  { name: "A retainer", price: "From £1,800 or ₦450,000 a month", line: "A set number of days each month for steady work. At least three months." },
+  { name: "Team training", price: "Priced per team", line: "The Build Session, run in-house around your team's own work and tools." },
 ];
 
 // TODO(D5): prices are the proposals in the playbook; confirm before launch.
@@ -44,53 +51,58 @@ export default function StudioPage() {
             </div>
           </div>
         </section>
-        <section className="block split">
-          <h2>What we make</h2>
-          <ul className="list">
+        <section className="block">
+          <div className="block-head">
+            <h2>What we make</h2>
+          </div>
+          <ul className="disciplines">
             {makes.map((m) => (
               <li key={m.name}>
-                <strong style={{ fontWeight: 500 }}>{m.name}.</strong> <span className="quiet">{m.line}</span>
+                <h3 className="discipline-name">{m.name}</h3>
+                <ul className="discipline-items">
+                  {m.items.map((x) => (
+                    <li key={x}>{x}</li>
+                  ))}
+                </ul>
+              </li>
+            ))}
+          </ul>
+        </section>
+        <section className="block">
+          <div className="block-head">
+            <h2>How a job runs</h2>
+            <p className="quiet">The same five steps every time, so you know what comes next and what you receive at each one.</p>
+          </div>
+          <ol className="flow is-five">
+            {method.map((m) => (
+              <li key={m.slug}>
+                <Link className="flow-link" href={`/method/${m.slug}/`}>
+                  <span className="flow-n">{m.numeral}</span>
+                  <h3 className="flow-name">{m.name}</h3>
+                  <p className="flow-line">{m.youGet[0]}.</p>
+                </Link>
+              </li>
+            ))}
+          </ol>
+        </section>
+        <section className="block">
+          <div className="block-head">
+            <h2>Ways to work</h2>
+          </div>
+          <ul className="ways">
+            {ways.map((w) => (
+              <li key={w.name}>
+                <h3 className="way-name">{w.name}</h3>
+                <p className="way-price">{w.price}</p>
+                <p className="way-line">{w.line}</p>
               </li>
             ))}
           </ul>
         </section>
         <section className="block split">
-          <h2>How a job runs</h2>
-          <ol className="steps">
-            <li>
-              <span>
-                <strong>Research.</strong> <span className="quiet">A one-page brief you sign off before design starts.</span>
-              </span>
-            </li>
-            <li>
-              <span>
-                <strong>Design.</strong> <span className="quiet">Routes tested on your real content, reviewed in rounds with a written list of changes.</span>
-              </span>
-            </li>
-            <li>
-              <span>
-                <strong>Build.</strong> <span className="quiet">The finished thing in its real medium: code, print-ready files or fabrication drawings.</span>
-              </span>
-            </li>
-            <li>
-              <span>
-                <strong>Launch.</strong> <span className="quiet">Release plan and assets, then a short report on what people did.</span>
-              </span>
-            </li>
-            <li>
-              <span>
-                <strong>Teach.</strong> <span className="quiet">Templates and a handover, so your team can carry on without us.</span>
-              </span>
-            </li>
-          </ol>
-        </section>
-        <section className="block split">
-          <h2>Prices</h2>
+          <h2>Retainers</h2>
           <div>
-            <div className="prose">
-              <p>Projects start at £2,500 in the UK and ₦400,000 in Nigeria. For steady work, a retainer gives you a set number of days each month at a fixed price.</p>
-            </div>
-            <table className="price-table" style={{ marginTop: 24 }}>
+            <table className="price-table">
               <thead>
                 <tr>
                   <th scope="col">Retainer</th>

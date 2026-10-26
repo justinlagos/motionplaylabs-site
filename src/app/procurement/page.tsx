@@ -16,6 +16,20 @@ const services = [
   "Websites and digital content",
 ];
 
+const process = [
+  { name: "Send the documents", line: `RFQs, tenders and terms of reference to ${site.email}.` },
+  { name: "We complete the forms", line: "Supplier forms, annexes, technical proposals and financial offers." },
+  { name: "We work to your rules", line: "Your style guide, templates and review process." },
+  { name: "We deliver the files", line: "Print-ready and digital files, with editable sources." },
+];
+
+const documents = [
+  "Capability statement",
+  "References and past-performance details",
+  "Certificate of incorporation and company details",
+  "Bank and payment details, on the buyer's own form",
+];
+
 export default function ProcurementPage() {
   return (
     <div className="page">
@@ -48,10 +62,32 @@ export default function ProcurementPage() {
             ))}
           </ul>
         </section>
+        <section className="block">
+          <div className="block-head">
+            <h2>How we work with you</h2>
+            <p className="quiet">The paperwork is part of the job.</p>
+          </div>
+          <ol className="flow is-four">
+            {process.map((r, i) => (
+              <li key={r.name}>
+                <span className="flow-n">{String(i + 1).padStart(2, "0")}</span>
+                <h3 className="flow-name">{r.name}</h3>
+                <p className="flow-line">{r.line}</p>
+              </li>
+            ))}
+          </ol>
+        </section>
         <section className="block split">
-          <h2>On request</h2>
-          <div className="prose">
-            <p>Capability statement, references and past-performance details. Ask at the email address above.</p>
+          <h2>Documents on request</h2>
+          <div>
+            <ul className="list">
+              {documents.map((d) => (
+                <li key={d}>{d}</li>
+              ))}
+            </ul>
+            <p className="prose quiet" style={{ marginTop: 20 }}>
+              Ask at <a href={`mailto:${site.email}`}>{site.email}</a>.
+            </p>
           </div>
         </section>
       </div>

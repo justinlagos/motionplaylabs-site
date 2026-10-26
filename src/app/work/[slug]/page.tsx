@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Pager } from "@/components/Pager";
-import { CtaBand, PlateHero } from "@/components/Clip";
-import { site } from "@/content/site";
+import { NextBand, PlateHero } from "@/components/Clip";
+import { notes } from "@/content/notes";
+import { productBySlug } from "@/content/products";
 import { caseBySlug, work } from "@/content/work";
 
 export const dynamicParams = false;
@@ -24,6 +24,8 @@ export default async function CasePage({ params }: P) {
   if (!w) notFound();
   const i = work.indexOf(w);
   const next = work[(i + 1) % work.length];
+  const product = productBySlug(w.slug);
+  const note = notes.find((n) => n.about.href === `/products/${w.slug}/` || (w.slug === "the-build-session" && n.about.href === "/school/"));
   return (
     <div className="page">
       <PlateHero clip={w.clip} kicker={w.owner} title={w.title} line={w.summary} />
@@ -51,11 +53,11 @@ export default async function CasePage({ params }: P) {
         </section>
         <section className="block split">
           <h2>What we decided</h2>
-          <ul className="list">
+          <ol className="numbered">
             {w.decisions.map((d) => (
               <li key={d}>{d}</li>
             ))}
-          </ul>
+          </ol>
         </section>
         <section className="block split">
           <h2>{w.resultsLabel ?? "What happened"}</h2>
@@ -65,31 +67,36 @@ export default async function CasePage({ params }: P) {
             ))}
           </ul>
         </section>
-        {w.links && (
-          <section className="block split">
-            <h2>See it</h2>
-            <ul className="link-list">
-              {w.links.map((l) => (
-                <li key={l.href}>
-                  <a href={l.href} rel="noopener">
-                    {l.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </section>
-        )}
-        <section className="block">
-          <Pager prev={{ href: "/work/", label: "Back to", title: "All work" }} next={{ href: `/work/${next.slug}/`, label: "Next case study", title: next.title }} />
+        <section className="block split">
+          <h2>More</h2>
+          <ul className="link-list">
+            {w.links?.map((l) => (
+              <li key={l.href}>
+                <a href={l.href} rel="noopener">
+                  {l.label}
+                </a>
+              </li>
+            ))}
+            {product && (
+              <li>
+                <Link href={`/products/${product.slug}/`}>{product.name}: stage and details</Link>
+              </li>
+            )}
+            {note && (
+              <li>
+                <Link href={`/lab-notes/${note.slug}/`}>Lab note: {note.title}</Link>
+              </li>
+            )}
+            <li>
+              <Link href="/work/">All work</Link>
+            </li>
+            <li>
+              <Link href="/contact/">Start a project</Link>
+            </li>
+          </ul>
         </section>
       </div>
-      <CtaBand clip="inkdark" title="Start a project" line={`Tell us what you need on the enquiry form, or email ${site.email}. Every enquiry is read by Justin.`}>
-        <div className="button-row">
-          <Link className="button is-solid" href="/contact/">
-            Send an enquiry
-          </Link>
-        </div>
-      </CtaBand>
+      <NextBand clip={next.clip} href={`/work/${next.slug}/`} kicker="Next case study" title={next.title} line={next.summary} />
     </div>
   );
 }

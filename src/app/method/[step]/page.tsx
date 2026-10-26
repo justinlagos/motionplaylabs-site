@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Pager } from "@/components/Pager";
-import { PlateHero } from "@/components/Clip";
+import { NextBand, PlateHero } from "@/components/Clip";
+import { Numeral } from "@/components/Numeral";
 import { method, stepBySlug } from "@/content/method";
 
 export const dynamicParams = false;
@@ -22,11 +22,16 @@ export default async function StepPage({ params }: P) {
   const s = stepBySlug((await params).step);
   if (!s) notFound();
   const i = method.indexOf(s);
-  const prev = method[i - 1];
   const next = method[i + 1];
   return (
     <div className="page">
-      <PlateHero clip={s.clip} kicker={`${s.numeral} of V`} title={s.name} line={`${s.line}.`} />
+      <PlateHero
+        clip={s.clip}
+        mark={<Numeral value={s.numeral} className="hero-numeral" />}
+        kicker={`Step ${i + 1} of ${method.length}`}
+        title={s.name}
+        line={`${s.line}.`}
+      />
       <div className="wrap">
         <section className="block split">
           <h2>What it means</h2>
@@ -58,13 +63,12 @@ export default async function StepPage({ params }: P) {
             ))}
           </ul>
         </section>
-        <section className="block">
-          <Pager
-            prev={prev ? { href: `/method/${prev.slug}/`, label: `Previous: ${prev.numeral}`, title: prev.name } : { href: "/", label: "Back to", title: "Method" }}
-            next={next ? { href: `/method/${next.slug}/`, label: `Next: ${next.numeral}`, title: next.name } : { href: "/studio/", label: "Work with us", title: "Studio" }}
-          />
-        </section>
       </div>
+      {next ? (
+        <NextBand clip={next.clip} href={`/method/${next.slug}/`} kicker={`Next step: ${next.numeral}`} title={next.name} line={`${next.line}.`} />
+      ) : (
+        <NextBand clip="soapfilm" href="/studio/" kicker="Work with us" title="Studio" line="Identity, campaigns, publications, events and websites, run on these five steps." />
+      )}
     </div>
   );
 }

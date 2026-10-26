@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { PlateHero } from "@/components/Clip";
+import { CtaBand, PlateHero } from "@/components/Clip";
+import { Loop } from "@/components/Loop";
 import { pageClips, site } from "@/content/site";
 
 export const metadata: Metadata = {
@@ -31,6 +32,20 @@ export default function CompanyPage() {
                 The same <Link href="/">five-step method</Link> runs all three. Each client job, product and class leaves something the next one can use.
               </p>
             </div>
+          </div>
+        </section>
+        <section className="block split">
+          <h2>How it fits together</h2>
+          <div>
+            <Loop />
+            <dl className="facts loop-notes">
+              <dt>Studio</dt>
+              <dd>Paid design work for organisations. Each job leaves templates and components the next one starts from.</dd>
+              <dt>Products</dt>
+              <dd>Our own software and hardware, run on the same steps. What we learn building them goes into client work.</dd>
+              <dt>School</dt>
+              <dd>The workflows that worked, taught to people who want to build their own.</dd>
+            </dl>
           </div>
         </section>
         <section className="block split">
@@ -66,18 +81,17 @@ export default function CompanyPage() {
             <dd>{site.ngCompany ? `${site.ngCompany.legalName}, RC ${site.ngCompany.rc}` : "Incorporated in 2026"}</dd>
           </dl>
         </section>
-        <section className="block split">
-          <h2>Contact</h2>
-          <div className="button-row">
-            <Link className="button is-solid" href="/contact/">
-              Start a project
-            </Link>
-            <a className="button" href={`mailto:${site.email}`}>
-              {site.email}
-            </a>
-          </div>
-        </section>
       </div>
+      <CtaBand clip="inkdark" title="Work with us" line={`Briefs, tenders, partnerships and press: ${site.email}. Every enquiry is read by Justin.`}>
+        <div className="button-row">
+          <Link className="button is-solid" href="/contact/">
+            Start a project
+          </Link>
+          <Link className="button" href="/procurement/">
+            For procurement teams
+          </Link>
+        </div>
+      </CtaBand>
     </div>
   );
 }

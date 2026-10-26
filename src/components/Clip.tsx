@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useRef } from "react";
 import { type ClipId, footage, media } from "@/content/footage";
 import { wirePlate, wireThumb } from "@/lib/clip-playback";
@@ -42,16 +43,19 @@ type HeroProps = {
   title: string;
   line?: string;
   kicker?: string;
+  /** Drawn above the title, e.g. a method step's numeral. */
+  mark?: React.ReactNode;
   children?: React.ReactNode;
 };
 
 /** Page opener: one clip behind the page title, in the clip's tone. */
-export function PlateHero({ clip, title, line, kicker, children }: HeroProps) {
+export function PlateHero({ clip, title, line, kicker, mark, children }: HeroProps) {
   const c = footage[clip];
   return (
     <section className="plate-hero" data-tone={c.tone}>
       <Plate id={clip} eager />
       <div className="plate-hero-text">
+        {mark}
         {kicker && <p className="plate-hero-kicker">{kicker}</p>}
         <h1 className="plate-hero-title">{title}</h1>
         {line && <p className="plate-hero-line">{line}</p>}
@@ -73,6 +77,33 @@ export function ClipThumb({ id, className = "" }: { id: ClipId; className?: stri
       <img src={m.thumbPoster} alt="" width={640} height={360} loading="lazy" decoding="async" />
       <video muted loop playsInline preload="none" disablePictureInPicture src={m.thumb} />
     </span>
+  );
+}
+
+type NextProps = { clip: ClipId; href: string; kicker: string; title: string; line?: string };
+
+/** The end of a detail page: the next page's own clip, and the whole band is the link to it. */
+export function NextBand({ clip, href, kicker, title, line }: NextProps) {
+  const c = footage[clip];
+  return (
+    <section className="cta-band is-next" data-tone={c.tone}>
+      <Plate id={clip} />
+      <div className="cta-band-text">
+        <p className="cta-band-kicker">{kicker}</p>
+        <h2 className="cta-band-title">
+          <Link className="stretch" href={href}>
+            {title}
+          </Link>
+        </h2>
+        {line && <p className="cta-band-line">{line}</p>}
+      </div>
+      <span className="next-mark" aria-hidden="true">
+        <svg viewBox="0 0 48 48" focusable="false">
+          <path d="M8 24h31M27 12l12 12-12 12" />
+        </svg>
+      </span>
+      <p className="plate-band-caption">{c.caption}</p>
+    </section>
   );
 }
 
