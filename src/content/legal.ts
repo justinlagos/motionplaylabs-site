@@ -1,3 +1,4 @@
+import { festivalTownStock } from "./festival-town";
 import { footage } from "./footage";
 
 // TODO: privacy, terms and safeguarding text to be finalised with a solicitor before launch.
@@ -89,7 +90,7 @@ export const legal: LegalDoc[] = [
       {
         heading: "Children",
         body: [
-          "Draw in the Air is used by children aged 3 to 7. We do not film or publish children's faces in our marketing.",
+          "Draw in the Air is used by children aged 3 to 7. We do not film or publish the children who use our products. Children shown in our marketing are models from licensed stock footage.",
           "Anyone working in schools on our behalf will hold an enhanced DBS check.",
         ],
       },
@@ -111,6 +112,13 @@ export const legal: LegalDoc[] = [
         heading: "Licences",
         body: [
           "The clips are used under the free licences of the sites they come from, which allow commercial use. They are placeholders for footage we shoot ourselves and will be replaced clip by clip.",
+        ],
+      },
+      {
+        heading: "Festival Town film",
+        body: [
+          "Character scenes are animated from Festival Town's own art. Gameplay is recorded from the game. Voices are the game's own recordings; the narration is a synthetic voice. The music is original.",
+          ...festivalTownStock.map((c) => `${c.title}. Mixkit, Mixkit Stock Video Free License. ${c.url}`),
         ],
       },
       {
