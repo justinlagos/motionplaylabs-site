@@ -13,6 +13,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/studio/",
     "/work/",
     "/products/",
+    "/festival-town/",
     "/school/",
     "/lab-notes/",
     "/company/",

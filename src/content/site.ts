@@ -41,6 +41,7 @@ export const footerNav = [
     title: "Products",
     links: [
       { href: "/products/", label: "All products" },
+      { href: "/festival-town/", label: "Festival Town" },
       { href: "/products/draw-in-the-air/", label: "Draw in the Air" },
       { href: "/products/void-canvas/", label: "Void Canvas" },
       { href: "/products/pamiit/", label: "Pamiit" },

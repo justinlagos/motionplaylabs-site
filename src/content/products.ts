@@ -22,6 +22,29 @@ export const stages: Exclude<Stage, "Parked">[] = ["Explore", "Prototype", "Pilo
 
 export const products: Product[] = [
   {
+    slug: "festival-town",
+    name: "Festival Town",
+    line: "A story game where children aged 4 to 7 learn by doing: counting, growing, coding, building and making.",
+    body: [
+      "The big street festival is on Saturday and the whole town needs a hand. A child picks Ada, Tobi or Amina, and Zizi comes along. Five places, three voiced activities in each, and something from every place goes to the festival square.",
+      "It runs in the browser on a phone, tablet or laptop, with nothing to install, no account and no adverts. Progress is saved on the device.",
+      "It is live and free. A promotional film, a parent and school waitlist and school pilots are the next steps.",
+    ],
+    stage: "Launch",
+    stageNote: "Live and free",
+    markets: "UK, Nigeria and anywhere English is spoken at home",
+    forWhom: "Parents, carers, nurseries and primary schools",
+    facts: [
+      { label: "Subjects", value: "Maths, science, technology, engineering" },
+      { label: "Worlds", value: "Market Street, Grandma's Farm, Computer Village, Builders' Yard, Adire Workshop" },
+      { label: "Platform", value: "Browser, touch or mouse" },
+      { label: "Price", value: "Free" },
+    ],
+    link: { href: "/festival-town/", label: "See Festival Town" },
+    next: "The promotional film, then school pilots. New worlds follow what children and teachers ask for.",
+    clip: "milkdrop",
+  },
+  {
     slug: "draw-in-the-air",
     name: "Draw in the Air",
     line: "Children aged 3 to 7 learn letters, numbers and shapes by drawing in the air in front of a webcam.",
