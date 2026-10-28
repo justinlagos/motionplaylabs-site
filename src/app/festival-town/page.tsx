@@ -44,6 +44,19 @@ const jsonLd = {
   audience: { "@type": "PeopleAudience", suggestedMinAge: 4, suggestedMaxAge: 7 },
   publisher: { "@type": "Organization", name: site.ukCompany.legalName, url: site.url },
   character: heroes.map((h) => ({ "@type": "Person", name: h.name })),
+  ...(festivalTown.film.src
+    ? {
+        trailer: {
+          "@type": "VideoObject",
+          name: `Festival Town: ${festivalTown.film.title}`,
+          description: festivalTown.film.body,
+          thumbnailUrl: new URL(festivalTown.film.poster, site.url).toString(),
+          contentUrl: new URL(festivalTown.film.src, site.url).toString(),
+          uploadDate: festivalTown.film.uploadDate,
+          duration: festivalTown.film.duration,
+        },
+      }
+    : {}),
 };
 
 const scene = (id: string) => ({
@@ -196,9 +209,22 @@ export default function FestivalTownPage() {
             <p className="ft-kicker">See it played</p>
             <h2 id="ft-devices-h">{festivalTown.film.title}</h2>
             <p className="ft-lead ft-muted">
-              These are screens from the game as it is today. It runs in the browser, so the same adventure fits a laptop, a tablet or a phone turned on its side.
+              {festivalTown.film.src
+                ? "A short film: the friends at work in their worlds, then the game on a tablet, a phone and a laptop."
+                : "These are screens from the game as it is today. It runs in the browser, so the same adventure fits a laptop, a tablet or a phone turned on its side."}
             </p>
           </header>
+          {festivalTown.film.src && (
+            <figure className="ft-film ft-reveal">
+              <Film />
+              <figcaption className="ft-film-cap">{festivalTown.film.credit}</figcaption>
+            </figure>
+          )}
+          {festivalTown.film.src && (
+            <p className="ft-screens-lead ft-muted ft-reveal">
+              The screens below are from the game as it is today. It runs in the browser, so the same adventure fits a laptop, a tablet or a phone turned on its side.
+            </p>
+          )}
           <div className="ft-screens">
             <figure className="ft-laptop ft-reveal">
               <div className="ft-screen">
@@ -222,10 +248,9 @@ export default function FestivalTownPage() {
               </figure>
             </div>
           </div>
-          <Film />
           <div className="ft-devices-foot ft-reveal">
             <p className="ft-muted">
-              {festivalTown.film.src ? "Or skip the film and try it yourself." : "A short film of the characters in their worlds, and children playing, is in production."} One place takes about ten minutes.
+              {festivalTown.film.src ? "Try it yourself." : "A short film of the characters in their worlds, and children playing, is in production."} One place takes about ten minutes.
             </p>
             <PlayLink place="devices" />
           </div>

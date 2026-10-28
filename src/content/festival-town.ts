@@ -12,15 +12,35 @@ export const festivalTown = {
   ages: "4 to 7",
   premise:
     "The big street festival is on Saturday and the whole town needs a hand. Children pick a friend, visit five places, and bring something back from each one for the festival square.",
-  /** Promotional film. Leave src empty until the film is finished; the section then shows the poster and no player. */
+  /**
+   * Promotional film. With an empty src the section shows the device screens and no player.
+   * Files live in public/festival-town/film/. Masters are kept outside the repo.
+   */
   film: {
-    src: "",
-    poster: "/festival-town/scene/bg_fest-1600.webp",
-    posterSmall: "/festival-town/scene/bg_fest-900.webp",
+    src: "/festival-town/film/festival-town-1080.mp4",
+    srcSmall: "/festival-town/film/festival-town-720.mp4",
+    captions: "/festival-town/film/festival-town-en.vtt",
+    poster: "/festival-town/film/poster-1600.webp",
+    posterSmall: "/festival-town/film/poster-900.webp",
+    /** ISO 8601, for the VideoObject in the page's structured data. */
+    duration: "PT1M14S",
+    uploadDate: "2026-10-28",
     title: "Big adventures. Little discoveries.",
     body: "The film shows the characters at work in their worlds and children playing on a phone, a tablet and a laptop.",
+    /** Shown under the player. The children are licensed stock, not our users. */
+    credit:
+      "Character scenes are animated from the game's own art. Gameplay is recorded from the game. Children's footage is licensed stock from Mixkit.",
   },
 };
+
+/** Licensed stock in the Festival Town film (main film and social cut). Listed on /legal/credits/. */
+export const festivalTownStock = [
+  { title: "A girl on a bed, smiling at a tablet", url: "https://mixkit.co/free-stock-video/smiling-girl-using-her-tablet-laying-on-bed-101259/" },
+  { title: "A boy using a phone", url: "https://mixkit.co/free-stock-video/young-boy-using-a-smartphone-101246/" },
+  { title: "A child working on a laptop", url: "https://mixkit.co/free-stock-video/kid-focused-on-homework-at-laptop-101330/" },
+  { title: "A boy using a tablet", url: "https://mixkit.co/free-stock-video/young-boy-using-a-tablet-101250/" },
+  { title: "A girl in headphones, smiling at a tablet", url: "https://mixkit.co/free-stock-video/smiling-little-girl-using-headphones-glaring-at-a-tabet-101267/" },
+];
 
 export type Hero = {
   id: "ada" | "tobi" | "amina" | "zizi";

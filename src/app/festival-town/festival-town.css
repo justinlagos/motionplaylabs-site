@@ -1330,29 +1330,95 @@
 .ft .ft-player-play {
   position: absolute;
   inset: 0;
-  display: grid;
-  place-items: center;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+  gap: 16px;
   border: 0;
-  padding: 0;
-  background: linear-gradient(to top, rgba(43, 27, 46, 0.5), rgba(43, 27, 46, 0.05) 60%);
+  padding: clamp(16px, 3vw, 40px);
+  background: linear-gradient(20deg, rgba(43, 27, 46, 0.6), rgba(43, 27, 46, 0) 45%);
   cursor: pointer;
+  text-align: left;
 }
 
 .ft .ft-player-play span {
+  flex: none;
   display: grid;
   place-items: center;
-  width: 104px;
-  height: 104px;
+  width: clamp(60px, 7vw, 96px);
+  height: clamp(60px, 7vw, 96px);
   border-radius: 50%;
   background: var(--ft-yellow);
   color: var(--ft-ink);
-  box-shadow: 0 8px 0 var(--ft-yellow-dark), 0 20px 40px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 7px 0 var(--ft-yellow-dark), 0 18px 36px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s ease;
 }
 
 .ft .ft-player-play svg {
-  width: 44px;
-  height: 44px;
-  margin-left: 6px;
+  width: 42%;
+  height: 42%;
+  margin-left: 6%;
+}
+
+.ft .ft-player-play em {
+  font-style: normal;
+  font-family: var(--ft-display);
+  font-weight: 800;
+  font-size: clamp(16px, 1.7vw, 24px);
+  line-height: 1.1;
+  color: #fff;
+  text-shadow: 0 2px 10px rgba(43, 27, 46, 0.5);
+  padding-bottom: 0.3em;
+}
+
+.ft .ft-player-play em small {
+  display: block;
+  font-family: var(--ft-label);
+  font-weight: 400;
+  font-size: 0.7em;
+  letter-spacing: 0.04em;
+  opacity: 0.9;
+}
+
+.ft .ft-player-play:hover span,
+.ft .ft-player-play:focus-visible span {
+  transform: translateY(-2px) scale(1.05);
+}
+
+.ft .ft-player-play:focus-visible {
+  outline: 4px solid var(--ft-yellow);
+  outline-offset: -4px;
+}
+
+.ft .ft-player video {
+  object-fit: contain;
+  background: var(--ft-ink);
+}
+
+.ft .ft-film {
+  margin: clamp(28px, 4vw, 56px) 0 0;
+}
+
+.ft .ft-film .ft-player {
+  margin-top: 0;
+}
+
+.ft .ft-film-cap {
+  margin-top: 14px;
+  font-size: 14px;
+  color: var(--ft-ink-2);
+  text-align: center;
+}
+
+.ft .ft-screens-lead {
+  max-width: 62ch;
+  margin: clamp(48px, 6vw, 88px) 0 clamp(20px, 3vw, 32px);
+}
+
+@media (max-width: 600px) {
+  .ft .ft-player {
+    border-radius: 18px;
+  }
 }
 
 @media (max-width: 860px) {

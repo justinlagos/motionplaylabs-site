@@ -237,22 +237,42 @@ export function Path({ children }: { children: React.ReactNode }) {
   );
 }
 
-/** The promotional film. Without a src nothing renders; the device captures stand in. */
+/**
+ * The promotional film. Without a src nothing renders; the device captures stand in.
+ * Nothing loads until the viewer presses play. Phones get the 720p file.
+ * Starts and completions are counted once per page view, with no personal data.
+ */
 export function Film() {
-  const { src, poster, posterSmall, title } = festivalTown.film;
+  const { src, srcSmall, captions, poster, posterSmall, title } = festivalTown.film;
   const [playing, setPlaying] = useState(false);
   const ref = useRef<HTMLVideoElement>(null);
+  const sent = useRef({ start: false, done: false });
 
   useEffect(() => {
-    if (playing && ref.current) ref.current.play().catch(() => setPlaying(false));
+    if (playing && ref.current) ref.current.play().catch(() => undefined);
   }, [playing]);
 
   if (!src) return null;
 
+  const onPlay = () => {
+    if (sent.current.start) return;
+    sent.current.start = true;
+    track("ft_video_start");
+  };
+  const onEnded = () => {
+    if (sent.current.done) return;
+    sent.current.done = true;
+    track("ft_video_complete");
+  };
+
   return (
     <div className="ft-player">
       {playing ? (
-        <video ref={ref} src={src} poster={poster} controls playsInline preload="metadata" onPlay={() => track("ft_video_start")} onEnded={() => track("ft_video_complete")} />
+        <video ref={ref} poster={poster} controls playsInline preload="auto" onPlay={onPlay} onEnded={onEnded} aria-label={`Film: ${title}`}>
+          {srcSmall && <source src={srcSmall} type="video/mp4" media="(max-width: 900px)" />}
+          <source src={src} type="video/mp4" />
+          {captions && <track kind="captions" src={captions} srcLang="en" label="English" default />}
+        </video>
       ) : (
         <>
           <img src={poster} srcSet={`${posterSmall} 900w, ${poster} 1600w`} sizes="(max-width: 900px) 100vw, 1360px" alt="" loading="lazy" decoding="async" />
@@ -260,6 +280,10 @@ export function Film() {
             <span>
               <PlayIcon />
             </span>
+            <em>
+              Watch the film
+              <small>1 min 14</small>
+            </em>
           </button>
         </>
       )}
