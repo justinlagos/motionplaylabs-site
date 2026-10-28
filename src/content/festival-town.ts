@@ -80,6 +80,8 @@ export type World = {
   intro: string;
   activities: { name: string; what: string }[];
   scene: string;
+  /** What this place sends to the festival square once its three activities are done. */
+  gift: string;
   /** Which hero stands in the scene, and in which pose. */
   kid: { id: Hero["id"]; pose: string };
   props: string[];
@@ -102,6 +104,7 @@ export const worlds: World[] = [
       { name: "Puff-puff", what: "Share Aunty Ronke's puff-puff so every plate gets the same" },
     ],
     scene: "bg_market_toys",
+    gift: "A talking drum, a basket of mangoes and a tray of puff-puff",
     kid: { id: "ada", pose: "point" },
     props: ["mango", "puff", "teddy_pink"],
   },
@@ -121,6 +124,7 @@ export const worlds: World[] = [
       { name: "Feeding time", what: "Give the goat, the hen and the rabbit the food each one eats, then sort living from not living" },
     ],
     scene: "bg_farm_garden",
+    gift: "Sunflowers, and the animals come too",
     kid: { id: "zizi", pose: "cheer" },
     props: ["pl_sprout", "chick", "sunflower"],
   },
@@ -140,6 +144,7 @@ export const worlds: World[] = [
       { name: "Light it up", what: "Fill the gap in the wire so electricity goes round the loop and the bulb comes on" },
     ],
     scene: "bg_tech",
+    gift: "A music speaker and the fairy lights",
     kid: { id: "amina", pose: "think" },
     props: ["bolt", "bulb_on", "battery"],
   },
@@ -159,6 +164,7 @@ export const worlds: World[] = [
       { name: "Strong shapes", what: "Build a tower to the flag line, then test which frame stays up when the fan blows" },
     ],
     scene: "bg_build",
+    gift: "A boat, a bridge and the stage itself",
     kid: { id: "tobi", pose: "cheer" },
     props: ["duck", "brick", "block"],
   },
@@ -178,34 +184,54 @@ export const worlds: World[] = [
       { name: "Shape kites", what: "Find the triangles, sort shapes by their sides and make a kite the same on both sides" },
     ],
     scene: "bg_adire",
+    gift: "Bunting, a ribbon pole and kites for the sky",
     kid: { id: "ada", pose: "cheer" },
     props: ["stamp_star", "kite", "scissors"],
   },
 ];
 
+export const festivalGifts = [
+  { id: "fe_drum", name: "Talking drum" },
+  { id: "fe_mangoes", name: "Mangoes" },
+  { id: "fe_puffpuff", name: "Puff-puff" },
+  { id: "fe_sunflowers", name: "Sunflowers" },
+  { id: "fe_hen", name: "The hen" },
+  { id: "fe_goat", name: "The goat" },
+  { id: "fe_boat", name: "A boat" },
+  { id: "fe_stage", name: "The stage" },
+  { id: "fe_ribbons", name: "Ribbons" },
+  { id: "fe_kites", name: "Kites" },
+];
+
 export const parentPoints = [
   {
     title: "Learning by doing",
+    icon: "mango",
     body: "Every activity is something to do, not a question to answer: count the mangoes into the basket, give the bean its water, put the arrows in order for the robot.",
   },
   {
     title: "Five subjects, one story",
+    icon: "fe_stage",
     body: "Counting, growing, coding, building and making. Each world is one subject, and the festival is the reason to visit all five.",
   },
   {
     title: "Pitched at early primary",
+    icon: "block",
     body: `Numbers to ten, life cycles, simple sequences, floating and sinking, patterns and measuring. About right for ages ${festivalTown.ages}.`,
   },
   {
     title: "Help when it's needed",
+    icon: "bulb_on",
     body: "A wrong tap gets a hint, not a buzzer. Zizi counts again with the child, or shows the step, so they can have another go.",
   },
   {
     title: "Nothing to install, nothing collected",
+    icon: "key",
     body: "It runs in the browser on a phone, tablet or laptop. Progress is saved on the device. There are no accounts and no adverts.",
   },
   {
     title: "Voiced all the way through",
+    icon: "speaker",
     body: "Every line is spoken in clear, simple English, so a child who is not reading yet can play on their own.",
   },
 ];

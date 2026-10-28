@@ -2,18 +2,74 @@
 
 import { track } from "@vercel/analytics";
 import { useEffect, useRef, useState } from "react";
-import { ageRanges, consentText, festivalTown, schoolRoles } from "@/content/festival-town";
-import { useMotionPaused } from "@/lib/motion";
+import { ageRanges, consentText, festivalTown, heroes, schoolRoles } from "@/content/festival-town";
+import { prefersReducedMotion, useMotionPaused } from "@/lib/motion";
 import { scrollToY } from "@/lib/scroll";
+import { Character } from "./Character";
 
 // Static previews have no server, so the form says so instead of pretending to send.
 const PREVIEW = process.env.NEXT_PUBLIC_PREVIEW === "1";
 
-/** Mirrors the site's "Pause motion" switch onto the page so blinks and drifting props stop too. */
+/** Mirrors the site's "Pause motion" switch onto the page, and runs the reveal observer. */
 export function MotionState({ children }: { children: React.ReactNode }) {
   const paused = useMotionPaused();
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const root = ref.current;
+    if (!root) return;
+    const els = root.querySelectorAll<HTMLElement>(".ft-reveal");
+    if (!("IntersectionObserver" in window)) {
+      els.forEach((e) => e.classList.add("is-in"));
+      return;
+    }
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const en of entries) {
+          if (en.isIntersecting) {
+            en.target.classList.add("is-in");
+            io.unobserve(en.target);
+          }
+        }
+      },
+      { rootMargin: "0px 0px -8% 0px", threshold: 0.12 },
+    );
+    els.forEach((e) => io.observe(e));
+    return () => io.disconnect();
+  }, []);
+
   return (
-    <div className="ft" data-ft-motion={paused ? "paused" : "playing"}>
+    <div ref={ref} className="ft" data-ft-motion={paused ? "paused" : "playing"}>
+      {children}
+    </div>
+  );
+}
+
+/** The town landscape drifts a little slower than the page, so it feels like ground, not a picture. */
+export function HeroLand({ children }: { children: React.ReactNode }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const paused = useMotionPaused();
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || paused || prefersReducedMotion()) return;
+    let raf = 0;
+    const onScroll = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        const y = Math.min(window.scrollY, 900);
+        el.style.transform = `translate3d(0, ${y * 0.22}px, 0)`;
+      });
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      cancelAnimationFrame(raf);
+      el.style.transform = "";
+    };
+  }, [paused]);
+  return (
+    <div ref={ref} className="ft-hero-land" aria-hidden="true">
       {children}
     </div>
   );
@@ -25,16 +81,10 @@ const PlayIcon = () => (
   </svg>
 );
 
-/** The Play button: goes straight into the game, and counts the click. */
+/** The Play button: straight into the game, and the click is counted. */
 export function PlayLink({ place, className = "ft-btn", children = "Play now" }: { place: string; className?: string; children?: React.ReactNode }) {
   return (
-    <a
-      className={className}
-      href={festivalTown.playUrl}
-      target="_blank"
-      rel="noopener"
-      onClick={() => track("ft_play_now", { place })}
-    >
+    <a className={className} href={festivalTown.playUrl} target="_blank" rel="noopener" onClick={() => track("ft_play_now", { place })}>
       <PlayIcon />
       {children}
     </a>
@@ -52,7 +102,7 @@ export function JumpLink({ to, audience, className = "ft-btn-2", children }: { t
         if (!el) return;
         e.preventDefault();
         if (audience) window.dispatchEvent(new CustomEvent("ft-audience", { detail: audience }));
-        const top = el.getBoundingClientRect().top + window.scrollY - 72;
+        const top = el.getBoundingClientRect().top + window.scrollY - 60;
         scrollToY(top, 1);
         history.replaceState(null, "", `#${to}`);
         track("ft_jump", { to, audience: audience ?? "" });
@@ -63,39 +113,146 @@ export function JumpLink({ to, audience, className = "ft-btn-2", children }: { t
   );
 }
 
-/** The promotional film. Without a src it shows the poster and says the film is coming. */
+type Kid = "ada" | "tobi" | "amina";
+
+/** The game's own pick screen, on the page: tap a friend and they step forward with their line. */
+export function Pick() {
+  const [kid, setKid] = useState<Kid>("ada");
+  const [swap, setSwap] = useState(0);
+  const kids = heroes.filter((h) => h.id !== "zizi");
+  const chosen = heroes.find((h) => h.id === kid)!;
+  const zizi = heroes.find((h) => h.id === "zizi")!;
+
+  const choose = (id: Kid) => {
+    if (id === kid) return;
+    setKid(id);
+    setSwap((n) => n + 1);
+    track("ft_pick", { kid: id });
+  };
+
+  return (
+    <div className="ft-inner">
+      <div className="ft-pick-left">
+        <div className="ft-bubble" style={{ "--c": zizi.colour } as React.CSSProperties}>
+          <img src="/festival-town/portrait/zizi.webp" alt="" width={74} height={74} />
+          <div>
+            <p className="ft-who">Zizi</p>
+            <p className="ft-line">Who will you play as? Tap a friend.</p>
+          </div>
+        </div>
+        <h2>Three friends to choose from. Zizi comes along whoever you pick.</h2>
+        <div className="ft-picks" role="group" aria-label="Choose a friend">
+          {kids.map((h) => (
+            <button
+              key={h.id}
+              type="button"
+              className="ft-pick"
+              aria-pressed={kid === h.id}
+              onClick={() => choose(h.id as Kid)}
+              style={{ "--c": h.colour } as React.CSSProperties}
+            >
+              <img src={`/festival-town/portrait/${h.id}.webp`} alt="" width={150} height={150} loading="lazy" />
+              <span>{h.name}</span>
+            </button>
+          ))}
+        </div>
+        <p className="ft-lead ft-muted">{chosen.body}</p>
+        <div className="ft-actions">
+          <PlayLink place="pick" className="ft-btn is-purple">
+            Play as {chosen.name}
+          </PlayLink>
+        </div>
+      </div>
+      <div className="ft-pick-stage" aria-live="polite">
+        <div className="ft-pick-ground" aria-hidden="true" />
+        <div className="ft-bubble" style={{ "--c": chosen.colour } as React.CSSProperties}>
+          <img src={`/festival-town/portrait/${chosen.id}.webp`} alt="" width={74} height={74} />
+          <div>
+            <p className="ft-who">{chosen.name}</p>
+            <p className="ft-line">{chosen.says}</p>
+          </div>
+        </div>
+        <Character key={`${kid}-${swap}`} id={kid} pose="wave" alt={`${chosen.name}, waving`} className={`c-hero${swap ? " is-swap" : ""}`} delay={0.6} />
+        <Character id="zizi" pose="idle" alt="Zizi" className="c-zizi" delay={2.4} bob />
+      </div>
+    </div>
+  );
+}
+
+/** Draws the dashed road through the five stops, measured from the page so it follows any screen size. */
+export function Path({ children }: { children: React.ReactNode }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [d, setD] = useState("");
+
+  useEffect(() => {
+    const root = ref.current;
+    if (!root) return;
+    const draw = () => {
+      if (window.innerWidth <= 820) {
+        setD("");
+        return;
+      }
+      const box = root.getBoundingClientRect();
+      const rings = [...root.querySelectorAll<HTMLElement>(".ft-ring")];
+      const pts = rings.map((r) => {
+        const b = r.getBoundingClientRect();
+        return { x: b.left - box.left + b.width / 2, y: b.top - box.top + b.height / 2 };
+      });
+      if (pts.length < 2) return;
+      // Start above the first stop, bend between stops with a loose S curve, finish below the last.
+      let path = `M ${pts[0].x} ${pts[0].y - 260}`;
+      path += ` L ${pts[0].x} ${pts[0].y}`;
+      for (let i = 1; i < pts.length; i++) {
+        const a = pts[i - 1], b = pts[i];
+        const midY = (a.y + b.y) / 2;
+        path += ` C ${a.x} ${midY + 20}, ${b.x} ${midY - 20}, ${b.x} ${b.y}`;
+      }
+      const last = pts[pts.length - 1];
+      path += ` C ${last.x} ${last.y + 180}, ${box.width / 2} ${last.y + 200}, ${box.width / 2} ${box.height + 160}`;
+      setD(path);
+    };
+    draw();
+    const ro = new ResizeObserver(draw);
+    ro.observe(root);
+    window.addEventListener("resize", draw);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", draw);
+    };
+  }, []);
+
+  return (
+    <div ref={ref} className="ft-path">
+      <svg className="ft-path-svg" aria-hidden="true">
+        {d && (
+          <>
+            <path className="ft-road-edge" d={d} />
+            <path className="ft-road" d={d} />
+            <path className="ft-dash" d={d} />
+          </>
+        )}
+      </svg>
+      {children}
+    </div>
+  );
+}
+
+/** The promotional film. Without a src nothing renders; the device captures stand in. */
 export function Film() {
   const { src, poster, posterSmall, title } = festivalTown.film;
   const [playing, setPlaying] = useState(false);
   const ref = useRef<HTMLVideoElement>(null);
-  const paused = useMotionPaused();
 
   useEffect(() => {
     if (playing && ref.current) ref.current.play().catch(() => setPlaying(false));
   }, [playing]);
 
-  if (!src) {
-    return (
-      <div className="ft-player" aria-label={`${title} (film in production)`}>
-        <img src={poster} srcSet={`${posterSmall} 900w, ${poster} 1600w`} sizes="(max-width: 900px) 100vw, 1360px" alt="The festival square in Festival Town, with the stage set up" loading="lazy" decoding="async" />
-        <span className="ft-player-soon">Film in production</span>
-      </div>
-    );
-  }
+  if (!src) return null;
 
   return (
     <div className="ft-player">
       {playing ? (
-        <video
-          ref={ref}
-          src={src}
-          poster={poster}
-          controls
-          playsInline
-          preload="metadata"
-          onPlay={() => track("ft_video_start")}
-          onEnded={() => track("ft_video_complete")}
-        />
+        <video ref={ref} src={src} poster={poster} controls playsInline preload="metadata" onPlay={() => track("ft_video_start")} onEnded={() => track("ft_video_complete")} />
       ) : (
         <>
           <img src={poster} srcSet={`${posterSmall} 900w, ${poster} 1600w`} sizes="(max-width: 900px) 100vw, 1360px" alt="" loading="lazy" decoding="async" />
@@ -104,7 +261,6 @@ export function Film() {
               <PlayIcon />
             </span>
           </button>
-          {paused && <span className="ft-player-soon">Motion is paused</span>}
         </>
       )}
     </div>
@@ -158,7 +314,8 @@ export function WaitlistForm({ initial = "parent" }: { initial?: Audience }) {
 
   if (status.kind === "sent") {
     return (
-      <div className="ft-form" role="status">
+      <div className="ft-board" role="status">
+        <span className="ft-board-ribbon">You're in</span>
         <div className="ft-done">
           <h3>{status.duplicate ? "You're already on the list" : audience === "school" ? "You're on the school list" : "You're on the list"}</h3>
           <p>
@@ -168,9 +325,7 @@ export function WaitlistForm({ initial = "parent" }: { initial?: Audience }) {
                 ? "A welcome email is on its way. We will write when there is something for schools: pilots first, then class tools."
                 : "A welcome email is on its way. You will hear from us when a new world is ready, and not much otherwise."}
           </p>
-          <PlayLink place="waitlist-done" className="ft-btn is-yellow">
-            Play while you wait
-          </PlayLink>
+          <PlayLink place="waitlist-done">Play while you wait</PlayLink>
         </div>
       </div>
     );
@@ -179,7 +334,8 @@ export function WaitlistForm({ initial = "parent" }: { initial?: Audience }) {
   const sending = status.kind === "sending";
 
   return (
-    <form className="ft-form" onSubmit={onSubmit}>
+    <form className="ft-board" onSubmit={onSubmit}>
+      <span className="ft-board-ribbon">Join the waitlist</span>
       <div className="ft-seg" role="group" aria-label="I am a">
         <button type="button" aria-pressed={audience === "parent"} onClick={() => setAudience("parent")}>
           Parent or carer
@@ -276,7 +432,7 @@ export function WaitlistForm({ initial = "parent" }: { initial?: Audience }) {
       </label>
 
       <div className="ft-actions">
-        <button type="submit" className="ft-btn" disabled={sending}>
+        <button type="submit" className="ft-btn is-purple" disabled={sending}>
           {sending ? "Sending" : audience === "school" ? "Join the school waitlist" : "Join the waitlist"}
         </button>
       </div>
