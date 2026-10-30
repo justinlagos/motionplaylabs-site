@@ -7,6 +7,64 @@ export type LegalDoc = { slug: string; title: string; status?: string; sections:
 
 export const legal: LegalDoc[] = [
   {
+    "slug": "festival-town-privacy",
+    "title": "Festival Town Privacy Policy",
+    "sections": [
+      {
+        "heading": "Last updated: 30 October 2026",
+        "body": [
+          "Festival Town is an educational game from MotionPlay Labs Ltd, registered in England and Wales, company number 17304660. This policy covers our Android game, package com.motionplaylabs.festivaltown. For privacy questions, parents and guardians can contact hello@motionplaylabs.com."
+        ]
+      },
+      {
+        "heading": "Playing the game",
+        "body": [
+          "Festival Town works without an online account. It has no advertising, in-app purchases, analytics SDKs or social messaging. The Android app does not request permission to access the internet, your camera, microphone, contacts or location. MotionPlay Labs does not receive children's profiles or gameplay records from the game."
+        ]
+      },
+      {
+        "heading": "Information saved on your device",
+        "body": [
+          "The game saves player profiles, an optional nickname, a locally generated profile identifier, character and colour choices, settings, activity progress, activity history, play time and related timestamps. This information enables saved progress, personalisation and the parent progress view. It stays in the app's local storage unless it is copied through the export or device-backup features described below. You can use an invented nickname; a child's real name is not required."
+        ]
+      },
+      {
+        "heading": "Export, backup and voice services",
+        "body": [
+          "The parent area can export progress as a text code and import it on another installation. The code contains profile and progress information; it is encoded, not encrypted. Anyone with the code may be able to read or restore that information. Share it only with someone you trust and remove copies when no longer needed.",
+          "Android may back up or transfer app data according to your device settings and backup provider. Those services are operated by the device or account provider, not by MotionPlay Labs. Check your device settings to manage or delete backups.",
+          "The game includes recorded narration and may use your device's text-to-speech service for spoken game instructions. The voice provider and its processing depend on your device settings; some voice services may use online processing. The game does not ask you to record speech. MotionPlay Labs does not receive audio or voice-service requests from the game."
+        ]
+      },
+      {
+        "heading": "Keeping and deleting information",
+        "body": [
+          "Local profile and progress information remains on your device until it is removed or the app's storage is cleared. The parent area provides progress-reset and profile-management controls. To remove all local app information, clear Festival Town's storage in Android settings. Uninstalling normally removes local app data, but a device backup may restore it if you reinstall. Manage backups separately in your device or backup-account settings, and delete any progress codes you exported.",
+          "MotionPlay Labs cannot access or remotely delete information stored only on your device or in your own backups."
+        ]
+      },
+      {
+        "heading": "Contacting us",
+        "body": [
+          "If a parent or guardian emails us, we receive the sender's email address and whatever information they choose to include. Please avoid sending children's names, photographs or other unnecessary personal information. We use correspondence to answer the request and provide support, with access limited to the people and email service providers needed for that purpose. We do not use support messages for advertising or sell their contents.",
+          "We delete support correspondence within 12 months after the request is resolved, unless we must keep it longer to meet a legal obligation or handle an ongoing dispute. You may ask to access, correct or delete information we hold about you by emailing hello@motionplaylabs.com. Applicable privacy law may provide additional rights, including the right to complain to your local data-protection authority."
+        ]
+      },
+      {
+        "heading": "Children's privacy",
+        "body": [
+          "Festival Town is designed for children aged 4–7 with parent or guardian involvement. The game does not send children's personal information to MotionPlay Labs. Parents can manage locally saved information using the controls described above. If you believe a child has sent personal information to our support address, contact us so we can review and delete information that is not needed."
+        ]
+      },
+      {
+        "heading": "Changes",
+        "body": [
+          "We will update this page if the game's information-handling practices change. The date above identifies the latest version."
+        ]
+      }
+    ]
+  },
+  {
     slug: "privacy",
     title: "Privacy notice",
     status: "Draft. Being finalised with legal advice.",
