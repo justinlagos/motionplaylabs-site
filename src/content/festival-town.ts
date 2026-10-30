@@ -6,6 +6,10 @@ export const festivalTown = {
   name: "Festival Town",
   tagline: "Help the town get ready",
   playUrl: "https://festival-town.netlify.app/",
+  /** Public Amazon listing supplied by the publisher, 30 October 2026. */
+  amazonUrl: "https://www.amazon.co.uk/dp/B0HPLJ1BLS",
+  /** Production release is still in review in Play Console. */
+  googlePlayStatus: "Coming soon",
   /** Set when playfestivaltown.com is bought and pointed at this page. */
   canonicalUrl: "https://motionplaylabs.com/festival-town/",
   /** Age range shown on the page. The game has no age gate; this is the range the activities are pitched at. */

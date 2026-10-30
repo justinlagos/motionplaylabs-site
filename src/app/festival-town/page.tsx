@@ -4,7 +4,7 @@ import "@fontsource/baloo-2/800.css";
 import "@fontsource/lilita-one/400.css";
 import "./festival-town.css";
 import "./landing.css";
-import { TownExplorer, GameplayPreview } from "./experience";
+import { TownExplorer, GameplayPreview, PlayEverywhere } from "./experience";
 import { MotionToggle } from "@/components/MotionToggle";
 import { festivalTown, heroes } from "@/content/festival-town";
 import { site } from "@/content/site";
@@ -37,7 +37,7 @@ const jsonLd = {
   url: festivalTown.canonicalUrl,
   description,
   applicationCategory: "EducationalApplication",
-  gamePlatform: ["Web browser"],
+  gamePlatform: ["Web browser", "Amazon Appstore"],
   operatingSystem: "Any",
   genre: ["Educational", "Adventure"],
   isAccessibleForFree: true,
@@ -64,7 +64,7 @@ const jsonLd = {
 const faqs = [
   { question: "What age is Festival Town for?", answer: "The activities are designed for ages 4–7: numbers to ten, life cycles, simple coding sequences, shapes and patterns. Younger players may enjoy exploring alongside a grown-up." },
   { question: "Does my child need to be able to read?", answer: "Instructions and character dialogue are spoken in English. Zizi offers hints along the way. A grown-up can help with the first visit and any unfamiliar controls." },
-  { question: "What do we need to play?", answer: "Open the free browser game on a phone, tablet or laptop with an internet connection. Use touch or a mouse. Turn phones sideways for a wider view. There is no account to create and nothing to install." },
+  { question: "What do we need to play?", answer: "Play in a web browser on your phone, tablet, laptop or desktop with an internet connection. Use touch or a mouse, and turn phones sideways. Festival Town is also available on the Amazon Appstore; check the listing for compatible devices. The Google Play release is coming soon." },
   { question: "How long does a visit take?", answer: "Each of the five places has three activities and takes roughly ten minutes to explore. You can play one place at a time and come back for more." },
   { question: "Will progress be saved?", answer: "The browser game saves progress on the device and browser you use. Clearing browser storage can remove that progress, and it does not automatically transfer to another device." },
   { question: "Are there adverts or purchases?", answer: "The browser game is free to play, with no adverts or in-game purchases. Signing up for news on this page is optional and is not needed to play." },
@@ -76,34 +76,32 @@ export default function FestivalTownPage() {
       <a className="ft-skip" href="#adventure">Skip to the adventure</a>
       <header className="ft-nav">
         <a href="#adventure" className="ft-nav-brand" aria-label="Festival Town, back to top"><img src="/festival-town/logo-600.webp" alt="Festival Town" width={600} height={437} /></a>
-        <nav aria-label="Festival Town"><a href="#explore">Explore the town</a><a href="#parents">Parents</a><a href="#schools">Schools</a></nav>
-        <PlayLink place="navigation">Play free</PlayLink>
+        <nav aria-label="Festival Town"><a href="#explore">The adventure</a><a href="#play-anywhere">Ways to play</a><a href="#parents">Grown-ups</a></nav>
+        <a href="#play-anywhere" className="ft-btn">Let’s play <span aria-hidden="true">↗</span></a>
       </header>
 
       <section className="ft-arrival" id="adventure" aria-labelledby="ft-h1">
-        <Bunting className="ft-arrival-bunting" flags={30} sag={20} height={70} />
         <div className="ft-inner ft-arrival-grid">
           <div className="ft-arrival-copy">
-            <p className="ft-kicker">Little adventures. A whole lot of discovery.</p>
-            <h1 id="ft-h1">A whole town to explore.<br /><em>A festival to bring to life.</em></h1>
+            <p className="ft-kicker">A little adventure for big imaginations · Ages 4–7</p>
+            <h1 id="ft-h1">Little adventures.<br /><em>A whole world of discovery.</em></h1>
             <p className="ft-lead">A playful learning adventure for ages 4–7, set in a colourful Nigerian town. Count, grow, code and help the festival come to life.</p>
-            <div className="ft-actions"><PlayLink place="hero"><span className="ft-play-wide">Play free in your browser</span><span className="ft-play-short">Play free</span></PlayLink><a className="ft-text-link" href="#gameplay">See it in action <span aria-hidden="true">↗</span></a></div>
-            <ul className="ft-trust" aria-label="Game essentials"><li>No adverts</li><li>No account</li><li>Nothing to install</li></ul>
+            <div className="ft-actions"><PlayLink place="hero">Play free on the web</PlayLink><a className="ft-text-link" href="#play-anywhere">Find your screen <span aria-hidden="true">↗</span></a></div>
           </div>
           <div className="ft-arrival-art">
-            <img className="ft-arrival-land" src="/festival-town/scene/bg_title-900.webp" alt="A colourful town getting ready for a street festival" width={900} height={386} fetchPriority="high" />
-            <span className="ft-arrival-note">The festival needs you!</span>
+            <img className="ft-arrival-land" src="/festival-town/scene/bg_title-1600.webp" srcSet="/festival-town/scene/bg_title-900.webp 900w, /festival-town/scene/bg_title-1600.webp 1600w" sizes="100vw" alt="A colourful Nigerian town getting ready for a street festival" width={1600} height={686} fetchPriority="high" />
+            <Bunting className="ft-arrival-bunting" flags={24} sag={50} height={100} />
             <div className="ft-arrival-cast" aria-hidden="true">
               <Character id="tobi" pose="point" alt="" className="c-tobi" priority />
               <Character id="ada" pose="wave" alt="" className="c-ada" priority delay={1.5} />
               <Character id="amina" pose="cheer" alt="" className="c-amina" priority delay={2.7} />
               <Character id="zizi" pose="cheer" alt="" className="c-zizi" priority bob delay={3.2} />
             </div>
-            <div className="ft-arrival-label"><strong>5 places. 15 little adventures.</strong><span>One big celebration, made together.</span></div>
           </div>
         </div>
-        <div className="ft-arrival-base ft-inner"><span>Made for curious kids. Inspired by the joy of Nigerian community.</span><MotionToggle /></div>
+        <div className="ft-arrival-base ft-inner"><span>Rooted in Nigeria. Made for curious minds, everywhere.</span><MotionToggle /></div>
       </section>
+      <div className="ft-facts" aria-label="Inside Festival Town"><span><b>5</b> places to explore</span><span><b>15</b> hands-on activities</span><span><b>4</b> STEM subjects</span><span><b>1</b> big celebration</span></div>
 
       <section className="ft-proof ft-section" id="gameplay" aria-labelledby="ft-gameplay-h">
         <div className="ft-inner ft-proof-grid">
@@ -117,6 +115,8 @@ export default function FestivalTownPage() {
       </section>
 
       <section className="ft-pickwrap ft-friends" id="friends" aria-label="Meet your friends"><Pick /></section>
+
+      <PlayEverywhere />
 
       <section className="ft-parent-section ft-section" id="parents" aria-labelledby="ft-parents-h">
         <div className="ft-inner"><header className="ft-section-heading"><div><p className="ft-kicker">A little reassurance for grown-ups</p><h2 id="ft-parents-h">Room to try.<br />Space to grow.</h2></div><p>Maths, science, technology and engineering, woven into everyday adventures. With a friendly voice to help along the way.</p></header>
