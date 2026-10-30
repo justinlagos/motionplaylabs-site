@@ -210,64 +210,6 @@ export const worlds: World[] = [
   },
 ];
 
-export const festivalGifts = [
-  { id: "fe_drum", name: "Talking drum" },
-  { id: "fe_mangoes", name: "Mangoes" },
-  { id: "fe_puffpuff", name: "Puff-puff" },
-  { id: "fe_sunflowers", name: "Sunflowers" },
-  { id: "fe_hen", name: "The hen" },
-  { id: "fe_goat", name: "The goat" },
-  { id: "fe_boat", name: "A boat" },
-  { id: "fe_stage", name: "The stage" },
-  { id: "fe_ribbons", name: "Ribbons" },
-  { id: "fe_kites", name: "Kites" },
-];
-
-export const parentPoints = [
-  {
-    title: "Learning by doing",
-    icon: "mango",
-    body: "Every activity is something to do, not a question to answer: count the mangoes into the basket, give the bean its water, put the arrows in order for the robot.",
-  },
-  {
-    title: "Five subjects, one story",
-    icon: "fe_stage",
-    body: "Counting, growing, coding, building and making. Each world is one subject, and the festival is the reason to visit all five.",
-  },
-  {
-    title: "Pitched at early primary",
-    icon: "block",
-    body: `Numbers to ten, life cycles, simple sequences, floating and sinking, patterns and measuring. About right for ages ${festivalTown.ages}.`,
-  },
-  {
-    title: "Help when it's needed",
-    icon: "bulb_on",
-    body: "A wrong tap gets a hint, not a buzzer. Zizi counts again with the child, or shows the step, so they can have another go.",
-  },
-  {
-    title: "Nothing to install, nothing collected",
-    icon: "key",
-    body: "It runs in the browser on a phone, tablet or laptop. Progress is saved on the device. There are no accounts and no adverts.",
-  },
-  {
-    title: "Voiced all the way through",
-    icon: "speaker",
-    body: "Every line is spoken in clear, simple English, so a child who is not reading yet can play on their own.",
-  },
-];
-
-export const schoolPoints = [
-  { label: "Subjects", value: "Maths, science, technology and engineering, three activities each" },
-  { label: "Session length", value: "One world takes about ten minutes; the whole town about an hour" },
-  { label: "Runs on", value: "Any browser on a tablet, laptop or classroom display with a touchscreen or mouse" },
-  { label: "Set-up", value: "None. Open the link, choose a child, play" },
-  { label: "Data", value: "No accounts, no names, nothing leaves the device" },
-];
-
-export const schoolNext =
-  "Teacher notes, class sets and a way to see how a class is getting on are not built yet. Join the school list and we will come to you first when they are, and when we run school pilots.";
-
-export const ageRanges = ["Under 4", "4 to 5", "6 to 7", "8 or over"];
 export const schoolRoles = ["Teacher", "Head or deputy", "Nursery lead", "Parent-teacher group", "Something else"];
 
 export const consentText = {

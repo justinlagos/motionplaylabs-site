@@ -3,12 +3,14 @@ import "@fontsource/baloo-2/700.css";
 import "@fontsource/baloo-2/800.css";
 import "@fontsource/lilita-one/400.css";
 import "./festival-town.css";
+import "./landing.css";
+import { TownExplorer, GameplayPreview } from "./experience";
 import { MotionToggle } from "@/components/MotionToggle";
-import { festivalGifts, festivalTown, heroes, parentPoints, schoolNext, schoolPoints, worlds } from "@/content/festival-town";
+import { festivalTown, heroes } from "@/content/festival-town";
 import { site } from "@/content/site";
 import { Bunting } from "./Bunting";
-import { Character, Host, Prop } from "./Character";
-import { Film, HeroLand, JumpLink, MotionState, Path, Pick, PlayLink, WaitlistForm } from "./client";
+import { Character } from "./Character";
+import { Film, JumpLink, MotionState, Pick, PlayLink, WaitlistForm } from "./client";
 
 const title = "Festival Town: a story game where children learn by doing";
 const description =
@@ -59,308 +61,83 @@ const jsonLd = {
     : {}),
 };
 
-const scene = (id: string) => ({
-  src: `/festival-town/scene/${id}-1600.webp`,
-  srcSet: `/festival-town/scene/${id}-900.webp 900w, /festival-town/scene/${id}-1600.webp 1600w`,
-});
+const faqs = [
+  { question: "What age is Festival Town for?", answer: "The activities are designed for ages 4–7: numbers to ten, life cycles, simple coding sequences, shapes and patterns. Younger players may enjoy exploring alongside a grown-up." },
+  { question: "Does my child need to be able to read?", answer: "Instructions and character dialogue are spoken in English. Zizi offers hints along the way. A grown-up can help with the first visit and any unfamiliar controls." },
+  { question: "What do we need to play?", answer: "Open the free browser game on a phone, tablet or laptop with an internet connection. Use touch or a mouse. Turn phones sideways for a wider view. There is no account to create and nothing to install." },
+  { question: "How long does a visit take?", answer: "Each of the five places has three activities and takes roughly ten minutes to explore. You can play one place at a time and come back for more." },
+  { question: "Will progress be saved?", answer: "The browser game saves progress on the device and browser you use. Clearing browser storage can remove that progress, and it does not automatically transfer to another device." },
+  { question: "Are there adverts or purchases?", answer: "The browser game is free to play, with no adverts or in-game purchases. Signing up for news on this page is optional and is not needed to play." },
+];
 
 export default function FestivalTownPage() {
-  const zizi = heroes.find((h) => h.id === "zizi")!;
   return (
     <MotionState>
-      {/* 1. Hero: the town rises out of the page */}
-      <section className="ft-hero" aria-labelledby="ft-h1">
-        <Bunting className="ft-hero-bunting" flags={26} sag={56} />
-        <MotionToggle />
-        <HeroLand>
-          <img {...scene("bg_title")} sizes="100vw" alt="" width={1600} height={686} fetchPriority="high" />
-        </HeroLand>
-        <Prop id="sun" className="p-sun" />
-        <Prop id="cloud" className="p-cloud" />
-        <Prop id="cloud" className="p-cloud2" />
-        <Prop id="kite" className="p-kite" />
-        <div className="ft-hero-text">
-          <img className="ft-hero-logo" src="/festival-town/logo.webp" alt="Festival Town. Help the town get ready." width={1200} height={874} fetchPriority="high" />
-          <h1 id="ft-h1">
-            A whole world of learning. <em>Ready to play.</em>
-          </h1>
-          <p className="ft-lead">
-            The big street festival is on Saturday and the whole town needs a hand. Pick a friend, visit five places, and learn to count, grow, code, build and make by doing it.
-          </p>
-          <div className="ft-actions">
-            <PlayLink place="hero" />
-            <JumpLink to="waitlist">Join the waitlist</JumpLink>
+      <a className="ft-skip" href="#adventure">Skip to the adventure</a>
+      <header className="ft-nav">
+        <a href="#adventure" className="ft-nav-brand" aria-label="Festival Town, back to top"><img src="/festival-town/logo-600.webp" alt="Festival Town" width={600} height={437} /></a>
+        <nav aria-label="Festival Town"><a href="#explore">Explore the town</a><a href="#parents">Parents</a><a href="#schools">Schools</a></nav>
+        <PlayLink place="navigation">Play free</PlayLink>
+      </header>
+
+      <section className="ft-arrival" id="adventure" aria-labelledby="ft-h1">
+        <Bunting className="ft-arrival-bunting" flags={30} sag={20} height={70} />
+        <div className="ft-inner ft-arrival-grid">
+          <div className="ft-arrival-copy">
+            <p className="ft-kicker">Little adventures. A whole lot of discovery.</p>
+            <h1 id="ft-h1">A whole town to explore.<br /><em>A festival to bring to life.</em></h1>
+            <p className="ft-lead">A playful learning adventure for ages 4–7, set in a colourful Nigerian town. Count, grow, code and help the festival come to life.</p>
+            <div className="ft-actions"><PlayLink place="hero"><span className="ft-play-wide">Play free in your browser</span><span className="ft-play-short">Play free</span></PlayLink><a className="ft-text-link" href="#gameplay">See it in action <span aria-hidden="true">↗</span></a></div>
+            <ul className="ft-trust" aria-label="Game essentials"><li>No adverts</li><li>No account</li><li>Nothing to install</li></ul>
           </div>
-          <p className="ft-fine">Free, in the browser, on a phone, tablet or laptop. Nothing to install, no account, no adverts.</p>
+          <div className="ft-arrival-art">
+            <img className="ft-arrival-land" src="/festival-town/scene/bg_title-900.webp" alt="A colourful town getting ready for a street festival" width={900} height={386} fetchPriority="high" />
+            <span className="ft-arrival-note">The festival needs you!</span>
+            <div className="ft-arrival-cast" aria-hidden="true">
+              <Character id="tobi" pose="point" alt="" className="c-tobi" priority />
+              <Character id="ada" pose="wave" alt="" className="c-ada" priority delay={1.5} />
+              <Character id="amina" pose="cheer" alt="" className="c-amina" priority delay={2.7} />
+              <Character id="zizi" pose="cheer" alt="" className="c-zizi" priority bob delay={3.2} />
+            </div>
+            <div className="ft-arrival-label"><strong>5 places. 15 little adventures.</strong><span>One big celebration, made together.</span></div>
+          </div>
         </div>
-        <div className="ft-hero-cast" aria-hidden="true">
-          <Character id="tobi" pose="point" alt="" className="c-tobi" delay={1.7} priority />
-          <Character id="ada" pose="wave" alt="" className="c-ada" delay={0} priority />
-          <Character id="amina" pose="cheer" alt="" className="c-amina" delay={3.1} priority />
-          <Character id="zizi" pose="idle" alt="" className="c-zizi" delay={2.3} bob priority />
+        <div className="ft-arrival-base ft-inner"><span>Made for curious kids. Inspired by the joy of Nigerian community.</span><MotionToggle /></div>
+      </section>
+
+      <section className="ft-proof ft-section" id="gameplay" aria-labelledby="ft-gameplay-h">
+        <div className="ft-inner ft-proof-grid">
+          <div className="ft-section-copy"><p className="ft-kicker">This is how discovery happens</p><h2 id="ft-gameplay-h">A little try.<br />A big “I did it!”</h2><p className="ft-lead ft-muted">Put the arrows in order. See what floats. Find the next stamp in the pattern. Every small action helps the town get ready.</p><ol className="ft-play-steps"><li><b>01</b><span>Try an idea</span></li><li><b>02</b><span>See what happens</span></li><li><b>03</b><span>Have another go</span></li></ol><a className="ft-text-link" href="#explore">Find their first adventure <span aria-hidden="true">↓</span></a></div>
+          <figure className="ft-proof-screen"><GameplayPreview /><figcaption>Real gameplay: coding, floating and patterns. Preview has no sound.</figcaption></figure>
         </div>
       </section>
 
-      {/* 2. Pick a friend */}
-      <section className="ft-pickwrap ft-reveal" aria-label="Choose a friend">
-        <Pick />
+      <section className="ft-explore ft-section" id="explore" aria-labelledby="ft-town-h">
+        <div className="ft-inner"><header className="ft-section-heading"><div><p className="ft-kicker">Five places. One festival.</p><h2 id="ft-town-h">Where shall we go first?</h2></div><p>From Mama Bisi’s market to Aunty Kemi’s Adire workshop, every neighbour has something to share. Choose a place to take a look.</p></header><TownExplorer /></div>
       </section>
 
-      {/* 3. The town: five places on one road, then the festival */}
-      <section className="ft-town" aria-labelledby="ft-town-h">
-        <div className="ft-inner">
-          <header className="ft-town-head ft-reveal">
-            <p className="ft-kicker">Five places, one festival</p>
-            <h2 id="ft-town-h">The whole town helps. Counting, growing, coding, building and making.</h2>
-            <p className="ft-lead ft-muted">
-              Each place is one subject with three activities. Finish them and that place sends something to the festival square.
-            </p>
-            <ul className="ft-verbs" aria-label="Subjects">
-              {worlds.map((w) => (
-                <li key={w.id} style={{ "--c": w.colour } as React.CSSProperties}>
-                  <i aria-hidden="true">{w.letter}</i>
-                  {w.verb}: {w.subject}
-                </li>
-              ))}
-            </ul>
-          </header>
-          <Path>
-            <ol className="ft-stops">
-              {worlds.map((w, i) => (
-                <li key={w.id} className="ft-stop ft-reveal" id={`world-${w.id}`} style={{ "--c": w.colour, "--c2": w.dark } as React.CSSProperties}>
-                  <div className="ft-stop-art" aria-hidden="true">
-                    <span className="ft-num">{i + 1}</span>
-                    <div className="ft-ring">
-                      <img {...scene(w.scene)} sizes="(max-width: 820px) 90vw, 520px" alt="" width={1600} height={686} loading="lazy" decoding="async" />
-                    </div>
-                    <Host id={w.host.id} name={w.host.name} />
-                    <Character id={w.kid.id} pose={w.kid.pose} alt="" delay={i * 0.9} />
-                    <Prop id={w.props[0]} className="p1" />
-                    <Prop id={w.props[1]} className="p2" />
-                    <Prop id={w.props[2]} className="p3" />
-                  </div>
-                  <div className="ft-stop-text">
-                    <span className="ft-pill">
-                      <i aria-hidden="true">{w.letter}</i>
-                      <b>{w.name}</b>
-                      <small>{w.subject}</small>
-                    </span>
-                    <p className="ft-verb">
-                      {w.verb} <span>with {w.host.name}</span>
-                    </p>
-                    <p className="ft-muted">{w.intro}</p>
-                    <ol className="ft-acts">
-                      {w.activities.map((a, j) => (
-                        <li key={a.name}>
-                          <i aria-hidden="true">{j + 1}</i>
-                          <div>
-                            <b>{a.name}</b>
-                            <span>{a.what}</span>
-                          </div>
-                        </li>
-                      ))}
-                    </ol>
-                    <p className="ft-with">For the festival: {w.gift}.</p>
-                  </div>
-                </li>
-              ))}
-            </ol>
-          </Path>
-        </div>
+      <section className="ft-pickwrap ft-friends" id="friends" aria-label="Meet your friends"><Pick /></section>
 
-        <div className="ft-finish">
-          <div className="ft-finish-land" aria-hidden="true">
-            <img {...scene("bg_fest")} sizes="100vw" alt="" width={1600} height={686} loading="lazy" decoding="async" />
+      <section className="ft-parent-section ft-section" id="parents" aria-labelledby="ft-parents-h">
+        <div className="ft-inner"><header className="ft-section-heading"><div><p className="ft-kicker">A little reassurance for grown-ups</p><h2 id="ft-parents-h">Room to try.<br />Space to grow.</h2></div><p>Maths, science, technology and engineering, woven into everyday adventures. With a friendly voice to help along the way.</p></header>
+          <div className="ft-parent-benefits">
+            <article><img src="/festival-town/prop/mango.webp" alt="" width={80} height={80} loading="lazy" /><h3>Learning they can do</h3><p>Count real objects in the story, test an idea and spot what changes. Fifteen activities across five places.</p></article>
+            <article><img src="/festival-town/prop/bulb_on.webp" alt="" width={80} height={80} loading="lazy" /><h3>Another go is welcome</h3><p>A wrong tap brings a hint. Zizi helps children find the next step, with spoken instructions in English.</p></article>
+            <article><img src="/festival-town/prop/key.webp" alt="" width={80} height={80} loading="lazy" /><h3>Easy to get started</h3><p>Free browser play. No account, no adverts and no in-game purchases. Progress stays in the browser you play in.</p></article>
           </div>
-          <div className="ft-inner ft-reveal">
-            <div className="ft-bubble" style={{ "--c": zizi.colour } as React.CSSProperties}>
-              <img src="/festival-town/portrait/zizi.webp" alt="" width={74} height={74} loading="lazy" />
-              <div>
-                <p className="ft-who">Zizi</p>
-                <p className="ft-line">The whole town helped. Counting, growing, coding, building and making!</p>
-              </div>
-            </div>
-            <h2>Everything is ready. It's festival time.</h2>
-            <ul className="ft-gifts" aria-label="What the town brings to the festival">
-              {festivalGifts.map((g) => (
-                <li key={g.id}>
-                  <img src={`/festival-town/prop/${g.id}.webp`} alt="" loading="lazy" decoding="async" />
-                  <span>{g.name}</span>
-                </li>
-              ))}
-            </ul>
-            <div className="ft-finish-cast" aria-hidden="true">
-              <Character id="tobi" pose="cheer" alt="" className="c-tobi" delay={0.5} />
-              <Character id="ada" pose="cheer" alt="" className="c-ada" delay={1.9} />
-              <Character id="amina" pose="cheer" alt="" className="c-amina" delay={3.3} />
-              <Character id="zizi" pose="cheer" alt="" className="c-zizi" delay={2.7} bob />
-            </div>
-            <div className="ft-actions">
-              <PlayLink place="finish" />
-            </div>
+          <div className="ft-parent-details"><div className="ft-faq"><h3>A few things you might be wondering</h3>{faqs.map(f => <details key={f.question}><summary>{f.question}<span aria-hidden="true">+</span></summary><p>{f.answer}</p></details>)}<p className="ft-policy-note">Looking for the Android app’s data information? <a href="/legal/festival-town-privacy/">Read the Android privacy policy</a>.</p></div>
+            <div className="ft-film-card"><p className="ft-kicker">Meet the world</p><h3>Big adventures.<br />Little discoveries.</h3><Film /><p className="ft-film-cap">{festivalTown.film.credit}</p></div>
           </div>
         </div>
       </section>
 
-      {/* 4. The real game on real screens */}
-      <section className="ft-devices" aria-labelledby="ft-devices-h">
-        <div className="ft-inner">
-          <header className="ft-reveal">
-            <p className="ft-kicker">See it played</p>
-            <h2 id="ft-devices-h">{festivalTown.film.title}</h2>
-            <p className="ft-lead ft-muted">
-              {festivalTown.film.src
-                ? "A short film: the friends at work in their worlds, then the game on a tablet, a phone and a laptop."
-                : "These are screens from the game as it is today. It runs in the browser, so the same adventure fits a laptop, a tablet or a phone turned on its side."}
-            </p>
-          </header>
-          {festivalTown.film.src && (
-            <figure className="ft-film ft-reveal">
-              <Film />
-              <figcaption className="ft-film-cap">{festivalTown.film.credit}</figcaption>
-            </figure>
-          )}
-          {festivalTown.film.src && (
-            <p className="ft-screens-lead ft-muted ft-reveal">
-              The screens below are from the game as it is today. It runs in the browser, so the same adventure fits a laptop, a tablet or a phone turned on its side.
-            </p>
-          )}
-          <div className="ft-screens">
-            <figure className="ft-laptop ft-reveal">
-              <div className="ft-screen">
-                <img src="/festival-town/play/town-laptop.webp" alt="Festival Town on a laptop: the town, with Zizi welcoming Ada and the five places to visit" width={1280} height={736} loading="lazy" decoding="async" />
-              </div>
-              <div className="ft-base" aria-hidden="true" />
-              <figcaption className="ft-screen-cap">The town, where every adventure starts. Tap a building to go there.</figcaption>
-            </figure>
-            <div className="ft-small-screens">
-              <figure className="ft-tablet ft-reveal" style={{ "--delay": "120ms" } as React.CSSProperties}>
-                <div className="ft-screen">
-                  <img src="/festival-town/play/farm-tablet.webp" alt="Festival Town on a tablet: Grandma's bean garden, with a watering can and a droopy bean" width={1024} height={706} loading="lazy" decoding="async" />
-                </div>
-                <figcaption className="ft-screen-cap">Grandma's Farm on a tablet: the bean is thirsty.</figcaption>
-              </figure>
-              <figure className="ft-phone ft-reveal" style={{ "--delay": "240ms" } as React.CSSProperties}>
-                <div className="ft-screen">
-                  <img src="/festival-town/play/market-phone.webp" alt="Festival Town on a phone: Uncle Femi's toy stall, with four sleeping teddies to wake and count" width={844} height={335} loading="lazy" decoding="async" />
-                </div>
-                <figcaption className="ft-screen-cap">Market Street on a phone: wake the teddies, count as you go.</figcaption>
-              </figure>
-            </div>
-          </div>
-          <div className="ft-devices-foot ft-reveal">
-            <p className="ft-muted">
-              {festivalTown.film.src ? "Try it yourself." : "A short film of the characters in their worlds, and children playing, is in production."} One place takes about ten minutes.
-            </p>
-            <PlayLink place="devices" />
-          </div>
-        </div>
-      </section>
+      <section className="ft-class-section ft-section" id="schools" aria-labelledby="ft-school-h"><div className="ft-inner ft-class-grid"><div className="ft-class-art"><img src="/festival-town/play/town-tablet.webp" alt="The Festival Town game map, with five places for a class to explore" width={1024} height={706} loading="lazy" /><Character id="tobi" pose="point" alt="" /></div><div className="ft-section-copy"><p className="ft-kicker">For schools and nurseries</p><h2 id="ft-school-h">A whole town.<br />A class full of ideas.</h2><p className="ft-lead">Explore together on a classroom display, or take turns on a tablet. Start with one place and about ten minutes.</p><p>15 voiced activities across maths, science, technology and engineering. Open the browser game, choose a friend and play.</p><p className="ft-muted">Teacher notes, class management and progress dashboards are not available yet. Join the school list for news about future pilots and tools.</p><div className="ft-actions"><JumpLink to="waitlist" audience="school" className="ft-btn is-purple">Join the school list</JumpLink><PlayLink place="schools" className="ft-text-link">Try the game</PlayLink></div></div></div></section>
 
-      {/* 5. Grown-ups */}
-      <section className="ft-grownups" aria-labelledby="ft-grownups-h">
-        <div className="ft-inner">
-          <header className="ft-reveal">
-            <p className="ft-kicker">For parents and carers</p>
-            <h2 id="ft-grownups-h">Made for curious kids. Built so grown-ups can relax.</h2>
-            <p className="ft-lead ft-muted">What is in it, what it asks of a child, and what it does not do.</p>
-            <div className="ft-grownups-cast" aria-hidden="true">
-              <Character id="amina" pose="think" alt="" className="c-amina" delay={0.4} />
-              <Character id="ada" pose="point" alt="" className="c-ada" delay={2.6} />
-            </div>
-          </header>
-          <ol className="ft-stickers">
-            {parentPoints.map((p, i) => (
-              <li key={p.title} className="ft-sticker ft-reveal" style={{ "--r": `${(i % 3) - 1}deg`, "--delay": `${(i % 2) * 90}ms` } as React.CSSProperties}>
-                <img src={`/festival-town/prop/${p.icon}.webp`} alt="" loading="lazy" decoding="async" />
-                <div>
-                  <h3>{p.title}</h3>
-                  <p>{p.body}</p>
-                </div>
-              </li>
-            ))}
-          </ol>
-        </div>
-      </section>
+      <section className="ft-celebrate" aria-labelledby="ft-festival-h"><img className="ft-celebrate-land" src="/festival-town/scene/bg_fest-1600.webp" alt="" width={1600} height={686} loading="lazy" /><Bunting flags={28} sag={25} height={80} /><div className="ft-inner"><div className="ft-celebrate-copy"><p className="ft-kicker">Every little helper makes a difference</p><h2 id="ft-festival-h">The town is waiting.<br />Let’s make it a festival.</h2><PlayLink place="celebration">Let’s play, it’s free</PlayLink></div><div className="ft-celebrate-cast" aria-hidden="true"><Character id="tobi" pose="cheer" alt="" delay={0.7} /><Character id="ada" pose="cheer" alt="" delay={1.9} /><Character id="amina" pose="cheer" alt="" delay={3.3} /><Character id="zizi" pose="cheer" alt="" bob /></div></div></section>
 
-      {/* 6. Schools */}
-      <section className="ft-schools" aria-labelledby="ft-schools-h" id="schools">
-        <div className="ft-inner">
-          <div className="ft-schools-text ft-reveal">
-            <p className="ft-kicker">For schools and nurseries</p>
-            <h2 id="ft-schools-h">Bring Festival Town to your class.</h2>
-            <p className="ft-lead ft-muted">
-              Three short, voiced activities in each of five places, which a class of four to seven year olds can run on tablets or a touchscreen display with no set-up.
-            </p>
-            <dl className="ft-facts">
-              {schoolPoints.map((s) => (
-                <div key={s.label}>
-                  <dt>{s.label}</dt>
-                  <dd>{s.value}</dd>
-                </div>
-              ))}
-            </dl>
-            <p>{schoolNext}</p>
-            <div className="ft-actions">
-              <JumpLink to="waitlist" audience="school" className="ft-btn is-purple">
-                Join the school waitlist
-              </JumpLink>
-              <PlayLink place="schools" className="ft-btn-2">
-                Try it first
-              </PlayLink>
-            </div>
-          </div>
-          <div className="ft-schools-art ft-reveal" style={{ "--delay": "140ms" } as React.CSSProperties}>
-            <figure className="ft-tablet">
-              <div className="ft-screen">
-                <img src="/festival-town/play/town-tablet.webp" alt="Festival Town on a classroom tablet, showing the town and its five places" width={1024} height={706} loading="lazy" decoding="async" />
-              </div>
-            </figure>
-            <Character id="tobi" pose="point" alt="" delay={1.1} />
-            <Host id="ngozi" name="Sister Ngozi" />
-          </div>
-        </div>
-      </section>
+      <section className="ft-updates ft-section" id="waitlist" aria-labelledby="ft-updates-h"><div className="ft-inner ft-updates-grid"><div className="ft-section-copy"><p className="ft-kicker">For the next adventure</p><h2 id="ft-updates-h">Good things<br />are growing.</h2><p className="ft-lead">The game is ready to play today. Get occasional emails about new adventures, activities and school pilots.</p><p className="ft-muted">A grown-up’s email is all we need for game updates. Signing up is optional.</p><img className="ft-updates-sprout" src="/festival-town/prop/pl_plant.webp" alt="" width={150} height={150} loading="lazy" /></div><WaitlistForm /></div></section>
 
-      {/* 7. Waitlist, on the festival stage */}
-      <section className="ft-stage" aria-labelledby="ft-waitlist-h" id="waitlist">
-        <div className="ft-stage-land" aria-hidden="true">
-          <img {...scene("bg_fest")} sizes="100vw" alt="" width={1600} height={686} loading="lazy" decoding="async" />
-        </div>
-        <Bunting className="ft-stage-bunting" flags={24} sag={48} />
-        <div className="ft-inner">
-          <div className="ft-stage-text ft-reveal">
-            <div className="ft-stage-panel">
-              <p className="ft-kicker">Waitlist</p>
-              <h2 id="ft-waitlist-h">The adventure is just beginning.</h2>
-              <p className="ft-lead">
-                The game is live and free. The waitlist is for what comes next: new worlds, new activities and school pilots. One email when there is something to say.
-              </p>
-            </div>
-            <div className="ft-stage-cast" aria-hidden="true">
-              <Character id="tobi" pose="cheer" alt="" className="c-tobi" delay={0.8} />
-              <Character id="zizi" pose="cheer" alt="" className="c-zizi" delay={2.2} bob />
-              <Prop id="drum" className="p-drum" />
-            </div>
-          </div>
-          <div className="ft-reveal" style={{ "--delay": "120ms" } as React.CSSProperties}>
-            <WaitlistForm />
-          </div>
-        </div>
-      </section>
-
-      {/* 8. Closing */}
-      <section className="ft-close" aria-label="Play Festival Town">
-        <div className="ft-inner ft-reveal">
-          <h2>A whole world of learning. Ready to play.</h2>
-          <div className="ft-actions">
-            <PlayLink place="close" />
-            <JumpLink to="waitlist">Join the waitlist</JumpLink>
-          </div>
-          <p className="ft-mpl">Festival Town is made by MotionPlay Labs.</p>
-        </div>
-      </section>
-
+      <footer className="ft-footer"><div className="ft-inner"><div><a href="/" className="ft-maker">Made by MotionPlay Labs <span aria-hidden="true">↗</span></a><p>Playful worlds. Curious minds.</p></div><nav aria-label="Festival Town footer"><a href="#parents">Parent questions</a><a href="#schools">Schools</a><a href="mailto:hello@motionplaylabs.com">Contact us</a><a href="/legal/privacy/">Website privacy</a><a href="/legal/festival-town-privacy/">Android privacy</a><a href="/legal/credits/">Credits</a></nav><small>{site.ukCompany.legalName} · Company {site.ukCompany.number}</small></div></footer>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
     </MotionState>
   );

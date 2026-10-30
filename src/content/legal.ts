@@ -76,10 +76,22 @@ export const legal: LegalDoc[] = [
       {
         heading: "What this site collects",
         body: [
-          "Only what you type into the enquiry form: your name, email, organisation and the details of the job. We use it to reply to you.",
+          "Our enquiry form collects your name, email, organisation and the details you submit so we can reply to you.",
           "The form sends your message to our inbox through our email provider, Resend.",
           "This site does not use advertising or tracking cookies.",
         ],
+      },
+      {
+        heading: "Festival Town updates and school news",
+        body: [
+          "The optional parent and carer signup asks for an adult’s email address and consent to receive Festival Town updates. The school signup also asks for the school name, with optional contact name, location and role. We record the selected audience, consent wording and signup source. These forms do not ask for children’s details.",
+          "Signup details are stored with Supabase. Resend sends the welcome email and a signup notification to our team. We use these details for the updates you choose. To unsubscribe, reply to one of our emails or contact hello@motionplaylabs.com. You can also ask us to delete your details.",
+          "Signing up is not required to play Festival Town. The Android game has its own privacy policy at /legal/festival-town-privacy/.",
+        ],
+      },
+      {
+        heading: "Website usage",
+        body: ["The website uses Vercel Analytics to measure visits and interactions such as play-button clicks, film plays and signup completion. The signup form does not include your email or contact details in these analytics events."],
       },
       {
         heading: "The Build Session",

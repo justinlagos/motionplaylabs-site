@@ -1,9 +1,14 @@
+"use client";
+
+import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { footageSources } from "@/content/legal";
 import { footerNav, site } from "@/content/site";
 import { LogoStacked } from "./Logo";
 
 export function Footer() {
+  const path = usePathname();
+  if (path === "/festival-town" || path === "/festival-town/") return null;
   return (
     <footer className="footer" data-tone="dark">
       <div className="footer-contact">

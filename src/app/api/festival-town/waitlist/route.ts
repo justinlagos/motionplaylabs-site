@@ -50,7 +50,7 @@ You asked for these emails on ${page}. To stop them, reply with "unsubscribe".`;
   }
   const text = `${hi}
 
-Thanks for joining the Festival Town waitlist.
+Thanks for signing up for Festival Town updates.
 
 The game is free and live now. Choose Ada, Tobi or Amina and help the town get ready for the festival: ${play}
 
@@ -100,8 +100,8 @@ export async function POST(req: Request) {
   const row = {
     audience,
     email,
-    first_name: audience === "parent" ? str(body.first_name, 80) || null : null,
-    child_age: audience === "parent" ? str(body.child_age, 40) || null : null,
+    first_name: null,
+    child_age: null,
     school_name: audience === "school" ? str(body.school_name, 160) || null : null,
     contact_name: audience === "school" ? str(body.contact_name, 120) || null : null,
     country: audience === "school" ? str(body.country, 80) || null : null,

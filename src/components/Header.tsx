@@ -28,6 +28,8 @@ export function Header() {
     return () => window.removeEventListener("keydown", onKey);
   }, [open]);
 
+  if (path === "/festival-town" || path === "/festival-town/") return null;
+
   return (
     <>
       <a className="skip-link" href="#content">

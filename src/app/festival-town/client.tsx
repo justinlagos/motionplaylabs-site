@@ -2,8 +2,8 @@
 
 import { track } from "@vercel/analytics";
 import { useEffect, useRef, useState } from "react";
-import { ageRanges, consentText, festivalTown, heroes, schoolRoles } from "@/content/festival-town";
-import { prefersReducedMotion, useMotionPaused } from "@/lib/motion";
+import { consentText, festivalTown, heroes, schoolRoles } from "@/content/festival-town";
+import { useMotionPaused } from "@/lib/motion";
 import { scrollToY } from "@/lib/scroll";
 import { Character } from "./Character";
 
@@ -39,37 +39,7 @@ export function MotionState({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <div ref={ref} className="ft" data-ft-motion={paused ? "paused" : "playing"}>
-      {children}
-    </div>
-  );
-}
-
-/** The town landscape drifts a little slower than the page, so it feels like ground, not a picture. */
-export function HeroLand({ children }: { children: React.ReactNode }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const paused = useMotionPaused();
-  useEffect(() => {
-    const el = ref.current;
-    if (!el || paused || prefersReducedMotion()) return;
-    let raf = 0;
-    const onScroll = () => {
-      cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        const y = Math.min(window.scrollY, 900);
-        el.style.transform = `translate3d(0, ${y * 0.22}px, 0)`;
-      });
-    };
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      cancelAnimationFrame(raf);
-      el.style.transform = "";
-    };
-  }, [paused]);
-  return (
-    <div ref={ref} className="ft-hero-land" aria-hidden="true">
+    <div ref={ref} className="ft ft-redesign" data-ft-motion={paused ? "paused" : "playing"}>
       {children}
     </div>
   );
@@ -137,10 +107,10 @@ export function Pick() {
           <img src="/festival-town/portrait/zizi.webp" alt="" width={74} height={74} />
           <div>
             <p className="ft-who">Zizi</p>
-            <p className="ft-line">Who will you play as? Tap a friend.</p>
+            <p className="ft-line">Meet your adventure crew. Tap a friend.</p>
           </div>
         </div>
-        <h2>Three friends to choose from. Zizi comes along whoever you pick.</h2>
+        <h2>A friend for every adventure.</h2>
         <div className="ft-picks" role="group" aria-label="Choose a friend">
           {kids.map((h) => (
             <button
@@ -159,7 +129,7 @@ export function Pick() {
         <p className="ft-lead ft-muted">{chosen.body}</p>
         <div className="ft-actions">
           <PlayLink place="pick" className="ft-btn is-purple">
-            Play as {chosen.name}
+            Choose your friend in the game
           </PlayLink>
         </div>
       </div>
@@ -175,64 +145,6 @@ export function Pick() {
         <Character key={`${kid}-${swap}`} id={kid} pose="wave" alt={`${chosen.name}, waving`} className={`c-hero${swap ? " is-swap" : ""}`} delay={0.6} />
         <Character id="zizi" pose="idle" alt="Zizi" className="c-zizi" delay={2.4} bob />
       </div>
-    </div>
-  );
-}
-
-/** Draws the dashed road through the five stops, measured from the page so it follows any screen size. */
-export function Path({ children }: { children: React.ReactNode }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [d, setD] = useState("");
-
-  useEffect(() => {
-    const root = ref.current;
-    if (!root) return;
-    const draw = () => {
-      if (window.innerWidth <= 820) {
-        setD("");
-        return;
-      }
-      const box = root.getBoundingClientRect();
-      const rings = [...root.querySelectorAll<HTMLElement>(".ft-ring")];
-      const pts = rings.map((r) => {
-        const b = r.getBoundingClientRect();
-        return { x: b.left - box.left + b.width / 2, y: b.top - box.top + b.height / 2 };
-      });
-      if (pts.length < 2) return;
-      // Start above the first stop, bend between stops with a loose S curve, finish below the last.
-      let path = `M ${pts[0].x} ${pts[0].y - 260}`;
-      path += ` L ${pts[0].x} ${pts[0].y}`;
-      for (let i = 1; i < pts.length; i++) {
-        const a = pts[i - 1], b = pts[i];
-        const midY = (a.y + b.y) / 2;
-        path += ` C ${a.x} ${midY + 20}, ${b.x} ${midY - 20}, ${b.x} ${b.y}`;
-      }
-      const last = pts[pts.length - 1];
-      path += ` C ${last.x} ${last.y + 180}, ${box.width / 2} ${last.y + 200}, ${box.width / 2} ${box.height + 160}`;
-      setD(path);
-    };
-    draw();
-    const ro = new ResizeObserver(draw);
-    ro.observe(root);
-    window.addEventListener("resize", draw);
-    return () => {
-      ro.disconnect();
-      window.removeEventListener("resize", draw);
-    };
-  }, []);
-
-  return (
-    <div ref={ref} className="ft-path">
-      <svg className="ft-path-svg" aria-hidden="true">
-        {d && (
-          <>
-            <path className="ft-road-edge" d={d} />
-            <path className="ft-road" d={d} />
-            <path className="ft-dash" d={d} />
-          </>
-        )}
-      </svg>
-      {children}
     </div>
   );
 }
@@ -300,10 +212,12 @@ export function WaitlistForm({ initial = "parent" }: { initial?: Audience }) {
   const [status, setStatus] = useState<Status>({ kind: "idle" });
   const [consent, setConsent] = useState(false);
 
+  useEffect(() => { setConsent(false); setStatus({ kind: "idle" }); }, [audience]);
+
   useEffect(() => {
     const onPick = (e: Event) => {
       const a = (e as CustomEvent<Audience>).detail;
-      if (a === "parent" || a === "school") setAudience(a);
+      if (a === "parent" || a === "school") { setAudience(a); setStatus({ kind: "idle" }); }
     };
     window.addEventListener("ft-audience", onPick);
     if (window.location.hash === "#waitlist-school") setAudience("school");
@@ -344,12 +258,12 @@ export function WaitlistForm({ initial = "parent" }: { initial?: Audience }) {
           <h3>{status.duplicate ? "You're already on the list" : audience === "school" ? "You're on the school list" : "You're on the list"}</h3>
           <p>
             {status.duplicate
-              ? "That address is already signed up, so nothing has changed. The welcome email went out the first time."
+              ? "That address is already signed up, so nothing has changed. No extra signup is needed."
               : audience === "school"
-                ? "A welcome email is on its way. We will write when there is something for schools: pilots first, then class tools."
-                : "A welcome email is on its way. You will hear from us when a new world is ready, and not much otherwise."}
+                ? "Thanks for signing up. We will write when there is something for schools: pilots first, then class tools."
+                : "Thanks for signing up. You will hear from us when a new world is ready, and not much otherwise."}
           </p>
-          <PlayLink place="waitlist-done">Play while you wait</PlayLink>
+          <PlayLink place="waitlist-done">Play Festival Town</PlayLink>
         </div>
       </div>
     );
@@ -359,12 +273,12 @@ export function WaitlistForm({ initial = "parent" }: { initial?: Audience }) {
 
   return (
     <form className="ft-board" onSubmit={onSubmit}>
-      <span className="ft-board-ribbon">Join the waitlist</span>
+      <span className="ft-board-ribbon">{audience === "school" ? "School news & pilots" : "Get new adventures"}</span>
       <div className="ft-seg" role="group" aria-label="I am a">
-        <button type="button" aria-pressed={audience === "parent"} onClick={() => setAudience("parent")}>
+        <button type="button" disabled={sending} aria-pressed={audience === "parent"} onClick={() => setAudience("parent")}>
           Parent or carer
         </button>
-        <button type="button" aria-pressed={audience === "school"} onClick={() => setAudience("school")}>
+        <button type="button" disabled={sending} aria-pressed={audience === "school"} onClick={() => setAudience("school")}>
           School
         </button>
       </div>
@@ -376,27 +290,6 @@ export function WaitlistForm({ initial = "parent" }: { initial?: Audience }) {
               Email<small>required</small>
             </label>
             <input id="ft-email" name="email" type="email" required autoComplete="email" maxLength={200} inputMode="email" />
-          </div>
-          <div className="ft-row">
-            <div className="ft-field">
-              <label htmlFor="ft-first">
-                First name<small>optional</small>
-              </label>
-              <input id="ft-first" name="first_name" autoComplete="given-name" maxLength={80} />
-            </div>
-            <div className="ft-field">
-              <label htmlFor="ft-age">
-                Child's age<small>optional</small>
-              </label>
-              <select id="ft-age" name="child_age" defaultValue="">
-                <option value="">Choose</option>
-                {ageRanges.map((a) => (
-                  <option key={a} value={a}>
-                    {a}
-                  </option>
-                ))}
-              </select>
-            </div>
           </div>
         </>
       ) : (
@@ -457,7 +350,7 @@ export function WaitlistForm({ initial = "parent" }: { initial?: Audience }) {
 
       <div className="ft-actions">
         <button type="submit" className="ft-btn is-purple" disabled={sending}>
-          {sending ? "Sending" : audience === "school" ? "Join the school waitlist" : "Join the waitlist"}
+          {sending ? "Sending" : audience === "school" ? "Join the school list" : "Keep me updated"}
         </button>
       </div>
 
@@ -466,7 +359,7 @@ export function WaitlistForm({ initial = "parent" }: { initial?: Audience }) {
       </p>
 
       <p className="ft-privacy">
-        We keep your email and the details above, nothing about your child, and we do not pass them on. Every email has an unsubscribe link, and you can ask us to delete your details at hello@motionplaylabs.com.
+        We use the details you submit to send the updates you choose. Signups are stored with Supabase and emails are sent through Resend. We do not ask for children’s details. To unsubscribe, reply to an email or contact hello@motionplaylabs.com. You can also ask us to delete your details. <a href="/legal/privacy/">Website privacy notice</a>.
       </p>
     </form>
   );
