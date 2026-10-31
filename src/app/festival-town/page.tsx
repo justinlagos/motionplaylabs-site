@@ -12,7 +12,7 @@ import { Hero } from "./Hero";
 import { Ribbons } from "./Ribbons";
 import { Shape } from "./Shapes";
 import { Playground, AdireMark } from "./Playground";
-import { Film, JumpLink, MotionState, MotionSwitch, PlayLink, TownHeader, WaitlistForm } from "./client";
+import { Film, JumpLink, MotionState, MotionSwitch, PlayLink, StoreLink, TownHeader, WaitlistForm } from "./client";
 
 const title = "Festival Town: a free learning game for ages 4 to 7";
 const description =
@@ -289,33 +289,33 @@ export default function FestivalTownPage() {
             <p className="ftx-lead">Tap on a phone or tablet, click on a laptop, or settle in on the sofa with the TV remote.</p>
             <ul className="ftx-stores">
               <li>
-                <a href={festivalTown.playUrl} target="_blank" rel="noopener" className="ftx-store">
+                <StoreLink href={festivalTown.playUrl} store="web" className="ftx-store">
                   <DeviceIcon type="web" />
                   <span>
                     <small>Play now, free</small>
                     <strong>In your web browser</strong>
                     <em>Phone, tablet, laptop and desktop</em>
                   </span>
-                </a>
+                </StoreLink>
               </li>
               <li>
-                <a href={festivalTown.amazonUrl} target="_blank" rel="noopener" className="ftx-store has-badge" aria-label="Festival Town on the Amazon Appstore">
+                <StoreLink href={festivalTown.amazonUrl} store="amazon" className="ftx-store has-badge" label="Festival Town on the Amazon Appstore">
                   <DeviceIcon type="tv" />
                   <span>
                     <AmazonBadge />
                     <em>Play on your TV with the remote</em>
                   </span>
-                </a>
+                </StoreLink>
               </li>
               <li>
                 {festivalTown.googlePlayUrl ? (
-                  <a href={festivalTown.googlePlayUrl} target="_blank" rel="noopener" className="ftx-store has-badge" aria-label="Festival Town on Google Play">
+                  <StoreLink href={festivalTown.googlePlayUrl} store="google_play" className="ftx-store has-badge" label="Festival Town on Google Play">
                     <DeviceIcon type="android" />
                     <span>
                       <GoogleBadge />
                       <em>Phones and tablets on Android</em>
                     </span>
-                  </a>
+                  </StoreLink>
                 ) : (
                   <div className="ftx-store has-badge is-soon">
                     <DeviceIcon type="android" />
