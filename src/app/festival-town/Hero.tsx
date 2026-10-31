@@ -4,12 +4,14 @@ import { useEffect, useRef } from "react";
 import { isPaused, subscribe } from "@/lib/motion";
 import { Bunting } from "./Bunting";
 import { Character } from "./Character";
-import { FilmButton, MotionSwitch, PlayLink } from "./client";
+import { FilmButton, PlayLink } from "./client";
+import { Shape } from "./Shapes";
 
 /**
- * Arrival. The sky, the town and the four friends, layered so they move apart a little as the
- * pointer moves and the page scrolls. The arrival sequence (bunting drops, friends pop up, Zizi
- * speaks) is CSS, so it plays without waiting for scripts; this file only adds depth.
+ * Arrival, set like a festival poster. The town sits in a round window; the four friends step out of
+ * it onto the page. Flat stamp shapes (the circle, star and triangle from the Adire Workshop) hang
+ * around it and drift apart as the pointer moves and the page scrolls. The arrival sequence is CSS,
+ * so it plays without waiting for scripts; this file only adds depth.
  */
 export function Hero() {
   const ref = useRef<HTMLElement>(null);
@@ -78,21 +80,52 @@ export function Hero() {
 
   return (
     <section ref={ref} className="ftx-hero" id="top" aria-labelledby="ftx-h1">
-      <div className="ftx-hero-sky" aria-hidden="true">
+      <div className="ftx-hero-field" aria-hidden="true">
+        <Shape kind="ring" className="hf-ring" />
+        <Shape kind="dots" className="hf-dots" />
         <img className="ftx-cloud c1" src="/festival-town/prop/cloud.webp" alt="" width={460} height={295} />
         <img className="ftx-cloud c2" src="/festival-town/prop/cloud.webp" alt="" width={460} height={295} />
-        <img className="ftx-cloud c3" src="/festival-town/prop/cloud.webp" alt="" width={460} height={295} />
-        <img className="ftx-kite" src="/festival-town/prop/kite.webp" alt="" width={285} height={460} />
       </div>
 
-      <div className="ftx-hero-copy">
-        <h1 id="ftx-h1" className="ftx-sticker-type">
-          <span>Help the town get ready</span> <span>for the festival</span>
+      <div className="ftx-hero-inner">
+        <h1 id="ftx-h1" className="ftx-hero-title ftx-sticker-type">
+          <span className="l1">Help the town</span> <span className="l2">get ready for</span> <span className="l3">the festival</span>
         </h1>
-        <p className="ftx-hero-lead">
-          A free learning game for ages 4 to 7. Pick a friend, visit five places in a Nigerian town, and count, grow, code, build and make your way to the big street festival.
-        </p>
-        <div className="ftx-hero-row">
+
+        <div className="ftx-window">
+          <div className="ftx-window-back" aria-hidden="true">
+            <Shape kind="sun" className="w-sun" />
+            <Shape kind="tri" className="w-tri" />
+            <Shape kind="star" className="w-star" />
+          </div>
+          <div className="ftx-window-disc">
+            <img
+              src="/festival-town/scene/bg_title-1600.webp"
+              srcSet="/festival-town/scene/bg_title-900.webp 900w, /festival-town/scene/bg_title-1600.webp 1600w"
+              sizes="(max-width: 900px) 120vw, 60vw"
+              alt="Festival Town: a computer shop, a market stall, a farm and a building yard around a green, ready for a street festival"
+              width={1600}
+              height={686}
+              fetchPriority="high"
+            />
+            <Bunting className="ftx-window-bunting" flags={18} sag={60} height={150} />
+          </div>
+          <div className="ftx-hero-cast" aria-hidden="true">
+            <p className="ftx-bubble ftx-hero-bubble">
+              <b>Zizi</b>
+              Welcome to our town! The big street festival is on Saturday.
+            </p>
+            <Character id="tobi" pose="point" alt="" className="c-tobi" priority delay={0.4} />
+            <Character id="ada" pose="wave" alt="" className="c-ada" priority delay={1.9} />
+            <Character id="amina" pose="cheer" alt="" className="c-amina" priority delay={3.1} />
+            <Character id="zizi" pose="wave" alt="" className="c-zizi" priority delay={2.5} />
+          </div>
+        </div>
+
+        <div className="ftx-hero-copy">
+          <p className="ftx-hero-lead">
+            A free learning game for ages 4 to 7. Pick a friend, visit five places in a Nigerian town, and count, grow, code, build and make your way to the big street festival.
+          </p>
           <div className="ftx-hero-actions">
             <PlayLink place="hero" className="ftx-btn is-big">
               Play free now
@@ -107,34 +140,6 @@ export function Hero() {
           </ul>
         </div>
       </div>
-
-      <div className="ftx-hero-stage">
-        <div className="ftx-hero-town">
-          <img
-            src="/festival-town/scene/bg_title-1600.webp"
-            srcSet="/festival-town/scene/bg_title-900.webp 900w, /festival-town/scene/bg_title-1600.webp 1600w"
-            sizes="(max-width: 700px) 190vw, 100vw"
-            alt="Festival Town: a computer shop, a market stall, a farm and a building yard around a green, ready for a street festival"
-            width={1600}
-            height={686}
-            fetchPriority="high"
-          />
-        </div>
-        <Bunting className="ftx-hero-bunting" flags={26} sag={44} height={120} />
-        <div className="ftx-hero-cast" aria-hidden="true">
-          <Character id="tobi" pose="point" alt="" className="c-tobi" priority delay={0.4} />
-          <Character id="ada" pose="wave" alt="" className="c-ada" priority delay={1.9} />
-          <Character id="amina" pose="cheer" alt="" className="c-amina" priority delay={3.1} />
-          <div className="c-zizi-wrap">
-            <p className="ftx-bubble ftx-hero-bubble">
-              <b>Zizi</b>
-              Welcome to our town! The big street festival is on Saturday.
-            </p>
-            <Character id="zizi" pose="wave" alt="" className="c-zizi" priority delay={2.5} />
-          </div>
-        </div>
-      </div>
-      <MotionSwitch className="ftx-hero-motion" />
     </section>
   );
 }

@@ -13,6 +13,7 @@ import { earn, resetGifts, useGifts } from "./store";
 type Id = World["id"];
 type Taster = {
   icon: string;
+  short: string;
   scene: string;
   kid: { id: string; pose: string };
   practises: string;
@@ -22,6 +23,7 @@ type Taster = {
 
 const T: Record<Id, Taster> = {
   market: {
+    short: "Market",
     icon: "mango",
     scene: "bg_market_mango",
     kid: { id: "ada", pose: "cheer" },
@@ -30,6 +32,7 @@ const T: Record<Id, Taster> = {
     win: "All packed! Mama Bisi’s mangoes are off to the festival square.",
   },
   farm: {
+    short: "Farm",
     icon: "sunflower",
     scene: "bg_farm_garden",
     kid: { id: "amina", pose: "cheer" },
@@ -38,6 +41,7 @@ const T: Record<Id, Taster> = {
     win: "Seed, sprout, plant, flowers. Grandma’s sunflowers are on their way.",
   },
   tech: {
+    short: "Tech",
     icon: "bolt",
     scene: "bg_tech",
     kid: { id: "amina", pose: "cheer" },
@@ -46,6 +50,7 @@ const T: Record<Id, Taster> = {
     win: "Bolt found his battery! The music speaker is going to the square.",
   },
   build: {
+    short: "Yard",
     icon: "duck",
     scene: "bg_build",
     kid: { id: "tobi", pose: "cheer" },
@@ -54,6 +59,7 @@ const T: Record<Id, Taster> = {
     win: "Five things tested. Engineer Bayo’s boat is ready for the river.",
   },
   adire: {
+    short: "Adire",
     icon: "stamp_star",
     scene: "bg_adire",
     kid: { id: "ada", pose: "cheer" },
@@ -686,6 +692,9 @@ export function Playground() {
               )}
             </span>
             <span className="ftx-tab-name">{w.name}</span>
+            <span className="ftx-tab-short" aria-hidden="true">
+              {T[w.id].short}
+            </span>
             <span className="ftx-tab-verb">{w.verb}</span>
             {gifts.includes(w.id) && <span className="visually-hidden">, done</span>}
           </button>

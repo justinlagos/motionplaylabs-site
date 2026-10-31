@@ -9,6 +9,8 @@ import { Character } from "./Character";
 import { Crew } from "./Crew";
 import { Finale } from "./Finale";
 import { Hero } from "./Hero";
+import { Ribbons } from "./Ribbons";
+import { Shape } from "./Shapes";
 import { Playground, AdireMark } from "./Playground";
 import { Film, JumpLink, MotionState, MotionSwitch, PlayLink, TownHeader, WaitlistForm } from "./client";
 
@@ -136,23 +138,31 @@ export default function FestivalTownPage() {
           <a href="#grown-ups">Grown-ups</a>
           <a href="#schools">Schools</a>
         </nav>
-        <PlayLink place="header" className="ftx-btn is-small">
-          Play free
-        </PlayLink>
+        <div className="ftx-header-end">
+          <MotionSwitch compact />
+          <PlayLink place="header" className="ftx-btn is-small">
+            Play free
+          </PlayLink>
+        </div>
       </TownHeader>
 
       <Hero />
 
       <section className="ftx-try" id="try" aria-labelledby="ftx-try-h">
+        <Ribbons />
+        <div className="ftx-try-field" aria-hidden="true">
+          <Shape kind="ring" className="tf-ring" />
+          <Shape kind="star" className="tf-star" />
+        </div>
         <div className="ftx-wrap">
           <header className="ftx-try-head">
-            <div className="ftx-try-zizi" aria-hidden="true">
-              <Character id="zizi" pose="think" alt="" delay={1.2} />
-            </div>
-            <div>
-              <h2 id="ftx-try-h" className="ftx-h2">
-                Have a go right here
-              </h2>
+            <h2 id="ftx-try-h" className="ftx-display">
+              <span>Have a go</span> <span>right here</span>
+            </h2>
+            <div className="ftx-try-intro">
+              <div className="ftx-try-zizi" aria-hidden="true">
+                <Character id="zizi" pose="think" alt="" delay={1.2} />
+              </div>
               <p className="ftx-lead">Five places in town need a hand before Saturday. Try a quick taster from each one. Finish it, and its gift goes to the festival square.</p>
             </div>
           </header>
@@ -179,22 +189,24 @@ export default function FestivalTownPage() {
           </header>
 
           <h3 className="ftx-h3">What they practise</h3>
-          <ol className="ftx-subjects">
+          <ol className="ftx-trail">
             {worlds.map((w) => (
-              <li key={w.id} style={{ "--tc": w.colour } as React.CSSProperties}>
-                <figure>
-                  <img src={`/festival-town/play/${shots[w.id]}.webp`} alt={`Real gameplay from ${w.name}`} width={1280} height={736} loading="lazy" />
-                </figure>
-                <div>
-                  <p className="ftx-subject-tag">
-                    <span className="ftx-letter" aria-hidden="true">
-                      {w.letter}
-                    </span>
-                    {w.subject}
-                  </p>
-                  <h4>
-                    {w.name} <small>with {w.host.name}</small>
-                  </h4>
+              <li key={w.id} style={{ "--tc": w.colour, "--td": w.dark } as React.CSSProperties}>
+                <div className="ftx-trail-stop">
+                  <figure className="ftx-trail-window">
+                    <img src={`/festival-town/play/${shots[w.id]}.webp`} alt={`Real gameplay from ${w.name}`} width={1280} height={736} loading="lazy" />
+                  </figure>
+                  <span className="ftx-trail-letter" aria-hidden="true">
+                    {w.letter}
+                  </span>
+                  <div className="ftx-trail-host" aria-hidden="true">
+                    <Character id={w.host.id} pose="wave" alt="" />
+                  </div>
+                </div>
+                <div className="ftx-trail-copy">
+                  <p className="ftx-subject-tag">{w.subject}</p>
+                  <h4>{w.name}</h4>
+                  <p className="ftx-trail-host-name">with {w.host.name}</p>
                   <ul>
                     {w.activities.map((a) => (
                       <li key={a.name}>
@@ -208,14 +220,12 @@ export default function FestivalTownPage() {
           </ol>
 
           <h3 className="ftx-h3">The house rules</h3>
-          <ul className="ftx-rules">
+          <ul className="ftx-quilt">
             {rules.map((r) => (
-              <li key={r.h}>
+              <li key={r.h} className={`is-${r.s}`}>
                 <AdireMark s={r.s} />
-                <div>
-                  <h4>{r.h}</h4>
-                  <p>{r.p}</p>
-                </div>
+                <h4>{r.h}</h4>
+                <p>{r.p}</p>
               </li>
             ))}
           </ul>
@@ -254,6 +264,8 @@ export default function FestivalTownPage() {
       <section className="ftx-screens" id="play-anywhere" aria-labelledby="ftx-screens-h">
         <div className="ftx-wrap ftx-screens-grid">
           <figure className="ftx-tv">
+            <Shape kind="tri" className="tv-tri" />
+            <Shape kind="dots" className="tv-dots" />
             <img
               src="/festival-town/scene/family-tv-1600.webp"
               srcSet="/festival-town/scene/family-tv-900.webp 900w, /festival-town/scene/family-tv-1600.webp 1600w"
@@ -310,6 +322,7 @@ export default function FestivalTownPage() {
       <section className="ftx-schools" id="schools" aria-labelledby="ftx-schools-h">
         <div className="ftx-wrap ftx-schools-grid">
           <div className="ftx-schools-art">
+            <Shape kind="sun" className="sc-sun" />
             <img src="/festival-town/play/town-tablet.webp" alt="The Festival Town map on a tablet, with the five places to visit" width={1024} height={706} loading="lazy" />
             <div className="ftx-schools-tobi" aria-hidden="true">
               <Character id="tobi" pose="point" alt="" delay={2} />

@@ -56,15 +56,23 @@ export function JumpLink({ to, audience, className = "ftx-btn is-ghost", childre
   );
 }
 
-/** Pause or play every looping animation on the page (WCAG 2.2.2). */
-export function MotionSwitch({ className = "" }: { className?: string }) {
+/** Pause or play every looping animation on the page (WCAG 2.2.2). Compact is the round icon in the header. */
+export function MotionSwitch({ className = "", compact = false }: { className?: string; compact?: boolean }) {
   const paused = useMotionPaused();
+  const label = paused ? "Play motion" : "Pause motion";
   return (
-    <button type="button" className={`ftx-motion ${className}`} aria-pressed={paused} onClick={() => setPaused(!paused)}>
+    <button
+      type="button"
+      className={`ftx-motion${compact ? " is-compact" : ""} ${className}`}
+      aria-pressed={paused}
+      aria-label={compact ? "Pause motion" : undefined}
+      title={compact ? label : undefined}
+      onClick={() => setPaused(!paused)}
+    >
       <svg viewBox="0 0 20 20" aria-hidden="true">
-        {paused ? <path d="M6 4.5v11l9-5.5z" fill="currentColor" /> : <path d="M6 4h3v12H6zM11 4h3v12h-3z" fill="currentColor" />}
+        {paused ? <path d="M6 4.5v11l9-5.5z" fill="currentColor" /> : <path d="M5.5 4h3v12h-3zM11.5 4h3v12h-3z" fill="currentColor" />}
       </svg>
-      {paused ? "Play motion" : "Pause motion"}
+      {!compact && label}
     </button>
   );
 }
