@@ -1381,6 +1381,9 @@ html:has(.ftx) {
 
 .ftx-card {
   position: relative;
+  align-self: stretch;
+  display: grid;
+  align-content: center;
   margin: 16px 16px 12px 0;
   padding: clamp(14px, 2.4vw, 26px);
   border: 5px solid var(--wc);
@@ -1452,62 +1455,94 @@ html:has(.ftx) {
   }
 }
 
-/* Win */
+/* Win: replaces the taster inside the card, so the card always fits it. */
 
 .ftx-win {
-  position: absolute;
-  inset: 0;
-  z-index: 5;
+  position: relative;
   display: grid;
-  grid-template-columns: minmax(110px, 30%) 1fr;
-  align-items: center;
-  gap: 8px 20px;
-  padding: 20px clamp(16px, 3vw, 32px);
-  background: rgb(255 248 236 / 0.97);
+  grid-template-columns: minmax(120px, 28%) minmax(0, 1fr);
+  grid-template-areas:
+    "kid title"
+    "kid text"
+    "kid actions";
+  align-content: center;
+  align-items: start;
+  column-gap: clamp(16px, 3vw, 36px);
+  padding: clamp(12px, 2vw, 24px) clamp(4px, 1.4vw, 16px);
   animation: ftx-card-in 300ms var(--soft) both;
 }
 
 .ftx-win-kid {
-  align-self: end;
+  grid-area: kid;
+  align-self: center;
+  width: 100%;
+  max-width: 200px;
+  justify-self: center;
   animation: ftx-pop 700ms 120ms var(--pop) both;
 }
 
-.ftx-win h3 {
-  font-size: clamp(1.4rem, 2.4vw, 2rem);
+.ftx-win-title {
+  grid-area: title;
+  align-self: end;
+  font-size: clamp(1.45rem, 2.4vw, 2rem);
   line-height: 1.1;
 }
 
-.ftx-win p {
-  margin-top: 10px;
+.ftx-win-text {
+  grid-area: text;
+  margin-top: 12px;
   max-width: 44ch;
 }
 
 .ftx-win-actions {
+  grid-area: actions;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 10px 18px;
-  margin-top: 18px;
+  gap: 12px 20px;
+  margin-top: 22px;
+  padding-bottom: 8px;
 }
 
 @media (max-width: 560px) {
+  .ftx-card[data-won="yes"] {
+    padding: 22px 18px 26px;
+  }
   .ftx-win {
-    grid-template-columns: 90px 1fr;
-    align-items: start;
-    padding: 14px;
+    grid-template-columns: 76px minmax(0, 1fr);
+    grid-template-areas:
+      "kid title"
+      "text text"
+      "actions actions";
+    align-items: center;
+    column-gap: 14px;
+    padding: 0;
   }
   .ftx-win-kid {
-    align-self: start;
+    align-self: center;
   }
-  .ftx-win h3 {
-    font-size: 1.25rem;
+  .ftx-win-title {
+    align-self: center;
+    font-size: 1.3rem;
   }
-  .ftx-win p {
-    font-size: 0.9375rem;
+  .ftx-win-text {
+    margin-top: 16px;
+    font-size: 1rem;
+  }
+  .ftx-win-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
+    margin-top: 20px;
+    padding-bottom: 6px;
   }
   .ftx-win-actions .ftx-btn {
-    font-size: 1rem;
-    padding-inline: 18px;
+    width: 100%;
+    font-size: 1.0625rem;
+    padding-inline: 16px;
+  }
+  .ftx-win-actions .ftx-link {
+    justify-content: center;
   }
 }
 
@@ -1746,9 +1781,7 @@ html:has(.ftx) {
   background: none;
   cursor: pointer;
   transform: rotate(var(--r));
-  transition:
-    transform 220ms var(--pop),
-    opacity 220ms;
+  transition: transform 220ms var(--pop);
 }
 
 .g-mango img {
@@ -1765,9 +1798,10 @@ html:has(.ftx) {
   transform: rotate(var(--r)) scale(0.92);
 }
 
+/* The tapped mango leaves the pile at once: its twin flies from this spot into the basket. */
 .g-mango[data-taken="yes"] {
-  opacity: 0;
-  transform: rotate(var(--r)) translate(140%, -30%) scale(0.4);
+  visibility: hidden;
+  transition: none;
   pointer-events: none;
 }
 
@@ -1804,51 +1838,83 @@ html:has(.ftx) {
   font-size: 1.5rem;
 }
 
+/* Three layers: the basket, the mangoes, then the basket again cut to its front lip,
+   so packed mangoes sit inside the rim instead of on top of the weave. */
 .g-basket {
   position: relative;
   width: min(240px, 100%);
   aspect-ratio: 384 / 351;
-  margin-top: 54px;
+  margin-top: 64px;
 }
 
-.g-basket-front {
+.g-basket-back,
+.g-basket-lip {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
 }
 
-.g-basket-fill img {
-  position: absolute;
-  width: 26%;
-  height: auto;
-  transform: rotate(var(--r));
-  animation: ftx-drop-in 420ms var(--pop) both;
+.g-basket-lip {
+  z-index: 60;
+  pointer-events: none;
+  -webkit-mask: radial-gradient(ellipse 45% 15% at 50% 21%, transparent 98%, #000 100%), linear-gradient(#000, #000);
+  -webkit-mask-composite: source-in;
+  -webkit-mask-size:
+    100% 100%,
+    100% 79%;
+  -webkit-mask-position:
+    0 0,
+    0 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask:
+    radial-gradient(ellipse 45% 15% at 50% 21%, transparent 98%, #000 100%) 0 0 / 100% 100% no-repeat,
+    linear-gradient(#000, #000) 0 100% / 100% 79% no-repeat;
+  mask-composite: intersect;
 }
 
-@keyframes ftx-drop-in {
-  from {
-    opacity: 0;
-    transform: translateY(-80px) rotate(var(--r, 0deg)) scale(0.8);
+.g-basket-fill img {
+  position: absolute;
+  height: auto;
+  transform: rotate(var(--r));
+  filter: drop-shadow(0 3px 0 rgb(0 0 0 / 0.1));
+  animation: g-fly 620ms cubic-bezier(0.33, 0.9, 0.4, 1) both;
+}
+
+@keyframes g-fly {
+  0% {
+    transform: translate(var(--fx), var(--fy)) scale(var(--s)) rotate(var(--r));
   }
-  to {
-    opacity: 1;
-    transform: rotate(var(--r, 0deg));
+  55% {
+    transform: translate(calc(var(--fx) * 0.35), calc(var(--fy) * 0.35 - 70px)) scale(calc((var(--s) + 1) / 2)) rotate(calc(var(--r) + 40deg));
+  }
+  82% {
+    transform: translate(0, 6px) scale(1.04, 0.94) rotate(var(--r));
+  }
+  100% {
+    transform: rotate(var(--r));
   }
 }
 
 .g-count {
   position: absolute;
-  right: -14px;
-  top: -34px;
+  z-index: 70;
+  left: -18px;
+  top: 22%;
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border: 4px solid #fff;
+  border-radius: 50%;
+  background: var(--ink);
   color: #fff;
   font-family: var(--display);
-  font-size: 4.5rem;
+  font-size: 1.6rem;
   font-weight: 800;
   line-height: 1;
-  -webkit-text-stroke: 0.14em var(--ink);
-  paint-order: stroke fill;
-  animation: ftx-count 520ms var(--pop) both;
+  box-shadow: 0 4px 0 rgb(0 0 0 / 0.15);
+  animation: ftx-count 420ms 380ms var(--pop) both;
 }
 
 @keyframes ftx-count {
@@ -1865,33 +1931,40 @@ html:has(.ftx) {
 @media (max-width: 560px) {
   .g-market {
     grid-template-columns: 1fr;
+    gap: 4px;
     min-height: 0;
   }
   .g-market-pile {
-    height: 210px;
+    width: min(100%, 290px);
+    height: 200px;
+    margin: 0 auto;
   }
   .g-mango {
-    width: 19%;
+    width: 24%;
   }
   .g-market-basket {
     grid-template-columns: auto auto;
-    align-items: center;
-    gap: 6px 18px;
+    justify-content: center;
+    align-items: end;
+    gap: 6px 22px;
   }
   .g-basket {
-    width: 150px;
-    margin-top: 44px;
+    width: 160px;
+    margin-top: 48px;
   }
   .g-target {
     grid-row: 1;
+    margin-bottom: 18px;
   }
   .g-market-basket .g-tally {
     grid-column: 1 / -1;
+    margin-top: 10px;
   }
   .g-count {
-    font-size: 3.2rem;
-    top: -24px;
-    right: -20px;
+    width: 44px;
+    height: 44px;
+    font-size: 1.35rem;
+    left: -14px;
   }
 }
 
@@ -1912,9 +1985,12 @@ html:has(.ftx) {
 .g-slots li {
   position: relative;
   display: grid;
-  place-items: center;
-  align-content: center;
-  aspect-ratio: 1 / 1.1;
+  grid-template-rows: 1fr auto;
+  justify-items: center;
+  align-items: center;
+  gap: 6px;
+  min-height: clamp(104px, 13vw, 150px);
+  padding: 18px 6px 12px;
   border: 3px dashed #c9b48c;
   border-radius: 20px;
   background: rgb(255 255 255 / 0.5);
@@ -1927,8 +2003,8 @@ html:has(.ftx) {
 }
 
 .g-slots img {
-  width: 62%;
-  height: 62%;
+  width: 100%;
+  height: clamp(44px, 6vw, 78px);
   object-fit: contain;
 }
 
@@ -1948,14 +2024,18 @@ html:has(.ftx) {
 }
 
 .g-slot-label {
+  max-width: 100%;
   font-family: var(--display);
   font-weight: 700;
   font-size: 0.9375rem;
+  line-height: 1.15;
+  text-align: center;
+  overflow-wrap: anywhere;
 }
 
 .g-deck {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 132px));
   justify-content: center;
   gap: 12px;
 }
@@ -1964,8 +2044,8 @@ html:has(.ftx) {
   display: grid;
   justify-items: center;
   gap: 4px;
-  width: clamp(92px, 22%, 132px);
-  padding: 12px 8px 10px;
+  min-width: 0;
+  padding: 12px 6px 10px;
   border: 4px solid #fff;
   border-radius: 20px;
   background: #fff;
@@ -1987,6 +2067,7 @@ html:has(.ftx) {
   font-family: var(--display);
   font-weight: 700;
   font-size: 0.9375rem;
+  line-height: 1.15;
 }
 
 .g-card:hover {
@@ -2021,6 +2102,46 @@ html:has(.ftx) {
   }
   80% {
     translate: 4px;
+  }
+}
+
+@media (max-width: 560px) {
+  .g-farm {
+    gap: 22px;
+  }
+  .g-slots {
+    gap: 8px;
+  }
+  .g-slots li {
+    min-height: 96px;
+    padding: 16px 4px 10px;
+    border-radius: 16px;
+  }
+  .g-slot-n {
+    width: 28px;
+    height: 28px;
+    top: -10px;
+    left: -6px;
+    font-size: 0.9375rem;
+  }
+  .g-slot-label {
+    font-size: 0.8125rem;
+  }
+  .g-deck {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+  }
+  .g-card {
+    padding: 10px 4px 8px;
+    border-width: 3px;
+    border-radius: 16px;
+  }
+  .g-card img {
+    width: 100%;
+    height: 50px;
+  }
+  .g-card span {
+    font-size: 0.8125rem;
   }
 }
 
@@ -2179,7 +2300,7 @@ html:has(.ftx) {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 8px 14px;
+  gap: 12px 14px;
 }
 
 .g-go {
@@ -3337,7 +3458,7 @@ a.ftx-store:hover {
   background: var(--marigold);
 }
 
-.ftx-store span {
+.ftx-store > span {
   display: grid;
 }
 
@@ -3358,8 +3479,40 @@ a.ftx-store:hover {
 }
 
 .ftx-store.is-soon {
-  opacity: 0.62;
-  filter: none;
+  filter: drop-shadow(0 6px 0 var(--sand-deep));
+}
+
+/* Official badges: same height for both stores, never recoloured or cropped, with clear space round them. */
+.ftx-store.has-badge > span {
+  gap: 10px;
+  padding-block: 16px;
+}
+
+.ftx-badge {
+  display: block;
+  width: auto;
+  height: 46px;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+.ftx-badge-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 14px;
+}
+
+.ftx-soon-tag {
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: var(--marigold);
+  color: var(--ink);
+  font-family: var(--display);
+  font-size: 0.875rem;
+  font-weight: 800;
+  line-height: 1.2;
+  white-space: nowrap;
 }
 
 @media (max-width: 860px) {

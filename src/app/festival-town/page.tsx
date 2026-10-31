@@ -103,8 +103,9 @@ const DeviceIcon = ({ type }: { type: "web" | "tv" | "android" }) => (
   <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
     {type === "web" ? (
       <>
-        <rect x="3" y="6" width="26" height="17" rx="3" />
-        <path d="M10 27h12M16 23v4" />
+        <circle cx="16" cy="16" r="12.5" />
+        <ellipse cx="16" cy="16" rx="5.5" ry="12.5" />
+        <path d="M3.5 16h25M5.6 9.5h20.8M5.6 22.5h20.8" />
       </>
     ) : type === "tv" ? (
       <>
@@ -120,6 +121,10 @@ const DeviceIcon = ({ type }: { type: "web" | "tv" | "android" }) => (
     )}
   </svg>
 );
+
+// Official store badges, used as each store's guidelines ask: unaltered, on their own, linking to the listing.
+const AmazonBadge = () => <img className="ftx-badge" src="/festival-town/badges/amazon-appstore-badge.png" alt="Available at Amazon Appstore" width={572} height={168} loading="lazy" />;
+const GoogleBadge = () => <img className="ftx-badge" src="/festival-town/badges/google-play-badge.png" alt="Get it on Google Play" width={564} height={168} loading="lazy" />;
 
 export default function FestivalTownPage() {
   return (
@@ -294,24 +299,35 @@ export default function FestivalTownPage() {
                 </a>
               </li>
               <li>
-                <a href={festivalTown.amazonUrl} target="_blank" rel="noopener" className="ftx-store">
+                <a href={festivalTown.amazonUrl} target="_blank" rel="noopener" className="ftx-store has-badge" aria-label="Festival Town on the Amazon Appstore">
                   <DeviceIcon type="tv" />
                   <span>
-                    <small>Available on</small>
-                    <strong>Amazon Appstore</strong>
-                    <em>Bring the adventure to your TV</em>
+                    <AmazonBadge />
+                    <em>Play on your TV with the remote</em>
                   </span>
                 </a>
               </li>
               <li>
-                <div className="ftx-store is-soon">
-                  <DeviceIcon type="android" />
-                  <span>
-                    <small>{festivalTown.googlePlayStatus}</small>
-                    <strong>Google Play</strong>
-                    <em>The Android release is in review</em>
-                  </span>
-                </div>
+                {festivalTown.googlePlayUrl ? (
+                  <a href={festivalTown.googlePlayUrl} target="_blank" rel="noopener" className="ftx-store has-badge" aria-label="Festival Town on Google Play">
+                    <DeviceIcon type="android" />
+                    <span>
+                      <GoogleBadge />
+                      <em>Phones and tablets on Android</em>
+                    </span>
+                  </a>
+                ) : (
+                  <div className="ftx-store has-badge is-soon">
+                    <DeviceIcon type="android" />
+                    <span>
+                      <span className="ftx-badge-row">
+                        <GoogleBadge />
+                        <b className="ftx-soon-tag">{festivalTown.googlePlayStatus}</b>
+                      </span>
+                      <em>The Android release is in review</em>
+                    </span>
+                  </div>
+                )}
               </li>
             </ul>
             <p className="ftx-fine">Check the Amazon listing for compatible devices. Browser progress stays on the device you play on.</p>

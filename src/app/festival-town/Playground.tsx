@@ -99,9 +99,28 @@ const PILE = [
 ];
 const WORDS = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"];
 
+// Where each packed mango settles in the basket, as a share of the basket box (left, top, tilt).
+// Low "top" values sit higher in the heap. The basket's front lip is drawn over them.
+const HEAP = [
+  { x: 30, y: 6, r: -12 },
+  { x: 50, y: 4, r: 10 },
+  { x: 12, y: 12, r: -22 },
+  { x: 66, y: 10, r: 18 },
+  { x: 40, y: -10, r: 4 },
+  { x: 58, y: -12, r: -8 },
+  { x: 22, y: -6, r: 14 },
+  { x: 72, y: -4, r: -14 },
+  { x: 46, y: -24, r: 0 },
+];
+const MANGO_W = 26; // % of basket width
+
+type Flight = { fx: number; fy: number; s: number };
+
 function Market({ onWin, say, replay }: GameProps) {
   const [target, setTarget] = useState(5);
   const [taken, setTaken] = useState<boolean[]>(() => PILE.map(() => false));
+  const [flights, setFlights] = useState<Flight[]>([]);
+  const basket = useRef<HTMLDivElement>(null);
   const count = taken.filter(Boolean).length;
   const done = count === target;
 
@@ -109,11 +128,25 @@ function Market({ onWin, say, replay }: GameProps) {
     const t = replay === 0 ? 5 : 3 + Math.floor(Math.random() * 5);
     setTarget(t);
     setTaken(PILE.map(() => false));
+    setFlights([]);
     say(`Please pack ${t} mangoes for my stall. Count as you go!`);
   }, [replay, say]);
 
-  const tap = (i: number) => {
+  const tap = (i: number, from: HTMLElement) => {
     if (taken[i] || done) return;
+    // Measure the throw: from the tapped mango to its place in the heap.
+    const slot = HEAP[count % HEAP.length];
+    const b = basket.current?.getBoundingClientRect();
+    const src = from.getBoundingClientRect();
+    let flight: Flight = { fx: 0, fy: 0, s: 1 };
+    if (b && !calm()) {
+      const w = (b.width * MANGO_W) / 100;
+      const h = (w * 385) / 322;
+      const tx = b.left + (b.width * slot.x) / 100 + w / 2;
+      const ty = b.top + (b.height * slot.y) / 100 + h / 2;
+      flight = { fx: src.left + src.width / 2 - tx, fy: src.top + src.height / 2 - ty, s: src.width / w };
+    }
+    setFlights((f) => [...f, flight]);
     const next = taken.map((v, k) => (k === i ? true : v));
     setTaken(next);
     const n = next.filter(Boolean).length;
@@ -135,7 +168,7 @@ function Market({ onWin, say, replay }: GameProps) {
             disabled={taken[i] || done}
             aria-label={taken[i] ? "Packed" : "Pack a mango"}
             style={{ left: `${p.x}%`, top: `${p.y}%`, "--r": `${p.r}deg` } as React.CSSProperties}
-            onClick={() => tap(i)}
+            onClick={(e) => tap(i, e.currentTarget)}
           >
             <img src="/festival-town/prop/mango.webp" alt="" width={322} height={385} draggable={false} />
           </button>
@@ -146,20 +179,35 @@ function Market({ onWin, say, replay }: GameProps) {
           <span>Pack</span>
           <b>{target}</b>
         </div>
-        <div className="g-basket">
+        <div className="g-basket" ref={basket}>
+          <img className="g-basket-back" src="/festival-town/prop/basket.webp" alt="" width={384} height={351} />
           <div className="g-basket-fill" aria-hidden="true">
-            {Array.from({ length: count }, (_, i) => (
-              <img
-                key={i}
-                src="/festival-town/prop/mango.webp"
-                alt=""
-                width={322}
-                height={385}
-                style={{ left: `${6 + (i % 4) * 21}%`, bottom: `${44 + Math.floor(i / 4) * 16}%`, "--r": `${(i % 3) * 14 - 14}deg` } as React.CSSProperties}
-              />
-            ))}
+            {flights.map((f, i) => {
+              const h = HEAP[i % HEAP.length];
+              return (
+                <img
+                  key={i}
+                  src="/festival-town/prop/mango.webp"
+                  alt=""
+                  width={322}
+                  height={385}
+                  style={
+                    {
+                      left: `${h.x}%`,
+                      top: `${h.y}%`,
+                      width: `${MANGO_W}%`,
+                      zIndex: 40 + h.y,
+                      "--r": `${h.r}deg`,
+                      "--fx": `${f.fx}px`,
+                      "--fy": `${f.fy}px`,
+                      "--s": f.s,
+                    } as React.CSSProperties
+                  }
+                />
+              );
+            })}
           </div>
-          <img className="g-basket-front" src="/festival-town/prop/basket.webp" alt="" width={384} height={351} />
+          <img className="g-basket-lip" src="/festival-town/prop/basket.webp" alt="" width={384} height={351} aria-hidden="true" />
           {count > 0 && (
             <span key={count} className="g-count" aria-hidden="true">
               {count}
@@ -179,7 +227,7 @@ function Market({ onWin, say, replay }: GameProps) {
 const STAGES = [
   { id: "seed", img: "pl_seed", w: 301, h: 240, label: "Seed" },
   { id: "sprout", img: "pl_sprout", w: 260, h: 256, label: "Sprout" },
-  { id: "plant", img: "pl_plant", w: 257, h: 382, label: "Bean plant" },
+  { id: "plant", img: "pl_plant", w: 257, h: 382, label: "Plant" },
   { id: "flower", img: "pl_flower", w: 284, h: 394, label: "Flowers" },
 ];
 
@@ -722,8 +770,8 @@ export function Playground() {
             <div className="ftx-board-host" aria-hidden="true" key={`host-${world.id}`}>
               <Character id={world.host.id} pose="wave" alt="" />
             </div>
-            <div className="ftx-card" key={`${world.id}-${replay}`}>
-              <Game onWin={onWin} say={say} replay={replay} />
+            <div className="ftx-card" data-won={won ? "yes" : "no"} key={`${world.id}-${replay}`}>
+              {!won && <Game onWin={onWin} say={say} replay={replay} />}
               {won && (
                 <div className="ftx-win" role="status">
                   <div className="ftx-confetti" aria-hidden="true">
@@ -734,30 +782,28 @@ export function Playground() {
                   <div className="ftx-win-kid" aria-hidden="true">
                     <Character id={t.kid.id} pose={t.kid.pose} alt="" />
                   </div>
-                  <div className="ftx-win-copy">
-                    <h3>{t.win}</h3>
-                    <p>In the game, {world.name} has three activities like this, with spoken instructions and hints from Zizi.</p>
-                    <div className="ftx-win-actions">
-                      {nextOpen >= 0 ? (
-                        <button type="button" className="ftx-btn is-purple" onClick={() => choose(nextOpen)}>
-                          <span>Next place: {worlds[nextOpen].name}</span>
-                        </button>
-                      ) : (
-                        <PlayLink place="taster-win" className="ftx-btn">
-                          Play the full game
-                        </PlayLink>
-                      )}
-                      <button
-                        type="button"
-                        className="ftx-link"
-                        onClick={() => {
-                          setWon(false);
-                          setReplay((n) => n + 1);
-                        }}
-                      >
-                        Play this one again
+                  <h3 className="ftx-win-title">{t.win}</h3>
+                  <p className="ftx-win-text">In the game, {world.name} has three activities like this, with spoken instructions and hints from Zizi.</p>
+                  <div className="ftx-win-actions">
+                    {nextOpen >= 0 ? (
+                      <button type="button" className="ftx-btn is-purple" onClick={() => choose(nextOpen)}>
+                        <span>Next: {worlds[nextOpen].name}</span>
                       </button>
-                    </div>
+                    ) : (
+                      <PlayLink place="taster-win" className="ftx-btn">
+                        Play the full game
+                      </PlayLink>
+                    )}
+                    <button
+                      type="button"
+                      className="ftx-link"
+                      onClick={() => {
+                        setWon(false);
+                        setReplay((n) => n + 1);
+                      }}
+                    >
+                      Play this one again
+                    </button>
                   </div>
                 </div>
               )}
