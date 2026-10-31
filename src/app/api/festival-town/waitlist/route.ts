@@ -108,7 +108,11 @@ export async function POST(req: Request) {
     role: audience === "school" ? str(body.role, 80) || null : null,
     consent: true,
     consent_text: consentText[audience],
-    source: "motionplaylabs.com/festival-town",
+    // Which ad brought them (utm source.campaign.content), letters, digits, _ - . only.
+    source: (() => {
+      const src = str(body.src, 130).toLowerCase().replace(/[^a-z0-9_.-]/g, "");
+      return src ? `motionplaylabs.com/festival-town?src=${src}` : "motionplaylabs.com/festival-town";
+    })(),
   };
   if (audience === "school" && !row.school_name) return NextResponse.json({ error: "Add the school's name." }, { status: 400 });
 

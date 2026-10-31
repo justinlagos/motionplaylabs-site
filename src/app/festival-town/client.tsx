@@ -8,9 +8,40 @@ import { setPaused, useMotionPaused } from "@/lib/motion";
 // Static previews have no server, so the form says so instead of pretending to send.
 const PREVIEW = process.env.NEXT_PUBLIC_PREVIEW === "1";
 
+// Which ad brought this visitor: utm_source.utm_campaign.utm_content from the landing URL,
+// kept for the tab only. Sent with Play clicks, store clicks and signups so results can be
+// compared per ad. No cookies, nothing stored beyond this tab.
+const SRC_KEY = "ft-src";
+const clean = (v: string | null) =>
+  (v || "")
+    .toLowerCase()
+    .replace(/[^a-z0-9_-]/g, "")
+    .slice(0, 40);
+
+export function adSource(): string {
+  if (typeof window === "undefined") return "";
+  try {
+    return window.sessionStorage.getItem(SRC_KEY) || "";
+  } catch {
+    return "";
+  }
+}
+
+function captureAdSource() {
+  const q = new URLSearchParams(window.location.search);
+  const parts = [clean(q.get("utm_source")), clean(q.get("utm_campaign")), clean(q.get("utm_content"))];
+  if (!parts[0]) return;
+  try {
+    window.sessionStorage.setItem(SRC_KEY, parts.filter(Boolean).join("."));
+  } catch {
+    // storage blocked: clicks are still counted, just without the ad name
+  }
+}
+
 /** Page root. Mirrors the site's motion switch onto the page so CSS can stop every loop. */
 export function MotionState({ children }: { children: React.ReactNode }) {
   const paused = useMotionPaused();
+  useEffect(captureAdSource, []);
   return (
     <div className="ftx" data-ft-motion={paused ? "paused" : "playing"}>
       {children}
@@ -27,7 +58,7 @@ export const PlayIcon = () => (
 /** The Play button: straight into the game, and the click is counted. */
 export function PlayLink({ place, className = "ftx-btn", children = "Play free now" }: { place: string; className?: string; children?: React.ReactNode }) {
   return (
-    <a className={className} href={festivalTown.playUrl} target="_blank" rel="noopener" onClick={() => track("ft_play_now", { place })}>
+    <a className={className} href={festivalTown.playUrl} target="_blank" rel="noopener" onClick={() => track("ft_play_now", { place, src: adSource() })}>
       <PlayIcon />
       <span>{children}</span>
     </a>
@@ -241,13 +272,13 @@ export function WaitlistForm({ initial = "parent" }: { initial?: Audience }) {
       const res = await fetch("/api/festival-town/waitlist/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...data, audience, consent, consent_text: consentText[audience] }),
+        body: JSON.stringify({ ...data, audience, consent, consent_text: consentText[audience], src: adSource() }),
       });
       const body = (await res.json().catch(() => ({}))) as { error?: string; duplicate?: boolean };
       if (!res.ok) throw new Error(body.error || "That did not go through. Try again in a minute.");
       form.reset();
       setConsent(false);
-      track("ft_waitlist", { audience, duplicate: body.duplicate ? "yes" : "no" });
+      track("ft_waitlist", { audience, src: adSource() });
       setStatus({ kind: "sent", duplicate: !!body.duplicate });
     } catch (err) {
       setStatus({ kind: "error", message: err instanceof Error ? err.message : "That did not go through. Try again in a minute." });
@@ -354,5 +385,14 @@ export function WaitlistForm({ initial = "parent" }: { initial?: Audience }) {
         details deleted. <a href="/legal/privacy/">Website privacy notice</a>.
       </p>
     </form>
+  );
+}
+
+/** A store badge or link that counts the click (and which ad brought the visitor). */
+export function StoreLink({ href, store, className, label, children }: { href: string; store: string; className: string; label?: string; children: React.ReactNode }) {
+  return (
+    <a href={href} target="_blank" rel="noopener" className={className} aria-label={label} onClick={() => track("ft_store", { store, src: adSource() })}>
+      {children}
+    </a>
   );
 }
