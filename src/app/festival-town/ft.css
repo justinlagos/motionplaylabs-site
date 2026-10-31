@@ -2300,7 +2300,7 @@ html:has(.ftx) {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 8px 14px;
+  gap: 12px 14px;
 }
 
 .g-go {
@@ -3458,7 +3458,7 @@ a.ftx-store:hover {
   background: var(--marigold);
 }
 
-.ftx-store span {
+.ftx-store > span {
   display: grid;
 }
 
@@ -3479,8 +3479,40 @@ a.ftx-store:hover {
 }
 
 .ftx-store.is-soon {
-  opacity: 0.62;
-  filter: none;
+  filter: drop-shadow(0 6px 0 var(--sand-deep));
+}
+
+/* Official badges: same height for both stores, never recoloured or cropped, with clear space round them. */
+.ftx-store.has-badge > span {
+  gap: 10px;
+  padding-block: 16px;
+}
+
+.ftx-badge {
+  display: block;
+  width: auto;
+  height: 46px;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+.ftx-badge-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 14px;
+}
+
+.ftx-soon-tag {
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: var(--marigold);
+  color: var(--ink);
+  font-family: var(--display);
+  font-size: 0.875rem;
+  font-weight: 800;
+  line-height: 1.2;
+  white-space: nowrap;
 }
 
 @media (max-width: 860px) {

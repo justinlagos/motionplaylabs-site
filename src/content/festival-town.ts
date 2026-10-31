@@ -10,12 +10,13 @@ export const festivalTown = {
   amazonUrl: "https://www.amazon.co.uk/dp/B0HPLJ1BLS",
   /** Production release is still in review in Play Console. */
   googlePlayStatus: "Coming soon",
+  /** Set to the Play listing once it is live: the page then links the Google Play badge and drops "Coming soon". */
+  googlePlayUrl: "",
   /** Set when playfestivaltown.com is bought and pointed at this page. */
   canonicalUrl: "https://motionplaylabs.com/festival-town/",
   /** Age range shown on the page. The game has no age gate; this is the range the activities are pitched at. */
   ages: "4 to 7",
-  premise:
-    "The big street festival is on Saturday and the whole town needs a hand. Children pick a friend, visit five places, and bring something back from each one for the festival square.",
+  premise: "The big street festival is on Saturday and the whole town needs a hand. Children pick a friend, visit five places, and bring something back from each one for the festival square.",
   /**
    * Promotional film. With an empty src the section shows the device screens and no player.
    * Files live in public/festival-town/film/. Masters are kept outside the repo.
@@ -32,8 +33,7 @@ export const festivalTown = {
     title: "Big adventures. Little discoveries.",
     body: "The film shows the characters at work in their worlds and children playing on a phone, a tablet and a laptop.",
     /** Shown under the player. The children are licensed stock, not our users. */
-    credit:
-      "Character scenes are animated from the game's own art. Gameplay is recorded from the game. Children's footage is licensed stock from Mixkit.",
+    credit: "Character scenes are animated from the game's own art. Gameplay is recorded from the game. Children's footage is licensed stock from Mixkit.",
   },
 };
 
