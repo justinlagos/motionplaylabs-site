@@ -20,7 +20,7 @@ export function Finale() {
   const gifts = useGifts();
   const n = gifts.length;
   const said =
-    n === 0 ? "The town is waiting. Let’s make it a festival." : n === worlds.length ? "The square is ready. Time for the real festival." : `${n} of 5 gifts are here. The rest are in the game.`;
+    n === 0 ? "The town is waiting. Let’s make it a festival." : n === worlds.length ? "The square is ready. Time for the real festival." : `${n} of 5 gifts made it here. The rest are in the game.`;
 
   return (
     <section className="ftx-finale" id="festival" aria-labelledby="ftx-finale-h">
