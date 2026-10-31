@@ -37,6 +37,9 @@ npm run preview:site     # static, self-contained copy in preview-site/ (no cont
 | Header tone and clip playback | `src/lib/chrome-tone.ts`, `src/lib/clip-playback.ts` |
 | Styles and tokens | `src/app/globals.css` |
 | Contact form email | `src/app/api/contact/route.ts` |
+| Festival Town page: hero, tasters, festival square | `src/app/festival-town/` (`Playground.tsx` holds the five tasters, `ft.css` the styles) |
+| Festival Town facts: places, activities, characters | `src/content/festival-town.ts` |
+| Festival Town waitlist | `src/app/api/festival-town/waitlist/route.ts` |
 
 ## Footage
 

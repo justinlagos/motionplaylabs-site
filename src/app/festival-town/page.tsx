@@ -1,20 +1,20 @@
 import type { Metadata } from "next";
-import "@fontsource/baloo-2/700.css";
-import "@fontsource/baloo-2/800.css";
-import "@fontsource/lilita-one/400.css";
-import "./festival-town.css";
-import "./landing.css";
-import { TownExplorer, GameplayPreview, PlayEverywhere } from "./experience";
-import { MotionToggle } from "@/components/MotionToggle";
-import { festivalTown, heroes } from "@/content/festival-town";
+import "@fontsource-variable/grandstander/wght.css";
+import "@fontsource/andika/400.css";
+import "@fontsource/andika/700.css";
+import "./ft.css";
+import { festivalTown, heroes, worlds } from "@/content/festival-town";
 import { site } from "@/content/site";
-import { Bunting } from "./Bunting";
 import { Character } from "./Character";
-import { Film, JumpLink, MotionState, Pick, PlayLink, WaitlistForm } from "./client";
+import { Crew } from "./Crew";
+import { Finale } from "./Finale";
+import { Hero } from "./Hero";
+import { Playground, AdireMark } from "./Playground";
+import { Film, JumpLink, MotionState, MotionSwitch, PlayLink, TownHeader, WaitlistForm } from "./client";
 
-const title = "Festival Town: a story game where children learn by doing";
+const title = "Festival Town: a free learning game for ages 4 to 7";
 const description =
-  "Help the town get ready for the festival with Ada, Tobi, Amina and Zizi. Five places, fifteen activities: counting, growing, coding, building and making. Free to play in the browser, nothing to install.";
+  "Help the town get ready for the festival with Ada, Tobi, Amina and Zizi. Five places, fifteen activities: counting, growing, coding, building and making. Free to play in the browser, no ads, nothing to install.";
 
 export const metadata: Metadata = {
   title,
@@ -62,82 +62,317 @@ const jsonLd = {
 };
 
 const faqs = [
-  { question: "What age is Festival Town for?", answer: "The activities are designed for ages 4–7: numbers to ten, life cycles, simple coding sequences, shapes and patterns. Younger players may enjoy exploring alongside a grown-up." },
-  { question: "Does my child need to be able to read?", answer: "Instructions and character dialogue are spoken in English. Zizi offers hints along the way. A grown-up can help with the first visit and any unfamiliar controls." },
-  { question: "What do we need to play?", answer: "Play in a web browser on your phone, tablet, laptop or desktop with an internet connection. Use touch or a mouse, and turn phones sideways. Festival Town is also available on the Amazon Appstore; check the listing for compatible devices. The Google Play release is coming soon." },
-  { question: "How long does a visit take?", answer: "Each of the five places has three activities and takes roughly ten minutes to explore. You can play one place at a time and come back for more." },
-  { question: "Will progress be saved?", answer: "The browser game saves progress on the device and browser you use. Clearing browser storage can remove that progress, and it does not automatically transfer to another device." },
-  { question: "Are there adverts or purchases?", answer: "The browser game is free to play, with no adverts or in-game purchases. Signing up for news on this page is optional and is not needed to play." },
+  {
+    question: "What age is Festival Town for?",
+    answer: "The activities are pitched at ages 4 to 7: numbers to ten, life cycles, simple coding sequences, shapes and patterns. Younger children enjoy exploring alongside a grown-up.",
+  },
+  {
+    question: "Does my child need to be able to read?",
+    answer: "No. Instructions and character dialogue are spoken in English, and Zizi gives hints along the way. A grown-up can help with the first visit and any unfamiliar controls.",
+  },
+  {
+    question: "What do we need to play?",
+    answer:
+      "A web browser on a phone, tablet, laptop or desktop, and an internet connection. Use touch or a mouse, and turn phones sideways. On a TV, it is on the Amazon Appstore; check the listing for compatible devices. The Google Play release is coming soon.",
+  },
+  { question: "How long does a visit take?", answer: "Each of the five places has three activities and takes about ten minutes. Play one place at a time and come back for the next." },
+  {
+    question: "Will progress be saved?",
+    answer: "The browser game saves progress on the device and browser you use. Clearing browser storage can remove it, and it does not move to another device automatically.",
+  },
+  {
+    question: "Are there adverts or purchases?",
+    answer: "No. The browser game is free, with no adverts and no in-game purchases. Signing up for news on this page is optional and is not needed to play.",
+  },
 ];
+
+const rules: { s: "circle" | "star" | "tri"; h: string; p: string }[] = [
+  { s: "circle", h: "Free, no account", p: "Open it in a browser and play. Nothing to install, nothing to sign up for." },
+  { s: "star", h: "No ads, no purchases", p: "No adverts, no in-game shop, no buttons that ask for money." },
+  { s: "tri", h: "No reading needed", p: "Every instruction is spoken in clear English, so children who can’t read yet can play on their own." },
+  { s: "circle", h: "Mistakes are welcome", p: "A wrong tap brings a hint from Zizi, not a buzzer. Children try again until it clicks." },
+  { s: "star", h: "Short visits", p: "About ten minutes per place. One place is a good after-school session." },
+  { s: "tri", h: "Saves as you go", p: "Progress is kept in the browser you play in, so children pick up where they stopped." },
+];
+
+const shots: Record<string, string> = { market: "market-laptop", farm: "farm-laptop", tech: "tech-laptop", build: "build-laptop", adire: "adire-laptop" };
+
+const DeviceIcon = ({ type }: { type: "web" | "tv" | "android" }) => (
+  <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    {type === "web" ? (
+      <>
+        <rect x="3" y="6" width="26" height="17" rx="3" />
+        <path d="M10 27h12M16 23v4" />
+      </>
+    ) : type === "tv" ? (
+      <>
+        <rect x="2" y="5" width="28" height="18" rx="3" />
+        <path d="M11 27h10" />
+        <path d="M13 11v6l5-3z" fill="currentColor" />
+      </>
+    ) : (
+      <>
+        <rect x="9" y="3" width="14" height="26" rx="3.5" />
+        <path d="M14 25h4" />
+      </>
+    )}
+  </svg>
+);
 
 export default function FestivalTownPage() {
   return (
     <MotionState>
-      <a className="ft-skip" href="#adventure">Skip to the adventure</a>
-      <header className="ft-nav">
-        <a href="#adventure" className="ft-nav-brand" aria-label="Festival Town, back to top"><img src="/festival-town/logo-600.webp" alt="Festival Town" width={600} height={437} /></a>
-        <nav aria-label="Festival Town"><a href="#explore">The adventure</a><a href="#play-anywhere">Ways to play</a><a href="#parents">Grown-ups</a></nav>
-        <a href="#play-anywhere" className="ft-btn">Let’s play <span aria-hidden="true">↗</span></a>
-      </header>
+      <a className="ftx-skip" href="#try">
+        Skip to the games
+      </a>
 
-      <section className="ft-arrival" id="adventure" aria-labelledby="ft-h1">
-        <div className="ft-inner ft-arrival-grid">
-          <div className="ft-arrival-copy">
-            <p className="ft-kicker">A little adventure for big imaginations · Ages 4–7</p>
-            <h1 id="ft-h1">Little adventures.<br /><em>A whole world of discovery.</em></h1>
-            <p className="ft-lead">A playful learning adventure for ages 4–7, set in a colourful Nigerian town. Count, grow, code and help the festival come to life.</p>
-            <div className="ft-actions"><PlayLink place="hero">Play free on the web</PlayLink><a className="ft-text-link" href="#play-anywhere">Find your screen <span aria-hidden="true">↗</span></a></div>
+      <TownHeader>
+        <a href="#top" className="ftx-logo" aria-label="Festival Town, back to top">
+          <img src="/festival-town/logo-600.webp" alt="Festival Town" width={600} height={437} />
+        </a>
+        <nav aria-label="Festival Town" className="ftx-nav">
+          <a href="#try">Try it</a>
+          <a href="#friends">The friends</a>
+          <a href="#grown-ups">Grown-ups</a>
+          <a href="#schools">Schools</a>
+        </nav>
+        <PlayLink place="header" className="ftx-btn is-small">
+          Play free
+        </PlayLink>
+      </TownHeader>
+
+      <Hero />
+
+      <section className="ftx-try" id="try" aria-labelledby="ftx-try-h">
+        <div className="ftx-wrap">
+          <header className="ftx-try-head">
+            <div className="ftx-try-zizi" aria-hidden="true">
+              <Character id="zizi" pose="think" alt="" delay={1.2} />
+            </div>
+            <div>
+              <h2 id="ftx-try-h" className="ftx-h2">
+                Have a go right here
+              </h2>
+              <p className="ftx-lead">Five places in town need a hand before Saturday. Try a quick taster from each one. Finish it, and its gift goes to the festival square.</p>
+            </div>
+          </header>
+          <Playground />
+        </div>
+      </section>
+
+      <section className="ftx-friends" id="friends" aria-labelledby="ftx-crew-h">
+        <div className="ftx-wrap">
+          <Crew />
+        </div>
+      </section>
+
+      <section className="ftx-grown" id="grown-ups" aria-labelledby="ftx-grown-h">
+        <div className="ftx-adire-edge" aria-hidden="true" />
+        <div className="ftx-wrap">
+          <header className="ftx-grown-head">
+            <h2 id="ftx-grown-h" className="ftx-h2">
+              For grown-ups
+            </h2>
+            <p className="ftx-lead">
+              Fifteen short activities across maths, science, technology and engineering, set in everyday places: a market, a farm, a phone shop, a building yard and a cloth workshop.
+            </p>
+          </header>
+
+          <h3 className="ftx-h3">What they practise</h3>
+          <ol className="ftx-subjects">
+            {worlds.map((w) => (
+              <li key={w.id} style={{ "--tc": w.colour } as React.CSSProperties}>
+                <figure>
+                  <img src={`/festival-town/play/${shots[w.id]}.webp`} alt={`Real gameplay from ${w.name}`} width={1280} height={736} loading="lazy" />
+                </figure>
+                <div>
+                  <p className="ftx-subject-tag">
+                    <span className="ftx-letter" aria-hidden="true">
+                      {w.letter}
+                    </span>
+                    {w.subject}
+                  </p>
+                  <h4>
+                    {w.name} <small>with {w.host.name}</small>
+                  </h4>
+                  <ul>
+                    {w.activities.map((a) => (
+                      <li key={a.name}>
+                        <b>{a.name}.</b> {a.what}.
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </li>
+            ))}
+          </ol>
+
+          <h3 className="ftx-h3">The house rules</h3>
+          <ul className="ftx-rules">
+            {rules.map((r) => (
+              <li key={r.h}>
+                <AdireMark s={r.s} />
+                <div>
+                  <h4>{r.h}</h4>
+                  <p>{r.p}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
+
+          <div className="ftx-film-block">
+            <div className="ftx-film-copy">
+              <h3 className="ftx-h3">See it in a minute</h3>
+              <p>The characters at work in their places, real gameplay, and children playing on a phone, a tablet and a laptop.</p>
+              <p className="ftx-fine">{festivalTown.film.credit}</p>
+            </div>
+            <Film />
           </div>
-          <div className="ft-arrival-art">
-            <img className="ft-arrival-land" src="/festival-town/scene/bg_title-1600.webp" srcSet="/festival-town/scene/bg_title-900.webp 900w, /festival-town/scene/bg_title-1600.webp 1600w" sizes="100vw" alt="A colourful Nigerian town getting ready for a street festival" width={1600} height={686} fetchPriority="high" />
-            <Bunting className="ft-arrival-bunting" flags={24} sag={50} height={100} />
-            <div className="ft-arrival-cast" aria-hidden="true">
-              <Character id="tobi" pose="point" alt="" className="c-tobi" priority />
-              <Character id="ada" pose="wave" alt="" className="c-ada" priority delay={1.5} />
-              <Character id="amina" pose="cheer" alt="" className="c-amina" priority delay={2.7} />
-              <Character id="zizi" pose="cheer" alt="" className="c-zizi" priority bob delay={3.2} />
+
+          <div className="ftx-faq">
+            <h3 className="ftx-h3">Questions parents ask</h3>
+            <div className="ftx-faq-amina" aria-hidden="true">
+              <Character id="amina" pose="think" alt="" delay={1.4} />
+            </div>
+            {faqs.map((f) => (
+              <details key={f.question}>
+                <summary>
+                  {f.question}
+                  <span aria-hidden="true" />
+                </summary>
+                <p>{f.answer}</p>
+              </details>
+            ))}
+            <p className="ftx-fine">
+              Looking for the Android app’s data information? <a href="/legal/festival-town-privacy/">Read the Android privacy policy</a>.
+            </p>
+          </div>
+        </div>
+        <div className="ftx-adire-edge is-bottom" aria-hidden="true" />
+      </section>
+
+      <section className="ftx-screens" id="play-anywhere" aria-labelledby="ftx-screens-h">
+        <div className="ftx-wrap ftx-screens-grid">
+          <figure className="ftx-tv">
+            <img
+              src="/festival-town/scene/family-tv-1600.webp"
+              srcSet="/festival-town/scene/family-tv-900.webp 900w, /festival-town/scene/family-tv-1600.webp 1600w"
+              sizes="(max-width: 900px) 100vw, 60vw"
+              alt="A mother and child on a sofa playing Festival Town on a television with the remote"
+              width={1600}
+              height={898}
+              loading="lazy"
+            />
+            <figcaption>Illustrative family scene, created with AI.</figcaption>
+          </figure>
+          <div className="ftx-screens-copy">
+            <h2 id="ftx-screens-h" className="ftx-h2">
+              Big screen or small screen
+            </h2>
+            <p className="ftx-lead">Tap on a phone or tablet, click on a laptop, or settle in on the sofa with the TV remote.</p>
+            <ul className="ftx-stores">
+              <li>
+                <a href={festivalTown.playUrl} target="_blank" rel="noopener" className="ftx-store">
+                  <DeviceIcon type="web" />
+                  <span>
+                    <small>Play now, free</small>
+                    <strong>In your web browser</strong>
+                    <em>Phone, tablet, laptop and desktop</em>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a href={festivalTown.amazonUrl} target="_blank" rel="noopener" className="ftx-store">
+                  <DeviceIcon type="tv" />
+                  <span>
+                    <small>Available on</small>
+                    <strong>Amazon Appstore</strong>
+                    <em>Bring the adventure to your TV</em>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <div className="ftx-store is-soon">
+                  <DeviceIcon type="android" />
+                  <span>
+                    <small>{festivalTown.googlePlayStatus}</small>
+                    <strong>Google Play</strong>
+                    <em>The Android release is in review</em>
+                  </span>
+                </div>
+              </li>
+            </ul>
+            <p className="ftx-fine">Check the Amazon listing for compatible devices. Browser progress stays on the device you play on.</p>
+          </div>
+        </div>
+      </section>
+
+      <section className="ftx-schools" id="schools" aria-labelledby="ftx-schools-h">
+        <div className="ftx-wrap ftx-schools-grid">
+          <div className="ftx-schools-art">
+            <img src="/festival-town/play/town-tablet.webp" alt="The Festival Town map on a tablet, with the five places to visit" width={1024} height={706} loading="lazy" />
+            <div className="ftx-schools-tobi" aria-hidden="true">
+              <Character id="tobi" pose="point" alt="" delay={2} />
+            </div>
+          </div>
+          <div>
+            <h2 id="ftx-schools-h" className="ftx-h2">
+              For schools and nurseries
+            </h2>
+            <p className="ftx-lead">Explore together on a classroom display, or take turns on a tablet. Start with one place and about ten minutes.</p>
+            <p>Fifteen voiced activities across maths, science, technology and engineering. Open the browser game, choose a friend and play.</p>
+            <p className="ftx-fine">Teacher notes, class management and progress tracking are not built yet. Join the school list to hear about pilots first.</p>
+            <div className="ftx-row-actions">
+              <JumpLink to="signup" audience="school" className="ftx-btn is-purple">
+                <span>Join the school list</span>
+              </JumpLink>
+              <PlayLink place="schools" className="ftx-link">
+                Try the game
+              </PlayLink>
             </div>
           </div>
         </div>
-        <div className="ft-arrival-base ft-inner"><span>Rooted in Nigeria. Made for curious minds, everywhere.</span><MotionToggle /></div>
       </section>
-      <div className="ft-facts" aria-label="Inside Festival Town"><span><b>5</b> places to explore</span><span><b>15</b> hands-on activities</span><span><b>4</b> STEM subjects</span><span><b>1</b> big celebration</span></div>
 
-      <section className="ft-proof ft-section" id="gameplay" aria-labelledby="ft-gameplay-h">
-        <div className="ft-inner ft-proof-grid">
-          <div className="ft-section-copy"><p className="ft-kicker">This is how discovery happens</p><h2 id="ft-gameplay-h">A little try.<br />A big “I did it!”</h2><p className="ft-lead ft-muted">Put the arrows in order. See what floats. Find the next stamp in the pattern. Every small action helps the town get ready.</p><ol className="ft-play-steps"><li><b>01</b><span>Try an idea</span></li><li><b>02</b><span>See what happens</span></li><li><b>03</b><span>Have another go</span></li></ol><a className="ft-text-link" href="#explore">Find their first adventure <span aria-hidden="true">↓</span></a></div>
-          <figure className="ft-proof-screen"><GameplayPreview /><figcaption>Real gameplay: coding, floating and patterns. Preview has no sound.</figcaption></figure>
+      <Finale />
+
+      <section className="ftx-signup" id="signup" aria-labelledby="ftx-signup-h">
+        <div className="ftx-wrap ftx-signup-grid">
+          <div>
+            <h2 id="ftx-signup-h" className="ftx-h2">
+              Hear when new places open
+            </h2>
+            <p className="ftx-lead">The game is ready to play today. Leave an email for the occasional note about new adventures, activities and school pilots.</p>
+            <p className="ftx-fine">A grown-up’s email is all we need. Signing up is optional and is not needed to play.</p>
+          </div>
+          <WaitlistForm />
         </div>
       </section>
 
-      <section className="ft-explore ft-section" id="explore" aria-labelledby="ft-town-h">
-        <div className="ft-inner"><header className="ft-section-heading"><div><p className="ft-kicker">Five places. One festival.</p><h2 id="ft-town-h">Where shall we go first?</h2></div><p>From Mama Bisi’s market to Aunty Kemi’s Adire workshop, every neighbour has something to share. Choose a place to take a look.</p></header><TownExplorer /></div>
-      </section>
-
-      <section className="ft-pickwrap ft-friends" id="friends" aria-label="Meet your friends"><Pick /></section>
-
-      <PlayEverywhere />
-
-      <section className="ft-parent-section ft-section" id="parents" aria-labelledby="ft-parents-h">
-        <div className="ft-inner"><header className="ft-section-heading"><div><p className="ft-kicker">A little reassurance for grown-ups</p><h2 id="ft-parents-h">Room to try.<br />Space to grow.</h2></div><p>Maths, science, technology and engineering, woven into everyday adventures. With a friendly voice to help along the way.</p></header>
-          <div className="ft-parent-benefits">
-            <article><img src="/festival-town/prop/mango.webp" alt="" width={80} height={80} loading="lazy" /><h3>Learning they can do</h3><p>Count real objects in the story, test an idea and spot what changes. Fifteen activities across five places.</p></article>
-            <article><img src="/festival-town/prop/bulb_on.webp" alt="" width={80} height={80} loading="lazy" /><h3>Another go is welcome</h3><p>A wrong tap brings a hint. Zizi helps children find the next step, with spoken instructions in English.</p></article>
-            <article><img src="/festival-town/prop/key.webp" alt="" width={80} height={80} loading="lazy" /><h3>Easy to get started</h3><p>Free browser play. No account, no adverts and no in-game purchases. Progress stays in the browser you play in.</p></article>
+      <footer className="ftx-footer">
+        <div className="ftx-wrap ftx-footer-grid">
+          <div>
+            <img className="ftx-footer-logo" src="/festival-town/logo-600.webp" alt="Festival Town" width={600} height={437} loading="lazy" />
+            <a href="/" className="ftx-maker">
+              Made by MotionPlay Labs
+            </a>
           </div>
-          <div className="ft-parent-details"><div className="ft-faq"><h3>A few things you might be wondering</h3>{faqs.map(f => <details key={f.question}><summary>{f.question}<span aria-hidden="true">+</span></summary><p>{f.answer}</p></details>)}<p className="ft-policy-note">Looking for the Android app’s data information? <a href="/legal/festival-town-privacy/">Read the Android privacy policy</a>.</p></div>
-            <div className="ft-film-card"><p className="ft-kicker">Meet the world</p><h3>Big adventures.<br />Little discoveries.</h3><Film /><p className="ft-film-cap">{festivalTown.film.credit}</p></div>
+          <nav aria-label="Festival Town footer">
+            <a href="#grown-ups">Parent questions</a>
+            <a href="#schools">Schools</a>
+            <a href="mailto:hello@motionplaylabs.com">Contact us</a>
+            <a href="/legal/privacy/">Website privacy</a>
+            <a href="/legal/festival-town-privacy/">Android privacy</a>
+            <a href="/legal/credits/">Credits</a>
+          </nav>
+          <div className="ftx-footer-base">
+            <small>
+              {site.ukCompany.legalName}, company {site.ukCompany.number}
+            </small>
+            <MotionSwitch />
           </div>
         </div>
-      </section>
-
-      <section className="ft-class-section ft-section" id="schools" aria-labelledby="ft-school-h"><div className="ft-inner ft-class-grid"><div className="ft-class-art"><img src="/festival-town/play/town-tablet.webp" alt="The Festival Town game map, with five places for a class to explore" width={1024} height={706} loading="lazy" /><Character id="tobi" pose="point" alt="" /></div><div className="ft-section-copy"><p className="ft-kicker">For schools and nurseries</p><h2 id="ft-school-h">A whole town.<br />A class full of ideas.</h2><p className="ft-lead">Explore together on a classroom display, or take turns on a tablet. Start with one place and about ten minutes.</p><p>15 voiced activities across maths, science, technology and engineering. Open the browser game, choose a friend and play.</p><p className="ft-muted">Teacher notes, class management and progress dashboards are not available yet. Join the school list for news about future pilots and tools.</p><div className="ft-actions"><JumpLink to="waitlist" audience="school" className="ft-btn is-purple">Join the school list</JumpLink><PlayLink place="schools" className="ft-text-link">Try the game</PlayLink></div></div></div></section>
-
-      <section className="ft-celebrate" aria-labelledby="ft-festival-h"><img className="ft-celebrate-land" src="/festival-town/scene/bg_fest-1600.webp" alt="" width={1600} height={686} loading="lazy" /><Bunting flags={28} sag={25} height={80} /><div className="ft-inner"><div className="ft-celebrate-copy"><p className="ft-kicker">Every little helper makes a difference</p><h2 id="ft-festival-h">The town is waiting.<br />Let’s make it a festival.</h2><PlayLink place="celebration">Let’s play, it’s free</PlayLink></div><div className="ft-celebrate-cast" aria-hidden="true"><Character id="tobi" pose="cheer" alt="" delay={0.7} /><Character id="ada" pose="cheer" alt="" delay={1.9} /><Character id="amina" pose="cheer" alt="" delay={3.3} /><Character id="zizi" pose="cheer" alt="" bob /></div></div></section>
-
-      <section className="ft-updates ft-section" id="waitlist" aria-labelledby="ft-updates-h"><div className="ft-inner ft-updates-grid"><div className="ft-section-copy"><p className="ft-kicker">For the next adventure</p><h2 id="ft-updates-h">Good things<br />are growing.</h2><p className="ft-lead">The game is ready to play today. Get occasional emails about new adventures, activities and school pilots.</p><p className="ft-muted">A grown-up’s email is all we need for game updates. Signing up is optional.</p><img className="ft-updates-sprout" src="/festival-town/prop/pl_plant.webp" alt="" width={150} height={150} loading="lazy" /></div><WaitlistForm /></div></section>
-
-      <footer className="ft-footer"><div className="ft-inner"><div><a href="/" className="ft-maker">Made by MotionPlay Labs <span aria-hidden="true">↗</span></a><p>Playful worlds. Curious minds.</p></div><nav aria-label="Festival Town footer"><a href="#parents">Parent questions</a><a href="#schools">Schools</a><a href="mailto:hello@motionplaylabs.com">Contact us</a><a href="/legal/privacy/">Website privacy</a><a href="/legal/festival-town-privacy/">Android privacy</a><a href="/legal/credits/">Credits</a></nav><small>{site.ukCompany.legalName} · Company {site.ukCompany.number}</small></div></footer>
+      </footer>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
     </MotionState>
   );

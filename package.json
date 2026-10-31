@@ -11,7 +11,9 @@
     "preview:site": "node scripts/export-preview.mjs && node scripts/build-site-preview.mjs preview-site"
   },
   "dependencies": {
+    "@fontsource-variable/grandstander": "^5.3.0",
     "@fontsource-variable/mona-sans": "^5.3.0",
+    "@fontsource/andika": "^5.3.0",
     "@fontsource/baloo-2": "^5.3.0",
     "@fontsource/lilita-one": "^5.3.0",
     "@vercel/analytics": "^2.0.1",
