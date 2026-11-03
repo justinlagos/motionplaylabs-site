@@ -7,7 +7,15 @@ const config: NextConfig = {
   reactStrictMode: true,
   trailingSlash: true,
   poweredByHeader: false,
-  ...(exportMode ? { output: "export" as const, images: { unoptimized: true } } : {}),
+  ...(exportMode
+    ? { output: "export" as const, images: { unoptimized: true } }
+    : {
+        // The playable game is a static build in public/festival-town/game/.
+        // Next.js does not serve a folder's index.html on its own, so map the folder to it.
+        async rewrites() {
+          return [{ source: "/festival-town/game/", destination: "/festival-town/game/index.html" }];
+        },
+      }),
 };
 
 export default config;

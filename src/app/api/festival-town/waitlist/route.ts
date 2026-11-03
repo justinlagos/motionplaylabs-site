@@ -28,7 +28,7 @@ type Audience = "parent" | "school";
 
 function welcome(audience: Audience, name: string) {
   const hi = name ? `Hi ${name},` : "Hi,";
-  const play = "https://festival-town.netlify.app/";
+  const play = "https://motionplaylabs.com/festival-town/game/";
   const page = "https://motionplaylabs.com/festival-town/";
   if (audience === "school") {
     const text = `${hi}
