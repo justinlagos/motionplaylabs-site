@@ -1,11 +1,12 @@
 // Festival Town: the page at /festival-town/. Everything here is checked against the game
-// (festival-town.netlify.app, build of 27 Oct 2026). Do not add worlds, activities or features
+// (motionplaylabs.com/festival-town/game/, same game code as the build of 27 Oct 2026). Do not add worlds, activities or features
 // the game does not have.
 
 export const festivalTown = {
   name: "Festival Town",
   tagline: "Help the town get ready",
-  playUrl: "https://festival-town.netlify.app/",
+  /** The game itself, a static build served from public/festival-town/game/. */
+  playUrl: "https://motionplaylabs.com/festival-town/game/",
   /** Public Amazon listing supplied by the publisher, 30 October 2026. */
   amazonUrl: "https://www.amazon.co.uk/dp/B0HPLJ1BLS",
   /** Production release is still in review in Play Console. */
