@@ -1,0 +1,23 @@
+{
+  "name": "Festival Town",
+  "short_name": "Festival Town",
+  "description": "A story game for young learners. Count, sort, build and solve to get the town ready for the festival.",
+  "id": "/",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "fullscreen",
+  "display_override": ["fullscreen", "standalone"],
+  "orientation": "landscape",
+  "background_color": "#5EC4FF",
+  "theme_color": "#2B1B2E",
+  "lang": "en",
+  "categories": ["education", "games", "kids"],
+  "icons": [
+    { "src": "assets/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icons/icon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "screenshots": [
+    { "src": "assets/icons/feature-1280x720.png", "sizes": "1280x720", "type": "image/png", "form_factor": "wide" }
+  ]
+}

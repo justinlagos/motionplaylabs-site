@@ -1,0 +1,41 @@
+/* ===== Festival Town: remote control, keyboard and gamepad play =====
+   Loaded on every platform. The ring only appears after the first arrow key,
+   so touch and mouse players never see it. */
+
+/* the focus ring: one element, moved from target to target */
+#tvring{ position:fixed; left:0; top:0; width:0; height:0; z-index:400; pointer-events:none; opacity:0; box-sizing:border-box;
+  border:max(5px, .55vmin) solid #FFFFFF; border-radius:30px;
+  box-shadow:0 0 0 max(5px, .55vmin) #FFC23A, 0 0 0 max(8px, .9vmin) rgba(43,16,32,.28), 0 0 32px 8px rgba(255,194,58,.55), inset 0 0 0 max(3px, .3vmin) rgba(255,194,58,.75);
+  transition:left .16s cubic-bezier(.2,.9,.3,1.2), top .16s cubic-bezier(.2,.9,.3,1.2), width .16s ease, height .16s ease, border-radius .16s ease, opacity .18s ease; }
+#tvring.on{ opacity:1; animation:tvbreathe 1.6s ease-in-out infinite }
+#tvring.jump{ animation:tvjump .22s cubic-bezier(.3,1.6,.5,1) }
+#tvring.press{ animation:tvpress .18s ease-out }
+#tvring.bump{ animation:tvbump .22s ease-out }
+@keyframes tvbreathe{ 50%{ box-shadow:0 0 0 max(5px, .55vmin) #FFC23A, 0 0 0 max(8px, .9vmin) rgba(43,16,32,.28), 0 0 44px 14px rgba(255,194,58,.7), inset 0 0 0 max(3px, .3vmin) rgba(255,194,58,.75) } }
+@keyframes tvjump{ 0%{ transform:scale(1.12) } 100%{ transform:none } }
+@keyframes tvpress{ 0%{ transform:scale(.92) } 100%{ transform:none } }
+@keyframes tvbump{ 0%,100%{ transform:none } 30%{ transform:translate(var(--bx, 0), var(--by, 0)) } }
+@media (prefers-reduced-motion: reduce){ #tvring, #tvring.on, #tvring.jump{ transition:none; animation:none } }
+
+/* TV mode: a little inset for overscan, no mouse cursor, no "turn sideways" prompt */
+#app[data-tv="1"]{ inset:2.5vh 2.5vw; cursor:none }
+#app[data-tv="1"] *{ cursor:none !important }
+#app[data-tv="1"] #rotate{ display:none !important }
+/* the ring is the only outline; the browser's own focus outline is never shown on top of it */
+#app[data-tv="1"] :focus, #app[data-tv="1"] :focus-visible{ outline:none }
+
+/* "Leave the game?" card, shown when Back is pressed on the title screen */
+#tvleave{ position:fixed; inset:0; z-index:390; display:flex; align-items:center; justify-content:center; background:rgba(43,27,46,.7); font-family:var(--display, 'Grandstander', sans-serif) }
+#tvleave[hidden]{ display:none }
+#tvleave .tvl-card{ background:#FFF8EC; border-radius:36px; padding:40px 48px 36px; text-align:center; box-shadow:0 18px 0 #C9A27A, 0 28px 40px rgba(43,16,32,.4); max-width:min(90vw, 760px) }
+#tvleave h2{ margin:0 0 10px; font-size:clamp(28px, 4.2vmin, 54px); color:#2B1B2E }
+#tvleave p{ margin:0 0 28px; font-size:clamp(18px, 2.4vmin, 30px); color:#5F5872; font-family:var(--body, 'Andika', sans-serif) }
+#tvleave .tvl-row{ display:flex; gap:28px; justify-content:center }
+#tvleave button{ border:0; border-radius:999px; padding:.55em 1.4em; font:800 clamp(20px, 3vmin, 36px) var(--display, 'Grandstander', sans-serif); color:#FFF; cursor:pointer; box-shadow:0 6px 0 rgba(43,16,32,.25) }
+#tvleave .tvl-stay{ background:#3E9B5A }
+#tvleave .tvl-go{ background:#D6336C }
+
+/* small helper shown once on TV: which buttons do what */
+#tvhint{ position:fixed; left:50%; bottom:4vh; transform:translateX(-50%); z-index:380; background:rgba(43,27,46,.86); color:#FFF8EC; border-radius:999px; padding:.6em 1.3em; font:700 clamp(16px, 2.2vmin, 26px) var(--body, 'Andika', sans-serif); pointer-events:none; opacity:0; transition:opacity .4s; white-space:nowrap }
+#tvhint.on{ opacity:1 }
+#tvhint b{ display:inline-block; min-width:1.5em; padding:0 .35em; margin:0 .15em; border-radius:.5em; background:#FFF8EC; color:#2B1B2E; text-align:center }
