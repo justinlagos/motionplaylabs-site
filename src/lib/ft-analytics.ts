@@ -32,7 +32,8 @@ async function selectAll<T>(base: string, key: string, table: string, query: str
   const page = 1000;
   for (let offset = 0; offset < cap; offset += page) {
     const res = await fetch(`${base}/rest/v1/${table}?${query}&limit=${page}&offset=${offset}`, {
-      headers: { apikey: key, Authorization: `Bearer ${key}`, Accept: "application/json" },
+      // new-style secret keys (sb_secret_...) go in apikey only; a legacy service_role JWT also goes in Authorization
+      headers: key.startsWith("eyJ") ? { apikey: key, Authorization: `Bearer ${key}`, Accept: "application/json" } : { apikey: key, Accept: "application/json" },
       cache: "no-store",
     });
     if (!res.ok) throw new Error(`${table}: ${res.status} ${(await res.text()).slice(0, 160)}`);
