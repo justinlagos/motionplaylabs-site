@@ -1,7 +1,7 @@
 /* Festival Town service worker: the game plays offline once it has been opened once.
    Small files are cached when the game is installed; pictures and voices are cached as they
    are first used. Bump VERSION whenever index.html changes so players get the new build. */
-const VERSION = 'ft-1.0.2-2026-11-03';
+const VERSION = 'ft-1.0.3-2026-11-05';
 const CORE = ['./', './index.html', './tv.js', './tv.css', './manifest.webmanifest', './vo/manifest.js', './assets/fonts/fonts.css', './assets/brand/logo.webp', './assets/bg2/bg_title.webp'];
 
 self.addEventListener('install', e => {
