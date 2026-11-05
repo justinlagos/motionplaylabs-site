@@ -1,0 +1,358 @@
+/* Festival Town data room. A plum band that ends in the town picture, then a numbered index.
+   Colours and Lilita One come from the Festival Town identity; body text is the site face. */
+.dr {
+  --dr-plum: #2a0b4a;
+  --dr-cream: #fff8ec;
+  --dr-paper: #ffffff;
+  --dr-lav: #f6f0ff;
+  --dr-ink: #2a0b4a;
+  --dr-text: #4e3f63;
+  --dr-muted: #6b5a80;
+  --dr-line: #e9ddf7;
+  --dr-band-muted: #d8c8ee;
+  --dr-pink: #c8155a;
+  --dr-purple: #4a16b8;
+  --dr-sun: #ffc21a;
+  --dr-ok: #0b6f66;
+  --dr-ok-bg: #e0f3ef;
+  --dr-draft-bg: #eee6fd;
+  --dr-todo: #a3124a;
+  --dr-todo-bg: #fce8f0;
+  --dr-display: "Lilita One", "Arial Rounded MT Bold", "Trebuchet MS", sans-serif;
+  background: var(--dr-cream);
+  color: var(--dr-text);
+}
+
+.dr a:focus-visible {
+  outline: 3px solid var(--dr-sun);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+/* Band */
+.dr-band {
+  background: var(--dr-plum);
+  color: var(--dr-cream);
+  padding-top: calc(var(--header-h) + clamp(24px, 4vw, 56px));
+}
+.dr-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 2rem;
+  padding-bottom: 2rem;
+}
+.dr-eyebrow {
+  margin: 0 0 0.75rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--dr-sun);
+}
+.dr-title {
+  margin: 0;
+  font-family: var(--dr-display);
+  font-weight: 400;
+  font-size: clamp(2.5rem, 6vw, 4.25rem);
+  line-height: 1;
+  letter-spacing: 0;
+  color: var(--dr-cream);
+  text-wrap: balance;
+}
+.dr-lead {
+  margin: 1rem 0 0;
+  max-width: 36rem;
+  font-size: 1.125rem;
+  line-height: 1.5;
+  color: var(--dr-band-muted);
+}
+.dr-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+  margin: 1.25rem 0 0;
+  font-size: 0.9375rem;
+  color: var(--dr-band-muted);
+}
+.dr-meta b {
+  color: var(--dr-cream);
+  font-weight: 700;
+}
+.dr-logo {
+  display: block;
+  width: 15rem;
+  max-width: 100%;
+  height: auto;
+}
+.dr-town {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  aspect-ratio: 1800 / 339;
+  object-fit: cover;
+  object-position: 50% 48%;
+  border-radius: 1rem 1rem 0 0;
+}
+
+/* Body */
+.dr-body {
+  padding-bottom: clamp(48px, 8vw, 96px);
+}
+.dr-glance {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1px;
+  margin: 2.5rem 0 0;
+  background: var(--dr-line);
+  border: 1px solid var(--dr-line);
+  border-radius: 0.875rem;
+  overflow: hidden;
+}
+.dr-glance div {
+  min-width: 0;
+  padding: 1rem 1.25rem;
+  background: var(--dr-paper);
+}
+.dr-glance dt {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--dr-muted);
+}
+.dr-glance dd {
+  margin: 0.25rem 0 0;
+  font-family: var(--dr-display);
+  font-size: 1.5rem;
+  line-height: 1.15;
+  color: var(--dr-ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.dr-part {
+  margin-top: 3rem;
+}
+.dr-part-head {
+  display: flex;
+  align-items: baseline;
+  gap: 0.875rem;
+  margin-bottom: 0.75rem;
+}
+.dr-part-no {
+  font-family: var(--dr-display);
+  font-size: 1.25rem;
+  color: var(--dr-pink);
+}
+.dr-part h2,
+.dr-contact h2 {
+  margin: 0;
+  font-family: var(--dr-display);
+  font-weight: 400;
+  font-size: 1.75rem;
+  line-height: 1.15;
+  letter-spacing: 0;
+  color: var(--dr-ink);
+}
+.dr-rows {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 2px solid var(--dr-ink);
+}
+.dr-rows li {
+  border-bottom: 1px solid var(--dr-line);
+}
+.dr-row {
+  display: grid;
+  grid-template-columns: 3.25rem minmax(0, 1fr) 11rem 7.5rem 1.25rem;
+  grid-template-areas: "no main kind status go";
+  align-items: center;
+  gap: 0.5rem 1rem;
+  padding: 1rem 0.75rem;
+  border-radius: 0.5rem;
+  color: inherit;
+  text-decoration: none;
+  transition: background-color 0.15s ease;
+}
+a.dr-row:hover {
+  background: var(--dr-lav);
+}
+a.dr-row:hover .dr-item-title,
+a.dr-row:hover .dr-go {
+  color: var(--dr-purple);
+}
+.dr-no {
+  grid-area: no;
+  font-weight: 700;
+  color: var(--dr-muted);
+  font-variant-numeric: tabular-nums;
+}
+.dr-main {
+  grid-area: main;
+  min-width: 0;
+}
+.dr-item-title {
+  display: block;
+  font-weight: 700;
+  font-size: 1.0625rem;
+  line-height: 1.35;
+  color: var(--dr-ink);
+}
+.dr-desc {
+  display: block;
+  margin-top: 0.125rem;
+  max-width: 36rem;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--dr-text);
+}
+.dr-kind {
+  grid-area: kind;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--dr-muted);
+  font-variant-numeric: tabular-nums;
+}
+.dr-status {
+  grid-area: status;
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.1875rem 0.625rem;
+  border-radius: 999px;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.dr-status::before {
+  content: "";
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: currentColor;
+}
+.dr-status.is-ready,
+.dr-status.is-live {
+  color: var(--dr-ok);
+  background: var(--dr-ok-bg);
+}
+.dr-status.is-draft {
+  color: var(--dr-purple);
+  background: var(--dr-draft-bg);
+}
+.dr-status.is-coming,
+.dr-status.is-request {
+  color: var(--dr-todo);
+  background: var(--dr-todo-bg);
+}
+.dr-status.is-coming::before,
+.dr-status.is-request::before {
+  background: transparent;
+  border: 2px solid currentColor;
+  box-sizing: border-box;
+}
+.dr-go {
+  grid-area: go;
+  font-weight: 700;
+  color: var(--dr-muted);
+}
+.dr-row.is-pending .dr-item-title {
+  color: var(--dr-muted);
+}
+
+/* Contact */
+.dr-contact {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+  gap: 1.5rem 2.5rem;
+  margin-top: 3rem;
+  padding: 1.75rem;
+  background: var(--dr-paper);
+  border: 1px solid var(--dr-line);
+  border-radius: 1rem;
+}
+.dr-contact p {
+  margin: 0.5rem 0 0;
+}
+.dr-contact ul {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.dr-contact li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 1rem;
+  min-width: 0;
+}
+.dr-contact li span {
+  width: 4rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--dr-muted);
+}
+.dr-contact li a {
+  font-weight: 700;
+  color: var(--dr-ink);
+  overflow-wrap: anywhere;
+}
+
+.dr-foot {
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--dr-line);
+  font-size: 0.875rem;
+  color: var(--dr-muted);
+}
+.dr-foot p {
+  margin: 0.25rem 0;
+  max-width: 48rem;
+}
+
+@media (max-width: 760px) {
+  .dr-head {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+  .dr-logo {
+    grid-row: 1;
+    width: 9rem;
+  }
+  .dr-glance {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .dr-row {
+    grid-template-columns: 2.5rem minmax(0, 1fr) auto;
+    grid-template-areas:
+      "no main main"
+      ". kind status";
+    padding-inline: 0.25rem;
+  }
+  .dr-go {
+    display: none;
+  }
+  .dr-status {
+    justify-self: end;
+  }
+  .dr-contact {
+    grid-template-columns: 1fr;
+    padding: 1.25rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dr-row {
+    transition: none;
+  }
+}
