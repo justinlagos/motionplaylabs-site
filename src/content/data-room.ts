@@ -24,7 +24,7 @@ export const dataRoom = {
   glance: [
     { label: "Year licence", value: "₦9,899 per pupil per term" },
     { label: "Single term", value: "₦14,899 per pupil" },
-    { label: "Ages", value: "4 to 7, 5 places, 15 activities" },
+    { label: "Ages", value: "4 to 7" },
     { label: "School start", value: "January 2027" },
   ],
   parts: [
