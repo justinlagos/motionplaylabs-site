@@ -15,6 +15,10 @@ const config: NextConfig = {
         async rewrites() {
           return [{ source: "/festival-town/game/", destination: "/festival-town/game/index.html" }];
         },
+        // The school data room is shared by link only: keep the page and its PDFs out of search.
+        async headers() {
+          return [{ source: "/festival-town/data-room/:path*", headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }] }];
+        },
       }),
 };
 

@@ -12,8 +12,8 @@ export const site = {
     number: "17304660",
     jurisdiction: "England and Wales",
   },
-  // TODO(D4): add the Nigerian company's legal name and CAC number once confirmed.
-  ngCompany: null as null | { legalName: string; rc: string },
+  // Corporate Affairs Commission, incorporated 18 June 2026.
+  ngCompany: { legalName: "MotionPlay Labs Ltd", rc: "9621200" } as null | { legalName: string; rc: string },
   ungmVendor: "1246998",
   schoolUrl: "https://workshop.motionplaylabs.com",
 };
