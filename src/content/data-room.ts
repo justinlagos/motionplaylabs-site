@@ -22,9 +22,9 @@ export const dataRoom = {
   title: "Festival Town data room",
   lead: "The documents behind the Festival Town school licence for Nigeria. Open any item, or download the PDFs to share.",
   glance: [
-    { label: "Price", value: "₦1,500 per pupil per term" },
+    { label: "Year licence", value: "₦9,899 per pupil per term" },
+    { label: "Single term", value: "₦14,899 per pupil" },
     { label: "Ages", value: "4 to 7" },
-    { label: "In the game", value: "5 places, 15 activities" },
     { label: "School start", value: "January 2027" },
   ],
   parts: [
@@ -48,7 +48,7 @@ export const dataRoom = {
       id: "product",
       title: "The product",
       items: [
-        { no: "2.1", title: "Play Festival Town", desc: "Free to play in any web browser.", kind: "Live game", status: "ready", href: "/festival-town/game/" },
+        { no: "2.1", title: "Play Festival Town", desc: "Free to start in any web browser.", kind: "Live game", status: "ready", href: "/festival-town/game/" },
         { no: "2.2", title: "Website and promo film", desc: "The Festival Town page, with the 1 min 14 film.", kind: "Web page", status: "ready", href: "/festival-town/" },
         {
           no: "2.3",
