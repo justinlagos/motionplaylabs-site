@@ -403,7 +403,6 @@ button:focus-visible{ outline:5px solid #0B5F63; outline-offset:4px }
 #rotate svg{ width:140px; animation:turn 2.4s ease-in-out infinite }
 #app[data-portrait="1"] #rotate{ display:flex }
 
-#ad-resume{position:fixed;inset:0;z-index:300;display:flex;align-items:center;justify-content:center;background:rgba(43,27,46,.82);backdrop-filter:blur(2px)}#ad-resume .btn{font:800 clamp(20px,4vw,32px)/1.2 var(--display),system-ui,sans-serif;color:#2B1B2E;background:#FFD23F;border:none;border-radius:999px;padding:18px 40px;cursor:pointer;box-shadow:0 8px 0 #C9A21F,0 14px 24px rgba(0,0,0,.3)}#ad-resume .btn:active{transform:translateY(4px);box-shadow:0 4px 0 #C9A21F}#stage>#ad-resume{position:absolute}#stage>#ad-resume .btn{font-size:34px;padding:20px 48px}
 /* ---------- grown-ups ---------- */
 .parent{ position:fixed; inset:0; z-index:200; background:rgba(43,27,46,.62); display:flex; align-items:center; justify-content:center; padding:16px; touch-action:pan-y; -webkit-user-select:text; user-select:text }
 .parent[hidden]{ display:none }
@@ -440,7 +439,7 @@ button:focus-visible{ outline:5px solid #0B5F63; outline-offset:4px }
 .toggle .sw{ width:56px; height:32px; border-radius:16px; background:#D9CBB8; position:relative; flex:none; transition:background .2s }
 .toggle .sw::after{ content:""; position:absolute; left:4px; top:4px; width:24px; height:24px; border-radius:50%; background:#FFF; transition:transform .2s }
 .toggle input:checked + .sw{ background:var(--leaf) } .toggle input:checked + .sw::after{ transform:translateX(24px) }
-.toggle input:focus-visible + .sw{ outline:4px solid #17A2A8; outline-offset:3px }
+.toggle input:focus-visible + .sw, .toggle:focus-visible .sw{ outline:4px solid #17A2A8; outline-offset:3px } .toggle:focus{ outline:none }
 .warn{ background:#FFE0E0; border-radius:10px; padding:8px 10px }
 @media (max-width:520px){ .pg-card{ padding:20px 16px } }
 
@@ -2174,7 +2173,7 @@ function escapeHTML(s){ return String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;'
 const COLORS = ['#17A2A8', '#D6336C', '#F5A623', '#7A3FC4', '#3E9B5A'];
 const Store = {
   KEY:'stemTown.v1', s:null, ok:true,
-  defaults(){ return { v:1, current:null, profiles:[], settings:{ voice:true, music:true, sfx:true, slow:false, calm:false, subtitles:true } }; },
+  defaults(){ return { v:1, current:null, profiles:[], settings:{ voice:true, music:true, sfx:true, slow:false, calm:false, subtitles:true, stats:null } }; },
   newProfile(name = 'Player 1', color = COLORS[0]){ return { id:'p' + Date.now().toString(36) + rnd(100, 999), name, color, created:Date.now(), hero:null, introSeen:false, worlds:{}, items:[], log:[], playMs:0, lastPlayed:0 }; },
   load(){
     let d = null;
@@ -2194,6 +2193,87 @@ const Store = {
   hero(){ return this.p().hero || 'ada'; }
 };
 Store.load();
+
+/* ---------- play counts: anonymous, and a grown-up can turn them off ----------
+   Sends which activities are started and finished, how long they take, and the kind of device.
+   No name, no account, no device ID: the session id is random, lives in memory for one launch and is
+   never saved. Region is the device's time zone, not a location. Nothing here can stop or slow play:
+   every call is wrapped, sending is batched, and a failed send is dropped after a few tries. */
+const GAME_VERSION = '1.0.3';
+const Stats = (() => {
+  const URL_ = 'https://imbhdffupsfehifcbdfb.supabase.co/rest/v1/ft_events';
+  const KEY = 'sb_publishable_72d5o8iR-PD3jvL83XBvkA_HGy66fZA';
+  const SID = (() => { try { const a = new Uint8Array(8); crypto.getRandomValues(a); return Array.from(a, b => b.toString(16).padStart(2, '0')).join(''); } catch (e) { return (Math.random().toString(16).slice(2, 10) + Date.now().toString(16)).slice(0, 16); } })();
+  const T0 = Date.now();
+  const inputs = new Set();
+  let q = [], timer = 0, acts = 0, tries = 0, base = null;
+  /* on unless a grown-up turned it off; a browser that asks for no tracking (Global Privacy Control) starts with it off */
+  function enabled(){
+    try { const v = Store.s.settings.stats; return v === true || (v == null && navigator.globalPrivacyControl !== true); } catch (e) { return false; }
+  }
+  function channel(){
+    try { if (typeof Portal !== 'undefined' && Portal.target && Portal.target !== 'none') return String(Portal.target); } catch (e) {}
+    if (window.FT_PLATFORM) return 'app-' + String(window.FT_PLATFORM).toLowerCase().replace(/[^a-z0-9-]/g, '').slice(0, 20);
+    const host = location.hostname || '';
+    if (location.protocol === 'file:' || !host || host === 'localhost' || host === '127.0.0.1' || host.endsWith('.localhost') || host.endsWith('.test')) return 'dev';
+    if (host === 'festival-town.netlify.app' || /(^|\.)playfestivaltown\.com$/.test(host)) return 'web';
+    if (/(^|\.)motionplaylabs\.com$/.test(host)) return 'site';
+    if (host.endsWith('.netlify.app') || host.endsWith('.vercel.app')) return 'preview';
+    return 'other';
+  }
+  function device(){
+    try { if (window.FT_TV && FT_TV.isTV) return 'tv'; } catch (e) {}
+    const ua = navigator.userAgent || '';
+    if (/Tizen|Web0S|webOS|NetCast|AFT[A-Z0-9]|Android TV|GoogleTV|BRAVIA|CrKey|SHIELD|SMART-TV|SmartTV|HbbTV/i.test(ua)) return 'tv';
+    let coarse = false; try { coarse = matchMedia('(pointer: coarse)').matches; } catch (e) {}
+    const s = Math.min(screen.width || 0, screen.height || 0);
+    return coarse ? (s && s < 600 ? 'phone' : 'tablet') : 'computer';
+  }
+  function common(){
+    if (!base){
+      let tz = ''; try { tz = Intl.DateTimeFormat().resolvedOptions().timeZone || ''; } catch (e) {}
+      base = { ch:channel(), dev:device(), v:GAME_VERSION, tz:String(tz).slice(0, 48) };
+    }
+    return base;
+  }
+  function flush(final){
+    clearTimeout(timer); timer = 0;
+    if (!q.length) return;
+    if (!enabled()){ q = []; return; }
+    const rows = q.splice(0, 40);
+    try {
+      fetch(URL_, { method:'POST', keepalive:!!final, mode:'cors', credentials:'omit',
+        headers:{ apikey:KEY, 'Content-Type':'application/json', Prefer:'return=minimal' }, body:JSON.stringify(rows) })
+        .then(r => { if (r.ok) tries = 0; else throw 0; })
+        .catch(() => { if (++tries <= 3 && !final){ q = rows.concat(q).slice(0, 80); schedule(30000); } });
+    } catch (e) {}
+    if (q.length) schedule(2000);
+  }
+  function schedule(ms){ if (!timer) timer = setTimeout(() => flush(false), ms); }
+  function send(event, f = {}){
+    try {
+      if (!enabled()) return;
+      const props = Object.assign({}, common(), f.props || {});
+      q.push({ app:'game', session_id:SID, event, world:f.world || null, activity:f.activity || null, props });
+      if (event === 'activity_done') acts++;
+      if (q.length >= 12 || event === 'activity_done') flush(false); else schedule(8000);
+    } catch (e) {}
+  }
+  /* how the child plays: touch, mouse, keys (a TV remote or keyboard) or a game controller */
+  try {
+    addEventListener('pointerdown', e => { if (e.pointerType) inputs.add(e.pointerType === 'pen' ? 'touch' : e.pointerType); }, true);
+    addEventListener('keydown', () => inputs.add('keys'), true);
+    addEventListener('gamepadconnected', () => inputs.add('pad'));
+  } catch (e) {}
+  /* the app going to the background ends the session as far as counts go; coming back carries on with the same session */
+  let endedAt = 0;
+  function end(){ if (Date.now() - endedAt < 3000) return; endedAt = Date.now(); try { send('session_end', { props:{ ms:Date.now() - T0, acts, input:[...inputs].sort().join('+') || 'none' } }); flush(true); } catch (e) {} }
+  try {
+    document.addEventListener('visibilitychange', () => { if (document.hidden) end(); });
+    addEventListener('pagehide', end);
+  } catch (e) {}
+  return { send, flush, enabled, session:SID };
+})();
 
 /* ---------- stage: always 720 high, 1024 to 1600 wide ---------- */
 let STAGE_W = 1280, SCALE = 1;
@@ -3414,8 +3494,7 @@ const Title = {
     const chip = $('#b-player', el);
     if (Store.s.profiles.length > 1){ chip.hidden = false; chip.querySelector('i').style.background = p.color; chip.querySelector('span').textContent = p.name; chip.onclick = () => { SFX.tap(); Parent.open('players'); }; }
     $('#b-play', el).onclick = async () => {
-      audio(); musicStart(); SFX.tap();
-      await Portal.preroll();
+      audio(); musicStart(); SFX.tap(); Stats.send('play');
       if (!Store.p().hero) return Pick.enter(true);
       const tok = newRun();
       await Iris.close(STAGE_W - 200, 520);
@@ -3461,6 +3540,7 @@ const Pick = {
     if (!this.sel) return;
     SFX.tap(); stopSpeech();
     const p = Store.p(); p.hero = this.sel; Store.save();
+    Stats.send('pick', { props:{ hero:this.sel, first:this.first } });
     Object.keys(portraitCache).forEach(k => delete portraitCache[k]);
     const tok = newRun();
     await Iris.close(STAGE_W - 115, 605);
@@ -3532,6 +3612,7 @@ const Town = {
   async go(k){
     if (this.busy) return; this.busy = true;
     const tok = newRun(); audio(); SFX.tap();
+    Stats.send('world_open', { world:k });
     const L = TOWN_LOTS[k];
     const art = $(`#town .tbld[data-w="${k}"]`); if (art){ art.classList.remove('tap'); void art.getBoundingClientRect(); art.classList.add('tap'); }
     try {
@@ -3673,153 +3754,6 @@ const WMap = {
   back(){ return Town.enter({ from:this.wid }); }
 };
 
-/* ===================== portal adapter =====================
-   One build per portal. PORTAL_TARGET is set by the build script; on the
-   plain web build it stays 'none' and every call below does nothing.
-   Portals that serve ads get gameplayStart / gameplayStop around each
-   activity and an ad break only BETWEEN activities, never inside a round. */
-const Portal = (() => {
-  const TARGET = 'none';
-  const MIN_GAP_MS = 120000;          /* GameDistribution allows a 2 minute timer */
-  let sdk = null, lastAd = 0, playing = false, booted = false;
-
-  const loadScript = src => new Promise((res, rej) => {
-    const s = document.createElement('script');
-    s.src = src; s.async = true; s.onload = res; s.onerror = rej;
-    document.head.appendChild(s);
-  });
-
-  async function boot(){
-    if (booted) return; booted = true;
-    try {
-      if (TARGET === 'crazygames'){
-        await loadScript('https://sdk.crazygames.com/crazygames-sdk-v3.js');
-        sdk = window.CrazyGames && window.CrazyGames.SDK;
-        if (sdk) await sdk.init();
-      } else if (TARGET === 'poki'){
-        await loadScript('https://game-cdn.poki.com/scripts/v2/poki-sdk.js');
-        sdk = window.PokiSDK;
-        if (sdk) await sdk.init();
-      } else if (TARGET === 'gamedistribution'){
-        window.GD_OPTIONS = {
-          gameId: '__GD_GAME_ID__',
-          onEvent(e){ if (e.name === 'SDK_GAME_PAUSE') silence(true); if (e.name === 'SDK_GAME_START') silence(false); }
-        };
-        await loadScript('https://html5.api.gamedistribution.com/main.min.js');
-        sdk = window.gdsdk || null;
-      }
-    } catch (e){ sdk = null; }   /* a blocked or missing SDK must never stop the game */
-  }
-
-  /* everything audible off during an ad, back on after */
-  function silence(on){
-    try {
-      if (on){ stopSpeech(); musicStop(); if (master && AC) master.gain.setTargetAtTime(0, AC.currentTime, .02); }
-      else { if (master && AC) master.gain.setTargetAtTime(1, AC.currentTime, .05);
-             if (Store.s.settings.music && AC) musicStart(); }
-    } catch (e){}
-  }
-
-  /* After an ad the child comes back to a still screen and taps to carry on.
-     It sits inside #stage so the remote's ring (tv.js) can reach it, and OK or Back
-     on a keyboard, TV remote or controller dismisses it straight away. */
-  const OK_KEYS = new Set(['Enter', ' ', 'Spacebar', 'Select', 'OK', 'NumpadEnter',
-                           'Escape', 'Esc', 'GoBack', 'BrowserBack', 'XF86Back', 'Backspace']);
-  const OK_CODES = new Set([13, 32, 23, 27, 8, 4, 166, 10009, 461, 65385]);
-  function resumeScreen(){
-    return new Promise(res => {
-      const el = document.createElement('div');
-      el.id = 'ad-resume';
-      el.innerHTML = '<button type="button" class="btn">Tap to carry on</button>';
-      let done = false;
-      const go = () => {
-        if (done) return; done = true;
-        window.removeEventListener('keydown', onKey, true);
-        el.remove(); res();
-      };
-      /* capture phase, so the game's own key handling never sees these presses */
-      const onKey = e => {
-        e.preventDefault(); e.stopImmediatePropagation();
-        if (OK_KEYS.has(e.key) || OK_CODES.has(e.keyCode)) go();
-      };
-      el.querySelector('button').addEventListener('click', go);
-      el.addEventListener('click', go);
-      window.addEventListener('keydown', onKey, true);
-      (document.getElementById('stage') || document.body).appendChild(el);
-      try { el.querySelector('button').focus({ preventScroll: true }); } catch (e) {}
-    });
-  }
-
-  /* An ad call that never calls back would leave a child staring at a frozen
-     screen, so every one of them races a timer and the game carries on. */
-  const AD_TIMEOUT_MS = 12000;
-  function withTimeout(p){
-    return new Promise(res => {
-      let done = false;
-      const finish = () => { if (!done){ done = true; res(); } };
-      const t = setTimeout(finish, AD_TIMEOUT_MS);
-      Promise.resolve(p).then(() => { clearTimeout(t); finish(); }, () => { clearTimeout(t); finish(); });
-    });
-  }
-
-  async function runAd(kind){
-    if (!sdk && TARGET !== 'gamedistribution') return;
-    let shown = false;
-    silence(true);
-    try {
-      if (TARGET === 'crazygames' && sdk && sdk.ad && sdk.ad.requestAd){
-        shown = true;
-        await withTimeout(new Promise(res => {
-          try { sdk.ad.requestAd('midgame', { adFinished: res, adError: res, adStarted(){} }); }
-          catch (e){ res(); }
-        }));
-      } else if (TARGET === 'poki' && sdk && sdk.commercialBreak){
-        shown = true;
-        await withTimeout(sdk.commercialBreak());
-      } else if (TARGET === 'gamedistribution' && window.gdsdk && window.gdsdk.showAd){
-        shown = true;
-        await withTimeout(window.gdsdk.showAd());
-      }
-    } catch (e){}
-    lastAd = Date.now();
-    silence(false);
-    /* no ad was actually attempted, so there is nothing to come back from */
-    if (shown) await resumeScreen();
-  }
-
-  return {
-    boot,
-    /* the first ad GameDistribution requires, after the child presses Play */
-    async preroll(){
-      if (TARGET !== 'gamedistribution') return;
-      await boot(); await runAd('preroll');
-    },
-    /* a break between two activities; never called inside a round */
-    async between(){
-      if (TARGET === 'none' || TARGET === 'coolmath') return;
-      if (Date.now() - lastAd < MIN_GAP_MS) return;
-      await runAd('midroll');
-    },
-    start(){
-      if (playing) return; playing = true;
-      try {
-        if (TARGET === 'crazygames' && sdk && sdk.game) sdk.game.gameplayStart();
-        else if (TARGET === 'poki' && sdk) sdk.gameplayStart();
-      } catch (e){}
-    },
-    stop(){
-      if (!playing) return; playing = false;
-      try {
-        if (TARGET === 'crazygames' && sdk && sdk.game) sdk.game.gameplayStop();
-        else if (TARGET === 'poki' && sdk) sdk.gameplayStop();
-      } catch (e){}
-    },
-    target: TARGET,
-    /* Coolmath takes no name entry and no code box */
-    noNameEntry: TARGET === 'coolmath'
-  };
-})();
-
 /* ===================== an activity: story, then play rounds on the board ===================== */
 const Runner = {
   wid:null, sid:null,
@@ -3833,9 +3767,12 @@ const Runner = {
     for (const k in ACT) delete ACT[k];
     const host = makeActor(st.host, 'host-a'); $('.host-slot', el).append(host);
     el.append(makeActor('zizi', 'zizi-a'), makeActor('hero', 'hero-a'));
-    showScreen('scene'); layout(); Portal.start();
+    showScreen('scene'); layout();
     const prog = Store.stop(wid, sid), replay = !!prog.done;
     const t0 = Date.now();
+    let misses = 0, hints = 0;
+    this.t0 = t0; this.finished = false; this.cur = null;
+    Stats.send('activity_start', { world:wid, activity:sid, props:{ replay, round:replay ? 0 : prog.round } });
     await Iris.open(140, 520);
     if (tok !== RUN) return;
     try {
@@ -3851,6 +3788,7 @@ const Runner = {
         await st.rounds[i](S);
         guard(tok);
         Store.log({ w:wid, s:sid, r:i, misses:S.misses, hints:S.hints, ms:Date.now() - rt0 });
+        misses += S.misses || 0; hints += S.hints || 0;
         if (!replay){ prog.round = i + 1; Store.save(); }
         Rounds.set(i + 1, st.rounds.length);
         if (i < st.rounds.length - 1){ await sleep(250); if (Math.random() < .5) await say('well_done'); else { pulse(rigOf('zizi'), 'pushups', 1500); await say('zizi_cheer'); } }
@@ -3863,16 +3801,19 @@ const Runner = {
       prog.done = true; prog.round = 0; prog.plays = (prog.plays || 0) + 1;
       const p = Store.p(); p.playMs = (p.playMs || 0) + (Date.now() - t0); p.lastPlayed = Date.now();
       Store.save();
+      this.finished = true;
+      Stats.send('activity_done', { world:wid, activity:sid, props:{ ms:Date.now() - t0, misses, hints, replay } });
       await sleep(400);
       guard(tok);
       const r = stageRect(ACT[Store.hero()]);
       await Iris.close(r.x + r.w / 2, r.y + r.h / 2); guard(tok);
-      Portal.stop();
-      await Portal.between();
       WMap.enter(wid, { justDone:W.stops.indexOf(st) });
     } catch (e) { if (e !== CANCEL) throw e; }
   },
-  back(){ Portal.stop(); return WMap.enter(this.wid); }
+  back(){
+    if (!this.finished && this.sid) Stats.send('activity_quit', { world:this.wid, activity:this.sid, props:{ round:this.cur ? this.cur.i : 0, ms:Date.now() - (this.t0 || Date.now()) } });
+    return WMap.enter(this.wid);
+  }
 };
 /* the usual ending: the host gives a thing for the festival */
 async function standardOutro(ctx){
@@ -3922,6 +3863,7 @@ const Fest = {
     el.innerHTML = `<div class="art">${festBackSVG()}</div><div class="f-crowd"></div><div class="f-items"></div><div class="fest-cast"></div><div class="fest-meter"></div>`;
     const box = $('.f-items', el);
     const n = festCount(), all = n === FEST_ORDER.length;
+    Stats.send('festival', { props:{ n, all } });
     if (all){
       const crowd = $('.f-crowd', el);
       FEST_HOSTS.forEach(([k, x], i) => { const a = makeActor(k); a.style.cssText = `left:${Math.round(STAGE_W * FEST_HX[i]) - 75}px;top:${196 + (i % 2) * 14}px;width:150px;height:262px`; a.classList.add('f-host'); a.style.animationDelay = (-i * .23).toFixed(2) + 's'; crowd.append(a); });
@@ -7494,7 +7436,7 @@ function fmtAgo(t){ if (!t) return 'not yet'; const d = Math.floor((Date.now() -
 const Parent = {
   el: $('#parent'), passedAt: 0, tab: 'progress',
   open(tab){
-    stopSpeech(); musicStop(); Portal.stop();
+    stopSpeech(); musicStop();
     this.tab = tab || this.tab || 'progress';
     this.el.hidden = false;
     if (Date.now() - this.passedAt < 5 * 60000) this.render(); else this.gate();
@@ -7554,13 +7496,14 @@ const Parent = {
         <p>Have a code? Paste it here:</p><textarea id="pg-paste" rows="3" placeholder="Paste a code"></textarea><div class="row"><button type="button" class="btn" id="pg-load">Load progress</button><span id="pg-msg" class="small" aria-live="polite"></span></div>
         <h3>Start again</h3><div class="row"><button type="button" class="btn ghost" id="pg-reset">Clear ${escapeHTML(p.name)}'s progress</button></div>`;
     } else if (this.tab === 'settings'){
-      const tg = (k, label, note) => `<label class="toggle"><input type="checkbox" data-set="${k}" ${S[k] ? 'checked' : ''}><span class="sw"></span><span><b>${label}</b>${note ? `<br><span class="small">${note}</span>` : ''}</span></label>`;
+      const tg = (k, label, note) => `<label class="toggle" tabindex="0"><input type="checkbox" tabindex="-1" data-set="${k}" ${S[k] ? 'checked' : ''}><span class="sw"></span><span><b>${label}</b>${note ? `<br><span class="small">${note}</span>` : ''}</span></label>`;
       body = tg('voice', 'Spoken words', 'Characters read every instruction aloud.') + tg('slow', 'Slower speech', 'For younger children or new English speakers. Slows the device voice; recorded voices keep their normal pace.') + tg('music', 'Music') + tg('sfx', 'Sound effects') + tg('calm', 'Calm mode', 'Less movement and no confetti.') +
         `<h3>Voices</h3><p>Every character has a recorded voice. If a recording can't load, that line uses this device's built-in voice instead.</p><div class="row"><button type="button" class="btn ghost" id="pg-script">Show the voice script</button></div><textarea id="pg-scriptout" rows="6" readonly hidden></textarea>`;
     } else {
-      body = `<ul class="plain"><li>Progress is saved on this device only. Nothing is sent over the internet.</li><li>No ads, no tracking, no accounts.</li><li>No in-game purchases, and nothing for children to buy.</li><li>This screen is behind a grown-up question so children don't change settings by accident.</li></ul>
+      body = `<ul class="plain"><li>Progress is saved on this device only.</li><li>The game sends anonymous play counts to MotionPlay Labs: which activities are started and finished, how long they take, how many tries they needed, and the kind of device and time zone. No names, no email, no device ID, nothing that identifies your child. We use the counts to find activities that are too hard or too easy.</li><li>No ads, no accounts.</li><li>No in-game purchases, and nothing for children to buy.</li><li>This screen is behind a grown-up question so children don't change settings by accident.</li></ul>
+        <label class="toggle" tabindex="0"><input type="checkbox" tabindex="-1" data-set="stats" ${Stats.enabled() ? 'checked' : ''}><span class="sw"></span><span><b>Send anonymous play counts</b><br><span class="small">Turn off and the game sends nothing at all.</span></span></label>
         ${Store.ok ? '' : '<p class="warn">This browser is blocking saving, so progress will be lost when the page closes.</p>'}
-        <p class="small">Festival Town, version 1.0.2: three characters, five worlds, fifteen activities with three rounds each.</p>`;
+        <p class="small">Festival Town, version ${GAME_VERSION}: three characters, five worlds, fifteen activities with three rounds each. Privacy policy: motionplaylabs.com/legal/festival-town-privacy</p>`;
     }
     this.el.innerHTML = `<div class="pg-card" role="dialog" aria-modal="true" aria-labelledby="pg-t">
       <button class="pg-x" type="button" aria-label="Close">×</button>
@@ -7713,9 +7656,14 @@ function switchedPlayer(){ updateFest(); Title.enter(); }
     setTimeout(async () => { if (tok !== RUN) return; await Iris.close(STAGE_W / 2, 360); if (tok === RUN) WMap.enter(wid); }, 900);
   });
   updateFest();
-  Portal.boot();
   Title.enter();
-  window.__ft = { Store, Title, Pick, Town, WMap, Runner, Fest, WORLDS, setFast(f){ FAST = f; } };
+  /* one "open" per launch, once tv.js has said whether this is a TV */
+  const sendOpen = () => { try {
+    const p = Store.p(), prog = WORLD_ORDER.reduce((t, w) => t + (WORLDS[w] ? WORLDS[w].stops.filter(s => ((p.worlds[w] || {})[s.id] || {}).done).length : 0), 0);
+    Stats.send('open', { props:{ ret:!!p.hero, prog, players:Store.s.profiles.length, lang:String(navigator.language || '').slice(0, 12) } });
+  } catch (e) {} };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', sendOpen, { once:true }); else setTimeout(sendOpen, 0);
+  window.__ft = { Store, Title, Pick, Town, WMap, Runner, Fest, WORLDS, Stats, setFast(f){ FAST = f; } };
 })();
 
 

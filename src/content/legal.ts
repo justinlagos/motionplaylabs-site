@@ -11,21 +11,32 @@ export const legal: LegalDoc[] = [
     "title": "Festival Town Privacy Policy",
     "sections": [
       {
-        "heading": "Last updated: 30 October 2026",
+        "heading": "Last updated: 5 November 2026",
         "body": [
-          "Festival Town is an educational game from MotionPlay Labs Ltd, registered in England and Wales, company number 17304660. This policy covers our Android game, package com.motionplaylabs.festivaltown. For privacy questions, parents and guardians can contact hello@motionplaylabs.com."
+          "Festival Town is an educational game from MotionPlay Labs Ltd, registered in England and Wales, company number 17304660. This policy covers the game wherever it is played: on the web at festival-town.netlify.app and motionplaylabs.com/festival-town/game, in the Android app (package com.motionplaylabs.festivaltown), in the Fire TV, Samsung TV and LG TV apps, and on game portals. For privacy questions, parents and guardians can contact hello@motionplaylabs.com."
         ]
       },
       {
         "heading": "Playing the game",
         "body": [
-          "Festival Town works without an online account. It has no advertising, in-app purchases, analytics SDKs or social messaging. The Android app does not request permission to access the internet, your camera, microphone, contacts or location. MotionPlay Labs does not receive children's profiles or gameplay records from the game."
+          "Festival Town works without an online account. The game itself has no advertising, in-app purchases, analytics SDKs or social messaging. It does not ask for the camera, microphone, contacts or location. The Android app up to version 1.0.2 does not request permission to access the internet; from version 1.0.3 it uses internet access only to send the anonymous play counts described below.",
+          "When the game is played on a game portal such as CrazyGames or GameDistribution, the portal may show its own adverts between activities. Those adverts are sold and shown by the portal, which may use cookies we do not control; the portal's own privacy policy covers them."
+        ]
+      },
+      {
+        "heading": "Anonymous play counts (version 1.0.3 and later)",
+        "body": [
+          "From version 1.0.3 the game sends MotionPlay Labs anonymous play counts: when the game is opened and closed, when Play is pressed, which friend is chosen, which places and activities are started, finished or left early, how long they take, and how many wrong tries and hints they needed. Each count also carries the game version, where it is played (for example our website or a store app), the kind of device (phone, tablet, computer or TV), how it is controlled (touch, mouse, remote or game controller), the device's language setting and its time zone. We use the time zone, not location, to see roughly which countries the game is played in.",
+          "The counts contain no name, nickname, email, account, advertising ID or other device identifier. Each launch of the game gets a random session number that lives in memory and is never saved, so one session cannot be linked to another or to a child.",
+          "We use the counts to find activities that are too hard, too easy or often left early, and to decide which devices to support. We do not use them for advertising, and we do not sell or share them.",
+          "The counts are stored with our database provider, Supabase. As with any web request, the device's network address reaches the provider in transit; we do not store it with the counts. We keep play counts for up to 24 months and then delete them.",
+          "A grown-up can switch the counts off: open the Grown-ups area (behind the grown-up question), go to Privacy and turn off Send anonymous play counts. When it is off the game sends nothing. On a browser that sends a Global Privacy Control signal, the switch starts off. Versions of the game before 1.0.3 send nothing."
         ]
       },
       {
         "heading": "Information saved on your device",
         "body": [
-          "The game saves player profiles, an optional nickname, a locally generated profile identifier, character and colour choices, settings, activity progress, activity history, play time and related timestamps. This information enables saved progress, personalisation and the parent progress view. It stays in the app's local storage unless it is copied through the export or device-backup features described below. You can use an invented nickname; a child's real name is not required."
+          "The game saves player profiles, an optional nickname, a locally generated profile identifier, character and colour choices, settings, activity progress, activity history, play time and related timestamps. This information enables saved progress, personalisation and the parent progress view. It stays in the game's storage on the device (the browser's storage on the web) unless it is copied through the export or device-backup features described below. None of it is included in the play counts. You can use an invented nickname; a child's real name is not required."
         ]
       },
       {
@@ -39,8 +50,8 @@ export const legal: LegalDoc[] = [
       {
         "heading": "Keeping and deleting information",
         "body": [
-          "Local profile and progress information remains on your device until it is removed or the app's storage is cleared. The parent area provides progress-reset and profile-management controls. To remove all local app information, clear Festival Town's storage in Android settings. Uninstalling normally removes local app data, but a device backup may restore it if you reinstall. Manage backups separately in your device or backup-account settings, and delete any progress codes you exported.",
-          "MotionPlay Labs cannot access or remotely delete information stored only on your device or in your own backups."
+          "Local profile and progress information remains on your device until it is removed or the game's storage is cleared. The parent area provides progress-reset and profile-management controls. To remove all local app information, clear Festival Town's storage in Android settings, or clear the site's data in your browser. Uninstalling normally removes local app data, but a device backup may restore it if you reinstall. Manage backups separately in your device or backup-account settings, and delete any progress codes you exported.",
+          "MotionPlay Labs cannot access or remotely delete information stored only on your device or in your own backups. Because play counts carry no identifier, we cannot pick out the counts from one particular device; they are deleted on the schedule above."
         ]
       },
       {
@@ -53,7 +64,7 @@ export const legal: LegalDoc[] = [
       {
         "heading": "Children's privacy",
         "body": [
-          "Festival Town is designed for children aged 4–7 with parent or guardian involvement. The game does not send children's personal information to MotionPlay Labs. Parents can manage locally saved information using the controls described above. If you believe a child has sent personal information to our support address, contact us so we can review and delete information that is not needed."
+          "Festival Town is designed for children aged 4 to 7 with parent or guardian involvement. The game does not send children's personal information to MotionPlay Labs. From version 1.0.3 it sends the anonymous play counts described above, which a grown-up can switch off. Parents can manage locally saved information using the controls described above. If you believe a child has sent personal information to our support address, contact us so we can review and delete information that is not needed."
         ]
       },
       {
@@ -86,7 +97,7 @@ export const legal: LegalDoc[] = [
         body: [
           "The optional parent and carer signup asks for an adult’s email address and consent to receive Festival Town updates. The school signup also asks for the school name, with optional contact name, location and role. We record the selected audience, consent wording and signup source. These forms do not ask for children’s details.",
           "Signup details are stored with Supabase. Resend sends the welcome email and a signup notification to our team. We use these details for the updates you choose. To unsubscribe, reply to one of our emails or contact hello@motionplaylabs.com. You can also ask us to delete your details.",
-          "Signing up is not required to play Festival Town. The Android game has its own privacy policy at /legal/festival-town-privacy/.",
+          "Signing up is not required to play Festival Town. The game has its own privacy policy at /legal/festival-town-privacy/, which also covers the anonymous play counts it sends from version 1.0.3.",
         ],
       },
       {
