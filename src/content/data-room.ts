@@ -48,7 +48,7 @@ export const dataRoom = {
       id: "product",
       title: "The product",
       items: [
-        { no: "2.1", title: "Play Festival Town", desc: "Free to play in any web browser.", kind: "Live game", status: "ready", href: "/festival-town/game/" },
+        { no: "2.1", title: "Play Festival Town", desc: "Free to start in any web browser.", kind: "Live game", status: "ready", href: "/festival-town/game/" },
         { no: "2.2", title: "Website and promo film", desc: "The Festival Town page, with the 1 min 14 film.", kind: "Web page", status: "ready", href: "/festival-town/" },
         {
           no: "2.3",
